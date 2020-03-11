@@ -5,8 +5,8 @@
 - update amazonmws with a modern python3, angular, and docker
     scrape amazon.com products
 - Technical Stack
-    database - MySQL 8.x/SQLAlchemy 1.3.x
-    backend - python 3.7.x/Scrapy2.0.x/Flask 1.1.x
+    database - MySQL 8.x/Django 3.0.*
+    backend - python 3.7.x/Scrapy 2.0.x/Flask 1.1.x
     frontend - Angular 1.7.x
 - Docker based applications
 
