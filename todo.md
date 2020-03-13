@@ -10,3 +10,7 @@
     frontend - Angular 1.7.x
 - Docker based applications
 
+## Mar 12 2020
+- django migration
+- init scrapy
+
