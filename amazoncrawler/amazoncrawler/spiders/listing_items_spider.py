@@ -1,9 +1,14 @@
+from scrapy import Request
 from scrapy.spiders import CrawlSpider
+from scrapy.exceptions import CloseSpider
 
-class AsinSpider(CrawlSpider):
-    name = "amazon_com_asin"
+from amazoncrawler import settings
 
-    # allowed_domains = ["amazon.com"]
+
+class ListingItemsSpider(CrawlSpider):
+    name = "listing_items"
+
+    allowed_domains = ["amazon.com"]
     # handle_httpstatus_list = [404]
 
     # crawlera_enabled = False
@@ -59,23 +64,16 @@ class AsinSpider(CrawlSpider):
     #     if 'dont_list_ebay' in kw:
     #         self.dont_list_ebay = kw['dont_list_ebay']
 
-    # def start_requests(self):
-    #     if len(self._asins) < 1:
-    #         raise CloseSpider
+    def start_requests(self):
+        pass
+        # if len(self._asins) < 1:
+        #     raise CloseSpider
 
-    #     for asin in self._asins:
-    #         yield Request(amazonmws_settings.AMAZON_ITEM_LINK_FORMAT % asin,
-    #                     callback=parsers.parse_amazon_item,
-    #                     meta={
-    #                         'dont_parse_pictures': self._dont_parse_pictures,
-    #                         'dont_parse_variations': self._dont_parse_variations,
-    #                     })
-
-    # def _filter_asins(self, asins):
-    #     filtered_asins = []
-    #     for asin in asins:
-    #         asin = asin.strip()
-    #         if asin not in self._asin_cache:
-    #             self._asin_cache[asin] = True
-    #             filtered_asins.append(asin)
-    #     return filtered_asins
+        # for asin in self._asins:
+        #     yield Request(settings.AMAZON_COM_ITEM_LINK_FORMAT % asin,
+        #                 callback=parsers.parse_amazon_item,
+        #                 # meta={
+        #                 #     'dont_parse_pictures': self._dont_parse_pictures,
+        #                 #     'dont_parse_variations': self._dont_parse_variations,
+        #                 # }
+        #                 )
