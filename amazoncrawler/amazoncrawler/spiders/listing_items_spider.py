@@ -2,10 +2,12 @@ from scrapy import Request
 from scrapy.spiders import CrawlSpider
 from scrapy.exceptions import CloseSpider
 
-from amazoncrawler import settings
+from amazoncrawler import settings, parsers
 
 
 class ListingItemsSpider(CrawlSpider):
+    """ crawl amazon items
+    """
     name = "listing_items"
 
     allowed_domains = ["amazon.com"]
@@ -30,7 +32,7 @@ class ListingItemsSpider(CrawlSpider):
     # force_crawl = False
     # dont_list_ebay = False
 
-    # _asins = []
+    __asins = []
     # _asin_cache = {}
     # _scraped_parent_asins_cache = {}
     # _dont_parse_pictures = False
@@ -65,15 +67,14 @@ class ListingItemsSpider(CrawlSpider):
     #         self.dont_list_ebay = kw['dont_list_ebay']
 
     def start_requests(self):
-        pass
-        # if len(self._asins) < 1:
-        #     raise CloseSpider
+        if len(self.__asins) < 1:
+            raise CloseSpider
 
-        # for asin in self._asins:
-        #     yield Request(settings.AMAZON_COM_ITEM_LINK_FORMAT % asin,
-        #                 callback=parsers.parse_amazon_item,
-        #                 # meta={
-        #                 #     'dont_parse_pictures': self._dont_parse_pictures,
-        #                 #     'dont_parse_variations': self._dont_parse_variations,
-        #                 # }
-        #                 )
+        for asin in self.__asins:
+            yield Request(settings.AMAZON_COM_ITEM_LINK_FORMAT % asin,
+                        callback=parsers.parse_amazon_item,
+                        # meta={
+                        #     'dont_parse_pictures': self._dont_parse_pictures,
+                        #     'dont_parse_variations': self._dont_parse_variations,
+                        # }
+                        )
