@@ -18,9 +18,9 @@
                 spiders
                     __init__.py
                     ...
-            dj (django application)
+            djg (django application)
                 manage.py
-                dj
+                djg
                     __init__.py
                     asgi.py
                     wsgi.py

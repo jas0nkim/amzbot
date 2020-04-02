@@ -2,7 +2,7 @@ from scrapy import Request
 from scrapy.spiders import CrawlSpider
 from scrapy.exceptions import CloseSpider
 
-from amazoncrawler import settings, parsers
+from amzbot import settings, parsers
 
 
 class ListingItemsSpider(CrawlSpider):

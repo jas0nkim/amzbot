@@ -6,6 +6,6 @@
 # See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 
 
-class AmazoncrawlerPipeline(object):
+class AmzbotPipeline(object):
     def process_item(self, item, spider):
         return item

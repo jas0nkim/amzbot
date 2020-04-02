@@ -1,4 +1,4 @@
 import logging
 
-logger = logging.getLogger("amazoncrawler")
+logger = logging.getLogger("amzbot")
 # logger.setLevel(logging.DEBUG)

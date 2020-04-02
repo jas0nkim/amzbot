@@ -10,9 +10,9 @@ from scrapy.exceptions import IgnoreRequest
 
 # from amazon_apparel_parser import AmazonApparelParser
 
-from amazoncrawler import utils, settings
-from amazoncrawler.loggers import logger
-from amazoncrawler.items import ListingItem, ListingPictureItem
+from amzbot import utils, settings
+from amzbot.loggers import logger
+from amzbot.items import ListingItem, ListingPictureItem
 
 class AmazonItemParser(object):
 
