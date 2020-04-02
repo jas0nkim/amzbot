@@ -33,15 +33,15 @@ class ListingItemsSpider(CrawlSpider):
     # dont_list_ebay = False
 
     __asins = []
-    # _asin_cache = {}
+    __asin_cache = {}
     # _scraped_parent_asins_cache = {}
     # _dont_parse_pictures = False
     # _dont_parse_variations = False
 
-    # def __init__(self, *a, **kw):
-    #     super(AmazonAsinSpider, self).__init__(*a, **kw)
-    #     if 'asins' in kw:
-    #         self._asins = self._filter_asins(kw['asins'])
+    def __init__(self, *a, **kw):
+        super().__init__(*a, **kw)
+        if 'asins' in kw:
+            self.__asins = self.__filter_asins(kw['asins'])
     #     if 'dont_parse_pictures' in kw:
     #         self._dont_parse_pictures = kw['dont_parse_pictures']
     #     if 'dont_parse_variations' in kw:
@@ -78,3 +78,13 @@ class ListingItemsSpider(CrawlSpider):
                         #     'dont_parse_variations': self._dont_parse_variations,
                         # }
                         )
+
+    def __filter_asins(self, asins):
+        filtered_asins = []
+        for asin in asins:
+            asin = asin.strip()
+            if asin not in self.__asin_cache:
+                self.__asin_cache[asin] = True
+                filtered_asins.append(asin)
+        return filtered_asins
+
