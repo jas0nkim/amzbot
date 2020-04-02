@@ -1,3 +1,32 @@
+### Week of 2020-03-29 - 2020-04-04
+- scrapy-djangoitem install/implement to scrapy items
+- rename: amazoncrawler -> amazonlistingsbot
+- run scrapyd with docker-compose
+- docker-compose services:
+    1. scrapyd server
+    2. mysql database server
+    3. scrapy/django app
+        amzbot
+            scrapy.cfg
+            requirements.txt
+            ...
+            amzbot
+                __init__.py
+                items.py
+                pipelines.py
+                settings.py (path hacking: https://stackoverflow.com/questions/19068308/access-django-models-with-scrapy-defining-path-to-django-project)
+                spiders
+                    __init__.py
+                    ...
+            dj (django application)
+                manage.py
+                dj
+                    __init__.py
+                    asgi.py
+                    wsgi.py
+                    setting.py
+                    ...
+
 ### Week of 2020-03-22 - 2020-03-28
 - setup.py (scrapy cloud)
     - https://medium.com/@chiayinchen/crawler-what-can-i-do-with-scrapy-cloud-edc336bc85e7
