@@ -8,7 +8,7 @@ from amzbot import settings, parsers
 class ListingItemsSpider(CrawlSpider):
     """ crawl amazon items
     """
-    name = "listing_items"
+    name = "ListingItemsSpider"
 
     allowed_domains = ["amazon.com"]
     # handle_httpstatus_list = [404]
@@ -81,6 +81,8 @@ class ListingItemsSpider(CrawlSpider):
 
     def __filter_asins(self, asins):
         filtered_asins = []
+        if isinstance(asins, str):
+            asins = asins.split(',')
         for asin in asins:
             asin = asin.strip()
             if asin not in self.__asin_cache:
