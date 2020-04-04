@@ -2,7 +2,7 @@ from scrapy import Request
 from scrapy.spiders import CrawlSpider
 from scrapy.exceptions import CloseSpider
 
-from amzbot import settings, parsers
+from amzbot import settings, parsers, utils
 
 
 class ListingItemsSpider(CrawlSpider):
@@ -35,17 +35,17 @@ class ListingItemsSpider(CrawlSpider):
     __asins = []
     __asin_cache = {}
     # _scraped_parent_asins_cache = {}
-    # _dont_parse_pictures = False
-    # _dont_parse_variations = False
+    __dont_parse_pictures = False
+    __dont_parse_variations = False
 
     def __init__(self, *a, **kw):
         super().__init__(*a, **kw)
         if 'asins' in kw:
             self.__asins = self.__filter_asins(kw['asins'])
-    #     if 'dont_parse_pictures' in kw:
-    #         self._dont_parse_pictures = kw['dont_parse_pictures']
-    #     if 'dont_parse_variations' in kw:
-    #         self._dont_parse_variations = kw['dont_parse_variations']
+        if 'dont_parse_pictures' in kw:
+            self.__dont_parse_pictures = utils.true_or_false(kw['dont_parse_pictures'])
+        if 'dont_parse_variations' in kw:
+            self.__dont_parse_variations = utils.true_or_false(kw['dont_parse_variations'])
     #     if 'premium' in kw and kw['premium'] == True:
     #         self.tor_privoxy_enabled = False
     #         self.crawlera_enabled = True
@@ -73,11 +73,10 @@ class ListingItemsSpider(CrawlSpider):
         for asin in self.__asins:
             yield Request(settings.AMAZON_COM_ITEM_LINK_FORMAT % asin,
                         callback=parsers.parse_amazon_item,
-                        # meta={
-                        #     'dont_parse_pictures': self._dont_parse_pictures,
-                        #     'dont_parse_variations': self._dont_parse_variations,
-                        # }
-                        )
+                        meta={
+                            'dont_parse_pictures': self.__dont_parse_pictures,
+                            'dont_parse_variations': self.__dont_parse_variations,
+                        })
 
     def __filter_asins(self, asins):
         filtered_asins = []

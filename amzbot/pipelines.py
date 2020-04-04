@@ -6,6 +6,13 @@
 # See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 
 
+import logging
+
+
 class AmzbotPipeline(object):
+
+    def __init__(self):
+        self.logger = logging.getLogger('amzbot.pipelines.AmzbotPipeline')
+
     def process_item(self, item, spider):
         return item

@@ -9,6 +9,8 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
+import time
+
 BOT_NAME = 'amzbot'
 
 SPIDER_MODULES = ['amzbot.spiders']
@@ -64,9 +66,9 @@ ROBOTSTXT_OBEY = True
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    'amzbot.pipelines.AmzbotPipeline': 300,
-#}
+ITEM_PIPELINES = {
+   'amzbot.pipelines.AmzbotPipeline': 300,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
@@ -88,6 +90,12 @@ ROBOTSTXT_OBEY = True
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+# scrapy logging
+# https://docs.scrapy.org/en/latest/topics/logging.html#topics-logging-settings
+
+LOG_FILE = '/var/log/python/amzbot-{}.log'.format(time.time())
+LOG_LEVEL = 'DEBUG'
 
 ## amazon.com related
 

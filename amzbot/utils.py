@@ -24,7 +24,7 @@ def extract_int(string):
 
 def trim_emojis(string):
     if isinstance(string, str):
-        return string.encode('ascii', errors='ignore')
+        return string.encode('ascii', errors='ignore').decode('utf-8', errors='ignore')
     return string
 
 def replace_html_anchors_to_spans(html):
@@ -65,3 +65,6 @@ def validate_image_size(url):
     if width < 500 and height < 500:
         raise Exception("Image width and height are less then 500px")
     return True
+
+def true_or_false(string):
+    return string.lower() in ['true', '1', 't', 'y', 'yes', 'yeah', 'yup', 'certainly', 'uh-huh']

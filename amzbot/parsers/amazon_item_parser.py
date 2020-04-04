@@ -10,7 +10,7 @@ from scrapy.exceptions import IgnoreRequest
 
 # from amazon_apparel_parser import AmazonApparelParser
 
-from amzbot import utils, settings, loggers
+from amzbot import utils, settings
 from amzbot.items import ListingItem, ListingPictureItem
 
 class AmazonItemParser(object):
@@ -55,13 +55,9 @@ class AmazonItemParser(object):
                 # RemovedVariationHandleMiddleware.__handle_removed_variations related
                 listing_item['parent_asin'] = None
                 # self.logger.error('[ASIN:null] Request Ignored - No ASIN')
-            # record_amazon_scrape_error(http_status=response.status,
-            #     error_code='22001',
-            #     asin=self.__asin,
-            #     url=response.url,)
-            yield listing_item
+            return listing_item
         else:
-            yield self.__parse_item_helper(response)
+            return self.__parse_item_helper(response)
 
     def __parse_item_helper(self, response):
         parse_picture = True
@@ -192,7 +188,7 @@ class AmazonItemParser(object):
             # get asin from Add To Cart button
             return response.css('form#addToCart input[type=hidden][name=ASIN]::attr(value)').extract()[0]
         except IndexError as e:
-            self.logger.exception("[ASIN:{}] error on parsing asin: ASIN at Add To Cart button missing - {}".format(self.__asin, str(e)))
+            self.logger.exception("[ASIN:{}] index error on parsing asin: ASIN at Add To Cart button missing - {}".format(self.__asin, str(e)))
             return None
         except Exception as e:
             self.logger.exception("[ASIN:{}] error on parsing asin at __extract_asin_on_content - {}".format(self.__asin, str(e)))
@@ -200,10 +196,7 @@ class AmazonItemParser(object):
 
     def __extract_category(self, response):
         try:
-            category_pieces = map(str.strip, response.css('#wayfinding-breadcrumbs_feature_div > ul li:not(.a-breadcrumb-divider) > span > a::text').extract())
-            if len(category_pieces) < 1:
-                return None
-            return ' : '.join(category_pieces)
+            return ' : '.join(map(str.strip, response.css('#wayfinding-breadcrumbs_feature_div > ul li:not(.a-breadcrumb-divider) > span > a::text').extract()))
         except Exception as e:
             self.logger.exception("[ASIN:{}] error on parsing category - {}".format(self.__asin, str(e)))
             return None
@@ -303,16 +296,16 @@ class AmazonItemParser(object):
     def __extract_review_count(self, response):
         try:
             if len(response.css('#summaryStars a::text')) > 0:
-                return int(response.css('#summaryStars a::text')[1].extract().replace(',', '').strip())
+                return utils.extract_int(response.css('#summaryStars a::text')[1].extract().replace(',', '').strip())
             elif len(response.css('#acrCustomerReviewText::text')) > 0:
                 if len(response.css('#acrCustomerReviewText::text')) == 1:
-                    return int(response.css('#acrCustomerReviewText::text')[0].extract().replace(',', '').replace('customer reviews', '').replace('customer review', '').strip())
+                    return utils.extract_int(response.css('#acrCustomerReviewText::text')[0].extract().replace(',', '').replace('customer reviews', '').replace('customer review', '').strip())
                 else:
-                    return int(response.css('#acrCustomerReviewText::text')[1].extract().replace(',', '').replace('customer reviews', '').replace('customer review', '').strip())
+                    return utils.extract_int(response.css('#acrCustomerReviewText::text')[1].extract().replace(',', '').replace('customer reviews', '').replace('customer review', '').strip())
             else:
                 return 0
         except IndexError as e:
-            self.logger.exception("[ASIN:{}] error on parsing review count - {}".format(self.__asin, str(e)))
+            self.logger.exception("[ASIN:{}] index error on parsing review count - {}".format(self.__asin, str(e)))
             return 0
         except Exception as e:
             self.logger.exception("[ASIN:{}] error on parsing review count - {}".format(self.__asin, str(e)))
@@ -327,7 +320,7 @@ class AmazonItemParser(object):
             else:
                 return 0.0
         except IndexError as e:
-            self.logger.exception("[ASIN:{}] error on parsing average rating - {}".format(self.__asin, str(e)))
+            self.logger.exception("[ASIN:{}] index error on parsing average rating - {}".format(self.__asin, str(e)))
             return 0.0
         except Exception as e:
             self.logger.exception("[ASIN:{}] error on parsing average rating - {}".format(self.__asin, str(e)))
@@ -603,7 +596,7 @@ class AmazonItemParser(object):
             else:
                 return None
         except IndexError as e:
-            self.logger.exception("[ASIN:{}] error on parsing meta keywords - {}".format(self.__asin, str(e)))
+            self.logger.exception("[ASIN:{}] index error on parsing meta keywords - {}".format(self.__asin, str(e)))
             return None
         except Exception as e:
             self.logger.exception("[ASIN:{}] error on parsing meta keywords - {}".format(self.__asin, str(e)))
@@ -670,7 +663,7 @@ class AmazonItemParser(object):
         if not selected_variations:
             self.logger.warning("[ASIN:{}] error on parsing variation specifics - unable to parse selected_variations".format(self.__asin))
             return None
-        for v_key, v_val in variation_labels.iteritems():
+        for v_key, v_val in variation_labels.items():
             if v_key not in selected_variations:
                 # selected variations must contains all variation options
                 return None
