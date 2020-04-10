@@ -1,11 +1,12 @@
 from scrapy import Request
-from scrapy.spiders import CrawlSpider
+from . import BaseAmzBotCrawlSpider
 from scrapy.exceptions import CloseSpider
 
 from amzbot import settings, parsers, utils
 
 
-class ListingItemsSpider(CrawlSpider):
+class ListingItemsSpider(BaseAmzBotCrawlSpider):
+
     """ crawl amazon items
     """
     name = "ListingItemsSpider"
