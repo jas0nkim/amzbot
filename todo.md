@@ -1,5 +1,13 @@
+## Apr 10 2020
+- graylog
+    - modify docker config: sync data directories to the host machine
+        https://docs.graylog.org/en/latest/pages/configuration/file_location.html
+    - dashboard, and so on...
+- setup amzbot database, and django models
+
 ## Apr 04 2020
 - logging system
+    - graylog
 - mysql connection
 
 ### Week of 2020-03-29 - 2020-04-04
