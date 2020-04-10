@@ -10,7 +10,8 @@ from scrapy.spiders import CrawlSpider
 class BaseAmzBotCrawlSpider(CrawlSpider):
 
     def __init__(self, *a, **kw):
-        logging.root.setLevel(logging.DEBUG)
-        graylog_handler = graypy.GELFUDPHandler('127.0.0.1', 12201)
-        logging.root.addHandler(graylog_handler)
+        self.__set_gelfudphandler()
         super().__init__(*a, **kw)
+
+    def __set_gelfudphandler(self):
+        logging.root.addHandler(graypy.GELFUDPHandler('127.0.0.1', 12201))
