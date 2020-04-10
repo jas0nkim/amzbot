@@ -1,3 +1,7 @@
+## Apr 04 2020
+- logging system
+- mysql connection
+
 ### Week of 2020-03-29 - 2020-04-04
 - scrapy-djangoitem install/implement to scrapy items
 - rename: amazoncrawler -> amazonlistingsbot
@@ -47,6 +51,23 @@
     ├── scrapy.cfg
     └── setup.py
 
+## Mar 16 2020
+- scrapyd
+    https://github.com/scrapy/scrapyd-client
+    https://scrapyd.readthedocs.io/en/latest/overview.html#how-scrapyd-works
+- scrapydweb
+    https://github.com/my8100/scrapydweb
+
+## Mar 13 2020
+- checkout distributed crawls
+    https://docs.scrapy.org/en/latest/topics/practices.html#distributed-crawls
+- You can access the cached version for any page that has been saved by Google with this:
+    https://webapps.stackexchange.com/a/22111
+
+## Mar 12 2020
+- django migration
+- init scrapy
+
 ### Week of 2020-03-08 - 2020-03-14
 
 - scraping amazon.com product data (price history)
@@ -58,21 +79,3 @@
     backend - python 3.7.x/Scrapy 2.0.x/Flask 1.1.x
     frontend - Angular 1.7.x
 - Docker based applications
-
-## Mar 12 2020
-- django migration
-- init scrapy
-
-## Mar 13 2020
-- checkout distributed crawls
-    https://docs.scrapy.org/en/latest/topics/practices.html#distributed-crawls
-- You can access the cached version for any page that has been saved by Google with this:
-    https://webapps.stackexchange.com/a/22111
-
-## Mar 16 2020
-- scrapyd
-    https://github.com/scrapy/scrapyd-client
-    https://scrapyd.readthedocs.io/en/latest/overview.html#how-scrapyd-works
-- scrapydweb
-    https://github.com/my8100/scrapydweb
-
