@@ -2,7 +2,8 @@
 - graylog
     - modify docker config: sync data directories to the host machine
         https://docs.graylog.org/en/latest/pages/configuration/file_location.html
-    - dashboard, and so on...
+    - dashboard
+        https://docs.graylog.org/en/latest/pages/dashboards.html
 - setup amzbot database, and django models
 
 ## Apr 04 2020
