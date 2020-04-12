@@ -37,6 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # dig_* apps
+    'djg_resources.apps.DjgResourcesConfig'
 ]
 
 MIDDLEWARE = [
@@ -81,7 +84,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'OPTIONS': {
-            'read_default_file': '/usr/local/etc/my_amzscraper.cnf', # has mysql connect information, and so on - macos
+            'read_default_file': '/usr/local/etc/my_amzbot.cnf', # has mysql connect information, and so on - macos
             # 'read_default_file': 'C:\ProgramData\MySQL\MySQL Server 8.0\my_amzscraper.ini', # has mysql connect information, and so on - windows 10
         },
     }
