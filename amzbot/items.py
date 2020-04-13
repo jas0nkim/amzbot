@@ -5,40 +5,18 @@
 # See documentation in:
 # https://docs.scrapy.org/en/latest/topics/items.html
 
+from . import utils
+utils.setup_djg()
+
 import scrapy
+from scrapy_djangoitem import DjangoItem
+from djg_resources.models import AmazonListing, AmazonListingPicture
 
 
-class ListingItem(scrapy.Item):
-    asin = scrapy.Field()
-    parent_asin = scrapy.Field()
-    variation_asins = scrapy.Field()
-    url = scrapy.Field()
-    category = scrapy.Field()
-    title = scrapy.Field()
-    price = scrapy.Field()
-    market_price = scrapy.Field()
-    quantity = scrapy.Field()
-    features = scrapy.Field()
-    description = scrapy.Field()
-    specifications = scrapy.Field()
-    variation_specifics = scrapy.Field()
-    review_count = scrapy.Field()
-    avg_rating = scrapy.Field()
-    is_fba = scrapy.Field()
-    is_addon = scrapy.Field()
-    is_pantry = scrapy.Field()
-    has_sizechart = scrapy.Field()
-    merchant_id = scrapy.Field()
-    merchant_name = scrapy.Field()
-    brand_name = scrapy.Field()
-    meta_title = scrapy.Field()
-    meta_description = scrapy.Field()
-    meta_keywords = scrapy.Field()
-    status = scrapy.Field()
+class ListingItem(DjangoItem):
+    django_model = AmazonListing
     _redirected_asins = scrapy.Field()
     _cached = scrapy.Field()
 
-
-class ListingPictureItem(scrapy.Item):
-    asin = scrapy.Field()
-    picture_urls = scrapy.Field()
+class ListingPictureItem(DjangoItem):
+    django_model = AmazonListingPicture
