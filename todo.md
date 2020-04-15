@@ -1,3 +1,13 @@
+## Apr 13 2020
+- switch db from MySQL to PostgreSQL
+    - json field
+    https://docs.djangoproject.com/en/3.0/ref/contrib/postgres/fields/#django.contrib.postgres.fields.JSONField
+- install postgres
+    https://www.robinwieruch.de/postgres-sql-macos-setup
+- connect django to postgres
+    https://www.enterprisedb.com/postgres-tutorials/how-use-postgresql-django
+    pip install psycopg2 # python driver for postgres
+
 ## Apr 10 2020
 - graylog
     - modify docker config: sync data directories to the host machine
