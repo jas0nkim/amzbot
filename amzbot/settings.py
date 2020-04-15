@@ -100,8 +100,8 @@ LOG_LEVEL = 'DEBUG'
 ## amazon.com related
 
 AMAZON_COM_ITEM_LINK_PATTERN = r'^(https?://www.amazon.com)?/([^/]+/[^/]+|dp)/([A-Z0-9]{10})(/.*$)?'
-AMAZON_COM_ITEM_LINK_FORMAT = "https://www.amazon.com/dp/%s"
-AMAZON_COM_ITEM_VARIATION_LINK_FORMAT = "https://www.amazon.com/dp/%s/?th=1&psc=1"
+AMAZON_COM_ITEM_LINK_FORMAT = 'https://www.amazon.com/dp/{}{}'
+AMAZON_COM_ITEM_VARIATION_LINK_POSTFIX = '/?th=1&psc=1'
 AMAZON_COM_ITEM_IMAGE_CONVERT_PATTERN_FROM = r'\._([^_]+)_\.'
 AMAZON_COM_ITEM_IMAGE_CONVERT_STRING_TO_PRIMARY = '._SL1500_.'
 AMAZON_COM_ITEM_IMAGE_CONVERT_STRING_TO_SECONDARY = '._SX522_.'

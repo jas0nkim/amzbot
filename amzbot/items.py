@@ -8,15 +8,15 @@
 from . import utils
 utils.setup_djg()
 
-import scrapy
+from scrapy import Field
 from scrapy_djangoitem import DjangoItem
-from djg_resources.models import AmazonListing, AmazonListingPicture
+from djg_resources.models import AmazonParentListing, AmazonListing
 
+
+class ParentListingItem(DjangoItem):
+    django_model = AmazonParentListing
 
 class ListingItem(DjangoItem):
     django_model = AmazonListing
-    _redirected_asins = scrapy.Field()
-    _cached = scrapy.Field()
-
-class ListingPictureItem(DjangoItem):
-    django_model = AmazonListingPicture
+    _redirected_asins = Field()
+    _cached = Field()

@@ -1,12 +1,27 @@
 from django.db import models
+from django.contrib.postgres.fields import ArrayField
+
+
+class AmazonParentListing(models.Model):
+    parent_asin = models.CharField(max_length=32, unique=True, db_index=True)
+    asins = ArrayField(base_field=models.CharField(max_length=32, blank=True, null=True), blank=True, null=True)
+    review_count = models.SmallIntegerField(blank=True, null=True, default=0)
+    avg_rating = models.FloatField(blank=True, null=True, default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.parent_asin
+
+    class Meta:
+        db_table = 'amazon_parent_listings'
 
 
 class AmazonListing(models.Model):
-    STATUS_INACTIVE = 0
-    STATUS_ACTIVE = 1
-
     asin = models.CharField(max_length=32, unique=True, db_index=True)
-    parent_asin = models.CharField(max_length=32, db_index=True, blank=True, null=True)
+    parent_asin = models.CharField(max_length=32, db_index=True)
+    picture_urls = ArrayField(base_field=models.CharField(max_length=255, blank=True, null=True), null=True)
+    description = models.TextField(blank=True, null=True)
     url = models.TextField()
     category = models.CharField(max_length=255, blank=True, null=True)
     title = models.TextField()
@@ -17,8 +32,6 @@ class AmazonListing(models.Model):
     description = models.TextField(blank=True, null=True)
     specifications = models.TextField(blank=True, null=True)
     variation_specifics = models.CharField(max_length=255, blank=True, null=True)
-    review_count = models.SmallIntegerField(blank=True, null=True, default=0)
-    avg_rating = models.FloatField(blank=True, null=True, default=0)
     is_fba = models.BooleanField(default=0)
     is_addon = models.BooleanField(default=0)
     is_pantry = models.BooleanField(default=0)
@@ -33,24 +46,12 @@ class AmazonListing(models.Model):
     status = models.SmallIntegerField(blank=True, null=True, default=1)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    ts = models.DateTimeField(auto_now=True)
+
+    STATUS_INACTIVE = 0
+    STATUS_ACTIVE = 1
 
     def __str__(self):
-        return self.title
+        return "[{}] {}".format(self.asin, self.title)
 
     class Meta:
         db_table = 'amazon_listings'
-
-
-class AmazonListingPicture(models.Model):
-    asin = models.CharField(max_length=32, db_index=True)
-    picture_url = models.CharField(max_length=255, db_index=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    ts = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.picture_url
-
-    class Meta:
-        db_table = 'amazon_listing_pictures'

@@ -11,7 +11,7 @@ from scrapy.exceptions import IgnoreRequest
 # from amazon_apparel_parser import AmazonApparelParser
 
 from amzbot import utils, settings
-from amzbot.items import ListingItem, ListingPictureItem
+from amzbot.items import ParentListingItem, ListingItem
 
 class AmazonItemParser(object):
 
@@ -59,33 +59,46 @@ class AmazonItemParser(object):
         else:
             return self.__parse_item_helper(response)
 
+    def parse_parent_listing_item(self, response, parent_asin):
+        parent_listing_item = ParentListingItem()
+        parent_listing_item['parent_asin'] = parent_asin
+        parent_listing_item['asins'] = self.__extract_variation_asins(response)
+        parent_listing_item['review_count'] = self.__extract_review_count(response)
+        parent_listing_item['avg_rating'] = self.__extract_avg_rating(response)
+        return parent_listing_item
+
     def __parse_item_helper(self, response):
-        parse_picture = True
-        if 'dont_parse_pictures' in response.meta and response.meta['dont_parse_pictures']:
-            parse_picture = False
+        parse_pictures = 'parse_pictures' in response.meta and response.meta['parse_pictures']
+        parse_variations = 'parse_variations' in response.meta and response.meta['parse_variations']
+        parse_parent_listing = 'parse_parent_listing' in response.meta and response.meta['parse_parent_listing']
 
-        parse_variations = True
-        if 'dont_parse_variations' in response.meta and response.meta['dont_parse_variations']:
-            parse_variations = False
+        __parent_asin = self.__extract_parent_asin(response)
 
-        __variation_asins = self.__extract_variation_asins(response)
+        if parse_parent_listing:
+            yield self.parse_parent_listing_item(response, parent_asin=__parent_asin)
+
         # check variations first
+        """ TODO: __stored_variation_asins = amazon_parent_listings.asins in db
+        """
         __stored_variation_asins = []
-        if parse_variations and len(__variation_asins) > 0:
-            for v_asin in __variation_asins:
-                if v_asin not in __stored_variation_asins:
-                    yield Request(settings.AMAZON_COM_ITEM_VARIATION_LINK_FORMAT % v_asin,
-                            callback=self.parse_item,
-                            headers={ 'Referer': 'https://www.amazon.com/', },
-                            meta={
-                                'dont_parse_pictures': not parse_picture,
-                                'dont_parse_variations': True,
-                            })
-            # self.logger.info("[ASIN:{}] Request Ignored - initial asin ignored".format(self.__asin))
-            # raise IgnoreRequest
+        if parse_variations:
+            __variation_asins = self.__extract_variation_asins(response)
+            if len(__variation_asins) > 0:
+                for v_asin in __variation_asins:
+                    if v_asin not in __stored_variation_asins:
+                        """ TODO: change settings.AMAZON_COM_ITEM_LINK_FORMAT.format(v_asin, settings.AMAZON_COM_ITEM_VARIATION_LINK_POSTFIX to real amazon url (db query) : avoid ban
+                        """
+                        yield Request(settings.AMAZON_COM_ITEM_LINK_FORMAT.format(v_asin, settings.AMAZON_COM_ITEM_VARIATION_LINK_POSTFIX),
+                                callback=self.parse_item,
+                                headers={ 'Referer': 'https://www.amazon.com/', },
+                                meta={
+                                    'parse_pictures': parse_pictures,
+                                    'parse_variations': False,
+                                    'parse_parent_listing': False,
+                                })
+                # self.logger.info("[ASIN:{}] Request Ignored - initial asin ignored".format(self.__asin))
+                # raise IgnoreRequest
         else:
-            __parent_asin = self.__extract_parent_asin(response)
-
             listing_item = ListingItem()
             listing_item['_cached'] = False
             listing_item['asin'] = self.__asin
@@ -102,7 +115,7 @@ class AmazonItemParser(object):
             else:
                 try:
                     listing_item['parent_asin'] = __parent_asin
-                    listing_item['variation_asins'] = __variation_asins
+                    listing_item['picture_urls'] = self.__extract_picture_urls(response) if parse_pictures else []
                     listing_item['url'] = response.url
                     listing_item['category'] = self.__extract_category(response)
                     listing_item['title'] = self.__extract_title(response)
@@ -113,8 +126,6 @@ class AmazonItemParser(object):
                     listing_item['description'] = self.__extract_description(response)
                     listing_item['specifications'] = self.__extract_specifications(response)
                     listing_item['variation_specifics'] = self.__extract_variation_specifics(response)
-                    listing_item['review_count'] = self.__extract_review_count(response)
-                    listing_item['avg_rating'] = self.__extract_avg_rating(response)
                     listing_item['is_fba'] = self.__extract_is_fba(response)
                     listing_item['is_addon'] = self.__extract_is_addon(response)
                     listing_item['is_pantry'] = self.__extract_is_pantry(response)
@@ -139,13 +150,6 @@ class AmazonItemParser(object):
                 #             callback=amazon_apparel_parser.parse_apparel_size_chart,
                 #             meta={'asin': __parent_asin},
                 #             dont_filter=True) # we have own filtering function: _filter_asins()
-                if parse_picture:
-                    pic_urls = self.__extract_picture_urls(response)
-                    if len(pic_urls) > 0:
-                        listing_pic_item = ListingPictureItem()
-                        listing_pic_item['asin'] = self.__asin
-                        listing_pic_item['picture_urls'] = pic_urls
-                        yield listing_pic_item
 
     # def __build_amazon_item_from_cache(self, response):
     #     a = AmazonItemModelManager.fetch_one(asin=self.__asin)

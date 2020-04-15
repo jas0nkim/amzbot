@@ -36,17 +36,20 @@ class ListingItemsSpider(BaseAmzBotCrawlSpider):
     __asins = []
     __asin_cache = {}
     # _scraped_parent_asins_cache = {}
-    __dont_parse_pictures = False
-    __dont_parse_variations = False
+    __parse_pictures = True
+    __parse_variations = True
+    __parse_parent_listing = True
 
     def __init__(self, *a, **kw):
         super().__init__(*a, **kw)
         if 'asins' in kw:
             self.__asins = self.__filter_asins(kw['asins'])
-        if 'dont_parse_pictures' in kw:
-            self.__dont_parse_pictures = utils.true_or_false(kw['dont_parse_pictures'])
-        if 'dont_parse_variations' in kw:
-            self.__dont_parse_variations = utils.true_or_false(kw['dont_parse_variations'])
+        if 'parse_pictures' in kw:
+            self.__parse_pictures = utils.true_or_false(kw['parse_pictures'])
+        if 'parse_variations' in kw:
+            self.__parse_variations = utils.true_or_false(kw['parse_variations'])
+        if 'parse_parent_listing' in kw:
+            self.__parse_parent_listing = utils.true_or_false(kw['parse_parent_listing'])
     #     if 'premium' in kw and kw['premium'] == True:
     #         self.tor_privoxy_enabled = False
     #         self.crawlera_enabled = True
@@ -72,11 +75,12 @@ class ListingItemsSpider(BaseAmzBotCrawlSpider):
             raise CloseSpider
 
         for asin in self.__asins:
-            yield Request(settings.AMAZON_COM_ITEM_LINK_FORMAT % asin,
+            yield Request(settings.AMAZON_COM_ITEM_LINK_FORMAT.format(asin, settings.AMAZON_COM_ITEM_VARIATION_LINK_POSTFIX),
                         callback=parsers.parse_amazon_item,
                         meta={
-                            'dont_parse_pictures': self.__dont_parse_pictures,
-                            'dont_parse_variations': self.__dont_parse_variations,
+                            'parse_pictures': self.__parse_pictures,
+                            'parse_variations': self.__parse_variations,
+                            'parse_parent_listing': self.__parse_parent_listing,
                         })
 
     def __filter_asins(self, asins):

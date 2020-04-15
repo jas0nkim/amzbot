@@ -81,12 +81,20 @@ DATABASES = {
     #     'ENGINE': 'django.db.backends.sqlite3',
     #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     # }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'OPTIONS': {
+    #         'read_default_file': '/usr/local/etc/my_amzbot.cnf', # has mysql connect information, and so on - macos
+    #         # 'read_default_file': 'C:\ProgramData\MySQL\MySQL Server 8.0\my_amzscraper.ini', # has mysql connect information, and so on - windows 10
+    #     },
+    # }
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'OPTIONS': {
-            'read_default_file': '/usr/local/etc/my_amzbot.cnf', # has mysql connect information, and so on - macos
-            # 'read_default_file': 'C:\ProgramData\MySQL\MySQL Server 8.0\my_amzscraper.ini', # has mysql connect information, and so on - windows 10
-        },
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'amzbot',
+        'USER': 'amzbotusr',
+        'PASSWORD': '20itSiT20',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
