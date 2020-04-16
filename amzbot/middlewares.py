@@ -6,6 +6,7 @@
 # https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
 from scrapy import signals
+from . import settings
 
 
 class AmzbotSpiderMiddleware(object):
@@ -54,6 +55,13 @@ class AmzbotSpiderMiddleware(object):
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
+
+
+class RequestHeaderCostomizerMiddleware(object):
+    def process_request(self, request, spider):
+        if settings.CRAWLERA_ENABLED:
+            request.headers['X-Crawlera-Profile'] = 'desktop'
+        return None
 
 
 class AmzbotDownloaderMiddleware(object):

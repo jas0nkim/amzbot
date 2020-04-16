@@ -54,9 +54,11 @@ ROBOTSTXT_OBEY = True
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
-#    'amzbot.middlewares.AmzbotDownloaderMiddleware': 543,
-#}
+DOWNLOADER_MIDDLEWARES = {
+   # 'amzbot.middlewares.AmzbotDownloaderMiddleware': 543,
+   'amzbot.middlewares.RequestHeaderCostomizerMiddleware': 400,
+   'scrapy_crawlera.CrawleraMiddleware': 610
+}
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
@@ -97,6 +99,10 @@ ITEM_PIPELINES = {
 LOG_FILE = '/var/log/python/amzbot-{}.log'.format(time.time())
 LOG_LEVEL = 'DEBUG'
 
+# crawlera related
+CRAWLERA_ENABLED = True
+CRAWLERA_APIKEY = '191582bbbb4144519a78f00776896436'
+
 ## amazon.com related
 
 AMAZON_COM_ITEM_LINK_PATTERN = r'^(https?://www.amazon.com)?/([^/]+/[^/]+|dp)/([A-Z0-9]{10})(/.*$)?'
@@ -105,3 +111,4 @@ AMAZON_COM_ITEM_VARIATION_LINK_POSTFIX = '/?th=1&psc=1'
 AMAZON_COM_ITEM_IMAGE_CONVERT_PATTERN_FROM = r'\._([^_]+)_\.'
 AMAZON_COM_ITEM_IMAGE_CONVERT_STRING_TO_PRIMARY = '._SL1500_.'
 AMAZON_COM_ITEM_IMAGE_CONVERT_STRING_TO_SECONDARY = '._SX522_.'
+

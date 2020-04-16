@@ -20,6 +20,8 @@ class AmazonItemParser(object):
     def __init__(self):
         self.logger = logging.getLogger('amzbot.parsers.amazon_item_parser.AmazonItemParser')
 
+    """ response scrapy.http.response.html.HtmlResponse
+    """
     def parse_item(self, response):
         asin = utils.extract_asin_from_url(response.url)
         if not asin:
@@ -59,10 +61,10 @@ class AmazonItemParser(object):
         else:
             return self.__parse_item_helper(response)
 
-    def parse_parent_listing_item(self, response, parent_asin):
+    def parse_parent_listing_item(self, response, parent_asin, asins):
         parent_listing_item = ParentListingItem()
         parent_listing_item['parent_asin'] = parent_asin
-        parent_listing_item['asins'] = self.__extract_variation_asins(response)
+        parent_listing_item['asins'] = asins
         parent_listing_item['review_count'] = self.__extract_review_count(response)
         parent_listing_item['avg_rating'] = self.__extract_avg_rating(response)
         return parent_listing_item
@@ -73,16 +75,16 @@ class AmazonItemParser(object):
         parse_parent_listing = 'parse_parent_listing' in response.meta and response.meta['parse_parent_listing']
 
         __parent_asin = self.__extract_parent_asin(response)
+        __variation_asins = self.__extract_variation_asins(response)
 
         if parse_parent_listing:
-            yield self.parse_parent_listing_item(response, parent_asin=__parent_asin)
+            yield self.parse_parent_listing_item(response, parent_asin=__parent_asin, asins=__variation_asins)
 
         # check variations first
         """ TODO: __stored_variation_asins = amazon_parent_listings.asins in db
         """
         __stored_variation_asins = []
         if parse_variations:
-            __variation_asins = self.__extract_variation_asins(response)
             if len(__variation_asins) > 0:
                 for v_asin in __variation_asins:
                     if v_asin not in __stored_variation_asins:
@@ -264,7 +266,7 @@ class AmazonItemParser(object):
 
     def __extract_description(self, response):
         try:
-            m = re.search(r"var iframeContent = \"(.+)\";\n", response.body.decode(response.request.encoding))
+            m = re.search(r"var iframeContent = \"(.+)\";\n", response.text)
             if m:
                 description_iframe_str = urllib.parse.unquote(m.group(1))
                 from scrapy.http import HtmlResponse
@@ -375,7 +377,7 @@ class AmazonItemParser(object):
 
     def __double_check_prime(self, response):
         # some fba are not prime
-        return response.body.find('bbop-check-box') > 0 or len(response.css('#pe-bb-signup-button')) > 0 or (len(response.css('#ourprice_shippingmessage span b::text')) > 0 and response.css('#ourprice_shippingmessage span b::text')[0].extract().strip().lower() == 'free shipping')
+        return response.text.find('bbop-check-box') > 0 or len(response.css('#pe-bb-signup-button')) > 0 or (len(response.css('#ourprice_shippingmessage span b::text')) > 0 and response.css('#ourprice_shippingmessage span b::text')[0].extract().strip().lower() == 'free shipping')
 
     def __extract_price(self, response):
         # 1. check deal price block first
@@ -457,7 +459,7 @@ class AmazonItemParser(object):
     def __extract_parent_asin(self, response):
         ret = None
         try:
-            m = re.search(r"\"parent_asin\":\"([A-Z0-9]{10})\"", response.body.decode(response.request.encoding))
+            m = re.search(r"\"parent_asin\":\"([A-Z0-9]{10})\"", response.text)
             if m:
                 ret = m.group(1)
             return ret
@@ -468,7 +470,7 @@ class AmazonItemParser(object):
     def __extract_picture_urls(self, response):
         ret = []
         try:
-            m = re.search(r"'colorImages': \{(.+)\},\n", response.body.decode(response.request.encoding))
+            m = re.search(r"'colorImages': \{(.+)\},\n", response.text)
             if m:
                 # work with json
                 json_dump = "{%s}" % m.group(1).replace('\'', '"')
@@ -608,7 +610,7 @@ class AmazonItemParser(object):
 
     def __extract_variation_asins(self, response):
         ret = []
-        m = re.search(r"\"asin_variation_values\":(\{.+?(?=\}\})\}\})", response.body.decode(response.request.encoding))
+        m = re.search(r"\"asin_variation_values\":(\{.+?(?=\}\})\}\})", response.text)
         if m:
             try:
                 json_dump = m.group(1)
@@ -617,7 +619,7 @@ class AmazonItemParser(object):
             except Exception:
                 ret = []
         if len(ret) < 1:
-            m = re.search(r"\"asinVariationValues\" : (\{.+?(?=\}\})\}\})", response.body.decode(response.request.encoding))
+            m = re.search(r"\"asinVariationValues\" : (\{.+?(?=\}\})\}\})", response.text)
             if m:
                 try:
                     json_dump = m.group(1)
@@ -633,14 +635,14 @@ class AmazonItemParser(object):
         ret = {}
         # variation labels
         variation_labels = {}
-        l = re.search(r"\"variationDisplayLabels\":(\{.+?(?=\})\})", response.body.decode(response.request.encoding))
+        l = re.search(r"\"variationDisplayLabels\":(\{.+?(?=\})\})", response.text)
         if l:
             try:
                 variation_labels = json.loads(l.group(1))
             except Exception:
                 variation_labels = {}
         if not variation_labels:
-            l = re.search(r"\"variationDisplayLabels\" : (\{.+?(?=\})\})", response.body.decode(response.request.encoding))
+            l = re.search(r"\"variationDisplayLabels\" : (\{.+?(?=\})\})", response.text)
             if l:
                 try:
                     variation_labels = json.loads(l.group(1))
@@ -651,14 +653,14 @@ class AmazonItemParser(object):
             return None
         # selected variations
         selected_variations = {}
-        m = re.search(r"\"selected_variations\":(\{.+?(?=\})\})", response.body.decode(response.request.encoding))
+        m = re.search(r"\"selected_variations\":(\{.+?(?=\})\})", response.text)
         if m:
             try:
                 selected_variations = json.loads(m.group(1))
             except Exception:
                 selected_variations = {}
         if not selected_variations:
-            m = re.search(r"\"selected_variations\" : (\{.+?(?=\})\})", response.body.decode(response.request.encoding))
+            m = re.search(r"\"selected_variations\" : (\{.+?(?=\})\})", response.text)
             if m:
                 try:
                     selected_variations = json.loads(m.group(1))
