@@ -1,7 +1,7 @@
 import re, urllib, io
 
 from PIL import Image
-from . import settings
+from amzbot import settings
 
 
 def is_valid_amazon_item_url(url):
@@ -74,3 +74,12 @@ def setup_djg():
     os.environ['DJANGO_SETTINGS_MODULE'] = 'djg.settings'
     import django
     django.setup()
+
+def class_fullname(o):
+    """ https://stackoverflow.com/a/2020083
+    """
+    module = o.__class__.__module__
+    if module is None or module == str.__class__.__module__:
+        return o.__class__.__name__  # Avoid reporting __builtin__
+    else:
+        return module + '.' + o.__class__.__name__

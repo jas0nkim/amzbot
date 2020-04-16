@@ -5,7 +5,7 @@
 # See documentation in:
 # https://docs.scrapy.org/en/latest/topics/items.html
 
-from . import utils
+from amzbot import utils
 utils.setup_djg()
 
 from scrapy import Field

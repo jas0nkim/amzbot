@@ -9,6 +9,8 @@
 import logging
 from scrapy.exceptions import DropItem
 
+from amzbot import utils
+
 class DbPipeline(object):
 
     def __init__(self):
@@ -22,5 +24,5 @@ class DbPipeline(object):
                 item.save()
             return item
         except Exception as e:
-            self.logger.exception("Error on saving item to db - {}".format(str(e)))
+            self.logger.exception("{}: Error on saving item to db - {}".format(utils.class_fullname(e), str(e)))
             raise DropItem

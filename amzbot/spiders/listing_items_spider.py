@@ -1,8 +1,8 @@
 from scrapy import Request
-from . import BaseAmzBotCrawlSpider
 from scrapy.exceptions import CloseSpider
 
 from amzbot import settings, parsers, utils
+from amzbot.spiders import BaseAmzBotCrawlSpider
 
 
 class ListingItemsSpider(BaseAmzBotCrawlSpider):

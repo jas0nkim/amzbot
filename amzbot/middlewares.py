@@ -6,7 +6,7 @@
 # https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
 from scrapy import signals
-from . import settings
+from amzbot import settings
 
 
 class AmzbotSpiderMiddleware(object):

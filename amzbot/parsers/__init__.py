@@ -1,6 +1,6 @@
 from scrapy.exceptions import IgnoreRequest
 
-from .amazon_item_parser import AmazonItemParser
+from amzbot.parsers.amazon_item_parser import AmazonItemParser
 
 """ response: scrapy.http.response.html.HtmlResponse
 """
