@@ -1,3 +1,8 @@
+## Apr 15 2020
+- implement crawlera
+- store items in postgres db
+- crawl variations
+
 ## Apr 13 2020
 - switch db from MySQL to PostgreSQL
     - json field
