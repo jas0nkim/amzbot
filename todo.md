@@ -1,3 +1,6 @@
+## Apr 16 2020
+- update db if item exists
+
 ## Apr 15 2020
 - implement crawlera
 - store items in postgres db
