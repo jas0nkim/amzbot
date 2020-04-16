@@ -615,7 +615,7 @@ class AmazonItemParser(object):
             try:
                 json_dump = m.group(1)
                 variations_data = json.loads(json_dump)
-                ret = variations_data.keys()
+                ret = list(variations_data.keys())
             except Exception:
                 ret = []
         if len(ret) < 1:
@@ -624,7 +624,7 @@ class AmazonItemParser(object):
                 try:
                     json_dump = m.group(1)
                     variations_data = json.loads(json_dump)
-                    ret = variations_data.keys()
+                    ret = list(variations_data.keys())
                 except Exception:
                     ret = []
         if len(ret) < 1:
