@@ -3,7 +3,7 @@ from django.contrib.postgres.fields import ArrayField
 
 
 class AmazonParentListing(models.Model):
-    parent_asin = models.CharField(max_length=32, unique=True, db_index=True)
+    parent_asin = models.CharField(max_length=32, primary_key=True)
     asins = ArrayField(base_field=models.CharField(max_length=32, blank=True, null=True), blank=True, null=True)
     review_count = models.SmallIntegerField(blank=True, null=True, default=0)
     avg_rating = models.FloatField(blank=True, null=True, default=0)
@@ -18,7 +18,7 @@ class AmazonParentListing(models.Model):
 
 
 class AmazonListing(models.Model):
-    asin = models.CharField(max_length=32, unique=True, db_index=True)
+    asin = models.CharField(max_length=32, primary_key=True)
     parent_asin = models.CharField(max_length=32, db_index=True)
     picture_urls = ArrayField(base_field=models.CharField(max_length=255, blank=True, null=True), null=True)
     description = models.TextField(blank=True, null=True)
