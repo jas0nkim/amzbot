@@ -1,5 +1,10 @@
 ## Apr 16 2020
-- update db if item exists
+- django model handle update
+    https://docs.djangoproject.com/en/3.0/topics/db/models/#overriding-predefined-model-methods
+    https://docs.djangoproject.com/en/3.0/ref/models/instances/#saving-objects
+- divide modules (micro-service architecture)
+    - scrapy (amzbot)
+    - django (amzbotdb)
 
 ## Apr 15 2020
 - implement crawlera
