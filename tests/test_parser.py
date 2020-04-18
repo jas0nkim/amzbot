@@ -4,7 +4,7 @@ from scrapy.http import HtmlResponse, Request
 from amzbot.parsers import parse_amazon_item
 
 
-def build_response(url, html_filename, site):
+def build_response(url, html_filename, domain):
     html_content = Path(html_filename).read_text()
     encoding = 'utf-8'
     return HtmlResponse(url,
@@ -13,7 +13,7 @@ def build_response(url, html_filename, site):
                 'parse_pictures': True,
                 'parse_variations': False,
                 'parse_parent_listing': True,
-                'site': site,
+                'domain': domain,
             },
         ),
         body=html_content.encode(encoding=encoding),
@@ -23,7 +23,7 @@ def build_response(url, html_filename, site):
 class TestParser(unittest.TestCase):
     def _get_testlist(self):
         # opening testlist.json file
-        content = Path('htmls/testlist.json').read_text()
+        content = Path('htmls/{}_testlist.json'.format(self.__class__.__name__)).read_text()
         data = json.loads(content)
         return [] if 'tests' not in data else data['tests']
     
@@ -31,9 +31,9 @@ class TestParser(unittest.TestCase):
         self.testlist = self._get_testlist()
     
     def __test_item(self, item, t):
-        if item.instance.__class__.__name__ == 'AmazonParentListing':
+        if item.__class__.__name__ == 'ParentListingItem':
             self.__test_parent_listing_item(item, t)
-        elif item.instance.__class__.__name__ == 'AmazonListing':
+        elif item.__class__.__name__ == 'ListingItem':
             self.__test_listing_item(item, t)
         else:
             raise Exception("Invalid 'item' passed")
@@ -54,7 +54,7 @@ class TestParser(unittest.TestCase):
 
     def test_parse_amazon_item(self):
         for t in self.testlist:
-            for item in parse_amazon_item(build_response(t['url'], t['html_filename'], t['site'])):
+            for item in parse_amazon_item(build_response(t['url'], t['html_filename'], t['domain'])):
                 self.__test_item(item, t)
 
 

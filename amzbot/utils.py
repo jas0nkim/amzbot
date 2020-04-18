@@ -4,14 +4,14 @@ from PIL import Image
 from amzbot import settings
 
 
-def is_valid_amazon_item_url(url, site='amazon.com'):
+def is_valid_amazon_item_url(url, domain='amazon.com'):
     link_pattern = settings.AMAZON_COM_ITEM_LINK_PATTERN
-    if site == 'amazon.ca':
+    if domain == 'amazon.ca':
         link_pattern = settings.AMAZON_CA_ITEM_LINK_PATTERN
     return re.match(link_pattern, url)
 
-def extract_asin_from_url(url, site='amazon.com'):
-    match = is_valid_amazon_item_url(url, site)
+def extract_asin_from_url(url, domain='amazon.com'):
+    match = is_valid_amazon_item_url(url, domain)
     if match:
         return match.group(3)
     else:

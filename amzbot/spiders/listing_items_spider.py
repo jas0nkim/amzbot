@@ -9,9 +9,9 @@ class ListingItemsSpider(BaseAmzBotCrawlSpider):
 
     """ crawl amazon items
     """
-    name = "ListingItemsSpider"
+    name = 'ListingItemsSpider'
 
-    allowed_domains = ["amazon.com"]
+    allowed_domains = ['amazon.com', 'amazon.ca',]
     # handle_httpstatus_list = [404]
 
     # crawlera_enabled = False
@@ -33,8 +33,7 @@ class ListingItemsSpider(BaseAmzBotCrawlSpider):
     # force_crawl = False
     # dont_list_ebay = False
 
-    __available_sites = ['amazon.com', 'amazon.ca',]
-    __site = 'amazon.com'
+    __domain = 'amazon.com'
     __asins = []
     __asin_cache = {}
     # _scraped_parent_asins_cache = {}
@@ -44,12 +43,12 @@ class ListingItemsSpider(BaseAmzBotCrawlSpider):
 
     def __init__(self, *a, **kw):
         super().__init__(*a, **kw)
-        if 'site' in kw:
-            self.__site = kw['site'] if kw['site'] in self.__available_sites else self.__site
+        if 'domain' in kw:
+            self.__domain = kw['domain'] if kw['domain'] in self.allowed_domains else self.__domain
         if 'asins' in kw:
             self.__asins = self.__filter_asins(kw['asins'])
         if 'url' in kw:
-            _asin_from_url = utils.extract_asin_from_url(kw['url'], self.__site)
+            _asin_from_url = utils.extract_asin_from_url(kw['url'], self.__domain)
             if _asin_from_url is not None:
                 self.__asins.append(_asin_from_url)
         if 'parse_pictures' in kw:
@@ -83,13 +82,13 @@ class ListingItemsSpider(BaseAmzBotCrawlSpider):
             raise CloseSpider
 
         for asin in self.__asins:
-            yield Request(settings.AMAZON_ITEM_LINK_FORMAT.format(self.__site, asin, settings.AMAZON_ITEM_VARIATION_LINK_POSTFIX),
+            yield Request(settings.AMAZON_ITEM_LINK_FORMAT.format(self.__domain, asin, settings.AMAZON_ITEM_VARIATION_LINK_POSTFIX),
                         callback=parsers.parse_amazon_item,
                         meta={
                             'parse_pictures': self.__parse_pictures,
                             'parse_variations': self.__parse_variations,
                             'parse_parent_listing': self.__parse_parent_listing,
-                            'site': self.__site,
+                            'domain': self.__domain,
                         })
 
     def __filter_asins(self, asins):

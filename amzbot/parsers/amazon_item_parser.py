@@ -23,7 +23,7 @@ class AmazonItemParser(object):
     """ response scrapy.http.response.html.HtmlResponse
     """
     def parse_item(self, response):
-        asin = utils.extract_asin_from_url(response.url, response.meta['site'])
+        asin = utils.extract_asin_from_url(response.url, response.meta['domain'])
         if not asin:
             self.logger.exception("[ASIN:null] Request Ignored - No ASIN")
             raise IgnoreRequest
@@ -37,7 +37,7 @@ class AmazonItemParser(object):
         #         if sv_asin != self.__asin: # ignore any amazon items which have the same parent_asin and asin - which makes endless scrapy requests
         #             yield Request(amazonmws_settings.AMAZON_ITEM_VARIATION_LINK_FORMAT % sv_asin,
         #                     callback=self.parse_item,
-        #                     headers={ 'Referer': 'https://www.{}/'.format(response.meta['site']), },
+        #                     headers={ 'Referer': 'https://www.{}/'.format(response.meta['domain']), },
         #                     meta={
         #                         'dont_parse_pictures': response.meta['dont_parse_pictures'] if 'dont_parse_pictures' in response.meta else False,
         #                         'dont_parse_variations': True,
@@ -52,7 +52,7 @@ class AmazonItemParser(object):
             listing_item = ListingItem()
             listing_item['_cached'] = False
             listing_item['asin'] = self.__asin
-            listing_item['site'] = response.meta['site']
+            listing_item['domain'] = response.meta['domain']
             listing_item['status'] = False
             if response.status == 404:
                 # RemovedVariationHandleMiddleware.__handle_removed_variations related
@@ -68,37 +68,34 @@ class AmazonItemParser(object):
         parent_listing_item['asins'] = asins
         parent_listing_item['review_count'] = self.__extract_review_count(response)
         parent_listing_item['avg_rating'] = self.__extract_avg_rating(response)
-        parent_listing_item['site'] = response.meta['site']
+        parent_listing_item['domain'] = response.meta['domain']
         return parent_listing_item
 
     def __parse_item_helper(self, response):
-        parse_pictures = 'parse_pictures' in response.meta and response.meta['parse_pictures']
-        parse_variations = 'parse_variations' in response.meta and response.meta['parse_variations']
-        parse_parent_listing = 'parse_parent_listing' in response.meta and response.meta['parse_parent_listing']
-
         __parent_asin = self.__extract_parent_asin(response)
         __variation_asins = self.__extract_variation_asins(response)
 
-        if parse_parent_listing:
+        if response.meta['parse_parent_listing']:
             yield self.parse_parent_listing_item(response, parent_asin=__parent_asin, asins=__variation_asins)
 
         # check variations first
         """ TODO: __stored_variation_asins = amazon_parent_listings.asins in db
         """
         __stored_variation_asins = []
-        if parse_variations:
+        if response.meta['parse_variations']:
             if len(__variation_asins) > 0:
                 for v_asin in __variation_asins:
                     if v_asin not in __stored_variation_asins:
-                        """ TODO: change settings.AMAZON_ITEM_LINK_FORMAT.format(response.meta['site'], v_asin, settings.AMAZON_ITEM_VARIATION_LINK_POSTFIX to real amazon url (db query) : avoid ban
+                        """ TODO: change settings.AMAZON_ITEM_LINK_FORMAT.format(response.meta['domain'], v_asin, settings.AMAZON_ITEM_VARIATION_LINK_POSTFIX to real amazon url (db query) : avoid ban
                         """
-                        yield Request(settings.AMAZON_ITEM_LINK_FORMAT.format(response.meta['site'], v_asin, settings.AMAZON_ITEM_VARIATION_LINK_POSTFIX),
+                        yield Request(settings.AMAZON_ITEM_LINK_FORMAT.format(response.meta['domain'], v_asin, settings.AMAZON_ITEM_VARIATION_LINK_POSTFIX),
                                 callback=self.parse_item,
-                                headers={ 'Referer': 'https://www.{}/'.format(response.meta['site']), },
+                                headers={ 'Referer': 'https://www.{}/'.format(response.meta['domain']), },
                                 meta={
-                                    'parse_pictures': parse_pictures,
+                                    'parse_pictures': response.meta['parse_pictures'],
                                     'parse_variations': False,
                                     'parse_parent_listing': False,
+                                    'domain': response.meta['domain'],
                                 })
                 # self.logger.info("[ASIN:{}] Request Ignored - initial asin ignored".format(self.__asin))
                 # raise IgnoreRequest
@@ -106,7 +103,7 @@ class AmazonItemParser(object):
             listing_item = ListingItem()
             listing_item['_cached'] = False
             listing_item['asin'] = self.__asin
-            listing_item['site'] = response.meta['site']
+            listing_item['domain'] = response.meta['domain']
 
             _asin_on_content = self.__extract_asin_on_content(response)
             if _asin_on_content != self.__asin:
@@ -120,7 +117,7 @@ class AmazonItemParser(object):
             else:
                 try:
                     listing_item['parent_asin'] = __parent_asin
-                    listing_item['picture_urls'] = self.__extract_picture_urls(response) if parse_pictures else []
+                    listing_item['picture_urls'] = self.__extract_picture_urls(response) if response.meta['parse_pictures'] else []
                     listing_item['url'] = response.url
                     listing_item['category'] = self.__extract_category(response)
                     listing_item['title'] = self.__extract_title(response)
@@ -362,7 +359,7 @@ class AmazonItemParser(object):
     def __extract_is_fba(self, response):
         try:
             element = response.css('#merchant-info::text')
-            if len(element) > 0 and 'sold by {}'.format(response.meta['site']) in element[0].extract().strip().lower():
+            if len(element) > 0 and 'sold by {}'.format(response.meta['domain']) in element[0].extract().strip().lower():
                 if self.__double_check_prime(response):
                     return True
             element = response.css('#merchant-info a#SSOFpopoverLink::text')
@@ -370,7 +367,7 @@ class AmazonItemParser(object):
                 if self.__double_check_prime(response):
                     return True
             element = response.css('#merchant-info #pe-text-availability-merchant-info::text')
-            if len(element) > 0 and 'sold by {}'.format(response.meta['site']) in element[0].extract().strip().lower():
+            if len(element) > 0 and 'sold by {}'.format(response.meta['domain']) in element[0].extract().strip().lower():
                 if self.__double_check_prime(response):
                     return True
             return False
@@ -507,7 +504,7 @@ class AmazonItemParser(object):
 
     def __extract_merchant_id(self, response):
         try:
-            if len(response.css('#merchant-info::text')) > 0 and response.meta['site'] in response.css('#merchant-info::text')[0].extract().strip().lower():
+            if len(response.css('#merchant-info::text')) > 0 and response.meta['domain'] in response.css('#merchant-info::text')[0].extract().strip().lower():
                 return None
             element = response.css('#merchant-info a:not(#SSOFpopoverLink)::attr(href)')
             if len(element) > 0:
@@ -520,8 +517,8 @@ class AmazonItemParser(object):
 
     def __extract_merchant_name(self, response):
         try:
-            if len(response.css('#merchant-info::text')) > 0 and response.meta['site'] in response.css('#merchant-info::text')[0].extract().strip().lower():
-                return response.meta['site']
+            if len(response.css('#merchant-info::text')) > 0 and response.meta['domain'] in response.css('#merchant-info::text')[0].extract().strip().lower():
+                return response.meta['domain']
             element = response.css('#merchant-info a:not(#SSOFpopoverLink)::text')
             if len(element) > 0:
                 return element[0].extract().strip()
@@ -686,7 +683,7 @@ class AmazonItemParser(object):
             if len(redirect_urls) > 0:
                 index = 0
                 for r_url in redirect_urls:
-                    r_asin = utils.extract_asin_from_url(r_url, response.meta['site'])
+                    r_asin = utils.extract_asin_from_url(r_url, response.meta['domain'])
                     if r_asin == self.__asin:
                         continue
                     redirected_asins[index] = r_asin

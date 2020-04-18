@@ -1,9 +1,9 @@
 {
     "tests": [
         {
-            "site": "amazon.ca",
+            "domain": "amazon.ca",
             "url": "https://www.amazon.ca/Hotel-Spa-Collection-Herringbone-Textured/dp/B008I25JB2/ref=sr_1_28?fst=as%3Aoff&qid=1587160260&refinements=p_85%3A5690392011&rnid=5690384011&rps=1&s=apparel&sr=1-28&th=1",
-            "html_filename": "htmls/content_001.html",
+            "html_filename": "htmls/TestParser_testcontent_001.html",
             "expected_asin": "B008I25JB2",
             "expected_title": "Hotel Spa Collection Herringbone Textured Plush Robe, Bright Pink",
             "expected_price": 26.64,
