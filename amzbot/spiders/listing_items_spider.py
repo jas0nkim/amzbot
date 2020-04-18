@@ -33,6 +33,8 @@ class ListingItemsSpider(BaseAmzBotCrawlSpider):
     # force_crawl = False
     # dont_list_ebay = False
 
+    __available_sites = ['amazon.com', 'amazon.ca',]
+    __site = 'amazon.com'
     __asins = []
     __asin_cache = {}
     # _scraped_parent_asins_cache = {}
@@ -42,8 +44,14 @@ class ListingItemsSpider(BaseAmzBotCrawlSpider):
 
     def __init__(self, *a, **kw):
         super().__init__(*a, **kw)
+        if 'site' in kw:
+            self.__site = kw['site'] if kw['site'] in self.__available_sites else self.__site
         if 'asins' in kw:
             self.__asins = self.__filter_asins(kw['asins'])
+        if 'url' in kw:
+            _asin_from_url = utils.extract_asin_from_url(kw['url'], self.__site)
+            if _asin_from_url is not None:
+                self.__asins.append(_asin_from_url)
         if 'parse_pictures' in kw:
             self.__parse_pictures = utils.true_or_false(kw['parse_pictures'])
         if 'parse_variations' in kw:
@@ -75,12 +83,13 @@ class ListingItemsSpider(BaseAmzBotCrawlSpider):
             raise CloseSpider
 
         for asin in self.__asins:
-            yield Request(settings.AMAZON_COM_ITEM_LINK_FORMAT.format(asin, settings.AMAZON_COM_ITEM_VARIATION_LINK_POSTFIX),
+            yield Request(settings.AMAZON_ITEM_LINK_FORMAT.format(self.__site, asin, settings.AMAZON_ITEM_VARIATION_LINK_POSTFIX),
                         callback=parsers.parse_amazon_item,
                         meta={
                             'parse_pictures': self.__parse_pictures,
                             'parse_variations': self.__parse_variations,
                             'parse_parent_listing': self.__parse_parent_listing,
+                            'site': self.__site,
                         })
 
     def __filter_asins(self, asins):

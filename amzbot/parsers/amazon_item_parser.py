@@ -23,7 +23,7 @@ class AmazonItemParser(object):
     """ response scrapy.http.response.html.HtmlResponse
     """
     def parse_item(self, response):
-        asin = utils.extract_asin_from_url(response.url)
+        asin = utils.extract_asin_from_url(response.url, response.meta['site'])
         if not asin:
             self.logger.exception("[ASIN:null] Request Ignored - No ASIN")
             raise IgnoreRequest
@@ -52,6 +52,7 @@ class AmazonItemParser(object):
             listing_item = ListingItem()
             listing_item['_cached'] = False
             listing_item['asin'] = self.__asin
+            listing_item['site'] = response.meta['site']
             listing_item['status'] = False
             if response.status == 404:
                 # RemovedVariationHandleMiddleware.__handle_removed_variations related
@@ -67,6 +68,7 @@ class AmazonItemParser(object):
         parent_listing_item['asins'] = asins
         parent_listing_item['review_count'] = self.__extract_review_count(response)
         parent_listing_item['avg_rating'] = self.__extract_avg_rating(response)
+        parent_listing_item['site'] = response.meta['site']
         return parent_listing_item
 
     def __parse_item_helper(self, response):
@@ -88,9 +90,9 @@ class AmazonItemParser(object):
             if len(__variation_asins) > 0:
                 for v_asin in __variation_asins:
                     if v_asin not in __stored_variation_asins:
-                        """ TODO: change settings.AMAZON_COM_ITEM_LINK_FORMAT.format(v_asin, settings.AMAZON_COM_ITEM_VARIATION_LINK_POSTFIX to real amazon url (db query) : avoid ban
+                        """ TODO: change settings.AMAZON_ITEM_LINK_FORMAT.format(response.meta['site'], v_asin, settings.AMAZON_ITEM_VARIATION_LINK_POSTFIX to real amazon url (db query) : avoid ban
                         """
-                        yield Request(settings.AMAZON_COM_ITEM_LINK_FORMAT.format(v_asin, settings.AMAZON_COM_ITEM_VARIATION_LINK_POSTFIX),
+                        yield Request(settings.AMAZON_ITEM_LINK_FORMAT.format(response.meta['site'], v_asin, settings.AMAZON_ITEM_VARIATION_LINK_POSTFIX),
                                 callback=self.parse_item,
                                 headers={ 'Referer': 'https://www.amazon.com/', },
                                 meta={
@@ -104,6 +106,7 @@ class AmazonItemParser(object):
             listing_item = ListingItem()
             listing_item['_cached'] = False
             listing_item['asin'] = self.__asin
+            listing_item['site'] = response.meta['site']
 
             _asin_on_content = self.__extract_asin_on_content(response)
             if _asin_on_content != self.__asin:
@@ -489,10 +492,10 @@ class AmazonItemParser(object):
             else:
                 original_image_url = response.css('#main-image-container > ul li.image.item img::attr(src)')
                 # try primary image url
-                converted_picture_url = re.sub(settings.AMAZON_COM_ITEM_IMAGE_CONVERT_PATTERN_FROM, settings.AMAZON_COM_ITEM_IMAGE_CONVERT_STRING_TO_PRIMARY, original_image_url)
+                converted_picture_url = re.sub(settings.AMAZON_ITEM_IMAGE_CONVERT_PATTERN_FROM, settings.AMAZON_ITEM_IMAGE_CONVERT_STRING_TO_PRIMARY, original_image_url)
                 if not utils.validate_image_size(converted_picture_url):
                     # try secondary image url
-                    converted_picture_url = re.sub(settings.AMAZON_COM_ITEM_IMAGE_CONVERT_PATTERN_FROM, settings.AMAZON_COM_ITEM_IMAGE_CONVERT_STRING_TO_SECONDARY, original_image_url)
+                    converted_picture_url = re.sub(settings.AMAZON_ITEM_IMAGE_CONVERT_PATTERN_FROM, settings.AMAZON_ITEM_IMAGE_CONVERT_STRING_TO_SECONDARY, original_image_url)
                     if not utils.validate_image_size(converted_picture_url):
                         ret.append(original_image_url)
                 if len(ret) < 1:
@@ -683,7 +686,7 @@ class AmazonItemParser(object):
             if len(redirect_urls) > 0:
                 index = 0
                 for r_url in redirect_urls:
-                    r_asin = utils.extract_asin_from_url(r_url)
+                    r_asin = utils.extract_asin_from_url(r_url, response.meta['site'])
                     if r_asin == self.__asin:
                         continue
                     redirected_asins[index] = r_asin
