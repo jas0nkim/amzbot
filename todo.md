@@ -7,7 +7,8 @@
         - amzbot application
         - scrapyd server
         - graylog
-    - frontend service - amzbotweb
+    - login service
+    - frontend - amzbotweb
         - display result
 
 ## Apr 16 2020
