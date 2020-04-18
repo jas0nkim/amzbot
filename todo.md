@@ -1,3 +1,10 @@
+## Apr 18 2020
+- bug fix
+    https://www.amazon.ca/Hotel-Spa-Collection-Herringbone-Textured/dp/B008I25JB2/ref=sr_1_28?fst=as%3Aoff&qid=1587160260&refinements=p_85%3A5690392011&rnid=5690384011&rps=1&s=apparel&sr=1-28&th=1
+    doesn't insert into db
+- test driven development
+    - write test first!
+
 ## Apr 17 2020
 - unit testing
     https://docs.python.org/3/library/unittest.html
