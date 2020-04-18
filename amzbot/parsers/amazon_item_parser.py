@@ -37,7 +37,7 @@ class AmazonItemParser(object):
         #         if sv_asin != self.__asin: # ignore any amazon items which have the same parent_asin and asin - which makes endless scrapy requests
         #             yield Request(amazonmws_settings.AMAZON_ITEM_VARIATION_LINK_FORMAT % sv_asin,
         #                     callback=self.parse_item,
-        #                     headers={ 'Referer': 'https://www.amazon.com/', },
+        #                     headers={ 'Referer': 'https://www.{}/'.format(response.meta['site']), },
         #                     meta={
         #                         'dont_parse_pictures': response.meta['dont_parse_pictures'] if 'dont_parse_pictures' in response.meta else False,
         #                         'dont_parse_variations': True,
@@ -94,7 +94,7 @@ class AmazonItemParser(object):
                         """
                         yield Request(settings.AMAZON_ITEM_LINK_FORMAT.format(response.meta['site'], v_asin, settings.AMAZON_ITEM_VARIATION_LINK_POSTFIX),
                                 callback=self.parse_item,
-                                headers={ 'Referer': 'https://www.amazon.com/', },
+                                headers={ 'Referer': 'https://www.{}/'.format(response.meta['site']), },
                                 meta={
                                     'parse_pictures': parse_pictures,
                                     'parse_variations': False,
@@ -362,7 +362,7 @@ class AmazonItemParser(object):
     def __extract_is_fba(self, response):
         try:
             element = response.css('#merchant-info::text')
-            if len(element) > 0 and 'sold by amazon.com' in element[0].extract().strip().lower():
+            if len(element) > 0 and 'sold by {}'.format(response.meta['site']) in element[0].extract().strip().lower():
                 if self.__double_check_prime(response):
                     return True
             element = response.css('#merchant-info a#SSOFpopoverLink::text')
@@ -370,7 +370,7 @@ class AmazonItemParser(object):
                 if self.__double_check_prime(response):
                     return True
             element = response.css('#merchant-info #pe-text-availability-merchant-info::text')
-            if len(element) > 0 and 'sold by amazon.com' in element[0].extract().strip().lower():
+            if len(element) > 0 and 'sold by {}'.format(response.meta['site']) in element[0].extract().strip().lower():
                 if self.__double_check_prime(response):
                     return True
             return False
@@ -507,7 +507,7 @@ class AmazonItemParser(object):
 
     def __extract_merchant_id(self, response):
         try:
-            if len(response.css('#merchant-info::text')) > 0 and 'amazon.com' in response.css('#merchant-info::text')[0].extract().strip().lower():
+            if len(response.css('#merchant-info::text')) > 0 and response.meta['site'] in response.css('#merchant-info::text')[0].extract().strip().lower():
                 return None
             element = response.css('#merchant-info a:not(#SSOFpopoverLink)::attr(href)')
             if len(element) > 0:
@@ -520,8 +520,8 @@ class AmazonItemParser(object):
 
     def __extract_merchant_name(self, response):
         try:
-            if len(response.css('#merchant-info::text')) > 0 and 'amazon.com' in response.css('#merchant-info::text')[0].extract().strip().lower():
-                return 'Amazon.com'
+            if len(response.css('#merchant-info::text')) > 0 and response.meta['site'] in response.css('#merchant-info::text')[0].extract().strip().lower():
+                return response.meta['site']
             element = response.css('#merchant-info a:not(#SSOFpopoverLink)::text')
             if len(element) > 0:
                 return element[0].extract().strip()
