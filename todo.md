@@ -1,10 +1,19 @@
+## Apr 17 2020
+- unit testing
+    https://docs.python.org/3/library/unittest.html
+    https://stackoverflow.com/questions/6456304/scrapy-unit-testing
+- microservices
+    - crawling service (dockers)
+        - amzbot application
+        - scrapyd server
+        - graylog
+    - frontend service - amzbotweb
+        - display result
+
 ## Apr 16 2020
 - django model handle update
     https://docs.djangoproject.com/en/3.0/topics/db/models/#overriding-predefined-model-methods
     https://docs.djangoproject.com/en/3.0/ref/models/instances/#saving-objects
-- divide modules (micro-service architecture)
-    - scrapy (amzbot)
-    - django (amzbotdb)
 
 ## Apr 15 2020
 - implement crawlera
