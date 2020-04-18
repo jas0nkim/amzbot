@@ -7,6 +7,7 @@ class AmazonParentListing(models.Model):
     asins = ArrayField(base_field=models.CharField(max_length=32, blank=True, null=True), blank=True, null=True)
     review_count = models.SmallIntegerField(blank=True, null=True, default=0)
     avg_rating = models.FloatField(blank=True, null=True, default=0)
+    site = models.CharField(max_length=32, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -40,6 +41,7 @@ class AmazonListing(models.Model):
     merchant_id = models.CharField(max_length=32, blank=True, null=True)
     merchant_name = models.CharField(max_length=100, blank=True, null=True)
     brand_name = models.CharField(max_length=100, blank=True, null=True)
+    site = models.CharField(max_length=32, blank=True, null=True)
     meta_title = models.TextField(blank=True, null=True)
     meta_description = models.TextField(blank=True, null=True)
     meta_keywords = models.TextField(blank=True, null=True)
