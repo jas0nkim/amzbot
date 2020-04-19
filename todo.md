@@ -1,3 +1,16 @@
+## Apr 19 2020
+- improve tests
+    - check variation asins
+    - request url (check http status == 200)
+        actually this depends on crawlera...
+    - parse original (before sale) price
+- new table amazon_listing_prices - log price history
+    - asin
+    - price
+    - origina_price
+    - created_at
+- deploy to scrapyd server
+
 ## Apr 18 2020
 - bug fix
     https://www.amazon.ca/Hotel-Spa-Collection-Herringbone-Textured/dp/B008I25JB2/ref=sr_1_28?fst=as%3Aoff&qid=1587160260&refinements=p_85%3A5690392011&rnid=5690384011&rps=1&s=apparel&sr=1-28&th=1
