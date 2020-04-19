@@ -2,6 +2,7 @@ import unittest, json
 from pathlib import Path
 from scrapy.http import HtmlResponse, Request
 from amzbot.parsers import parse_amazon_item
+from amzbot.tests import utils
 
 
 def build_response(url, html_filename, domain):
@@ -21,14 +22,8 @@ def build_response(url, html_filename, domain):
 
 
 class TestParser(unittest.TestCase):
-    def _get_testlist(self):
-        # opening testlist.json file
-        content = Path('htmls/{}_testlist.json'.format(self.__class__.__name__)).read_text()
-        data = json.loads(content)
-        return [] if 'tests' not in data else data['tests']
-    
     def setUp(self):
-        self.testlist = self._get_testlist()
+        self.testlist = utils.get_testlist(self.__class__.__name__)
     
     def __test_item(self, item, t):
         if item.__class__.__name__ == 'ParentListingItem':
