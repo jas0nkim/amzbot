@@ -27,7 +27,7 @@ class AmazonListing(models.Model):
     category = models.CharField(max_length=255, blank=True, null=True)
     title = models.TextField()
     price = models.DecimalField(max_digits=15, decimal_places=2)
-    market_price = models.DecimalField(max_digits=15, decimal_places=2)
+    original_price = models.DecimalField(max_digits=15, decimal_places=2)
     quantity = models.SmallIntegerField(blank=True, null=True, default=0)
     features = models.TextField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
