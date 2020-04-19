@@ -122,7 +122,7 @@ class AmazonItemParser(object):
                     listing_item['category'] = self.__extract_category(response)
                     listing_item['title'] = self.__extract_title(response)
                     listing_item['price'] = self.__extract_price(response)
-                    listing_item['market_price'] = self.__extract_market_price(response, default_price=listing_item['price'])
+                    listing_item['original_price'] = self.__extract_original_price(response, default_price=listing_item['price'])
                     listing_item['quantity'] = self.__extract_quantity(response)
                     listing_item['features'] = self.__extract_features(response)
                     listing_item['description'] = self.__extract_description(response)
@@ -167,7 +167,7 @@ class AmazonItemParser(object):
     #     amazon_item['category'] = a.category
     #     amazon_item['title'] = a.title
     #     amazon_item['price'] = a.price
-    #     amazon_item['market_price'] = a.market_price
+    #     amazon_item['original_price'] = a.original_price
     #     amazon_item['quantity'] = a.quantity
     #     amazon_item['features'] = a.features
     #     amazon_item['description'] = a.description
@@ -404,7 +404,8 @@ class AmazonItemParser(object):
                 if len(price_element) < 1: # for dvd
                     price_element = response.css('#buyNewSection span.a-color-price.offer-price::text')
             if len(price_element) < 1:
-                raise Exception("No price element found")
+                self.logger.info("[ASIN:{}] No price element found".format(self.__asin))
+                return 0.00
             else:
                 price_string = price_element[0].extract().strip()
                 return utils.money_to_float(price_string)
@@ -412,14 +413,14 @@ class AmazonItemParser(object):
             self.logger.exception("{}: [ASIN:{}] error on parsing price - {}".format(utils.class_fullname(e), self.__asin, str(e)))
             return 0.00
 
-    def __extract_market_price(self, response, default_price):
+    def __extract_original_price(self, response, default_price):
         try:
-            market_price_element = response.css('#price table tr td.a-text-strike::text')
-            if len(market_price_element) < 1:
+            original_price_element = response.css('#price table tr td span.a-text-strike::text')
+            if len(original_price_element) < 1:
                 return default_price
             else:
-                market_price_string = market_price_element[0].extract().strip()
-                return utils.money_to_float(market_price_string)
+                original_price_string = original_price_element[0].extract().strip()
+                return utils.money_to_float(original_price_string)
         except Exception as e:
             self.logger.exception("{}: [ASIN:{}] error on parsing market price - {}".format(utils.class_fullname(e), self.__asin, str(e)))
             return default_price
