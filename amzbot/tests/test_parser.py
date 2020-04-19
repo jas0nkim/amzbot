@@ -30,11 +30,23 @@ class TestParser(unittest.TestCase):
     def test_asin(self):
         for t in self.testlist:
             for i in t['items']:
+                # unittest.TestCase.subTest(msg: Any = ...)
                 with self.subTest(asin=t['expected_asin']):
                     if i.__class__.__name__ == 'ListingItem':
                         self.assertEqual(i['asin'], t['expected_asin'])
                     elif i.__class__.__name__ == 'ParentListingItem':
                         pass
+                    else:
+                        raise Exception("Invalid 'item' object passed - {}".format(i.__class__.__name__))
+
+    def test_variation_asins(self):
+        for t in self.testlist:
+            for i in t['items']:
+                with self.subTest(asin=t['expected_asin']):
+                    if i.__class__.__name__ == 'ListingItem':
+                        pass
+                    elif i.__class__.__name__ == 'ParentListingItem':
+                        self.assertEqual(set(i['asins']), set(t['expected_variation_asins']))
                     else:
                         raise Exception("Invalid 'item' object passed - {}".format(i.__class__.__name__))
 
