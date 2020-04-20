@@ -1,3 +1,13 @@
+import os, time
+
+## django integration
+
+os.environ['DJANGO_SETTINGS_MODULE'] = 'djg.settings'
+import django
+django.setup()
+
+## django integration end
+
 # -*- coding: utf-8 -*-
 
 # Scrapy settings for amzbot project
@@ -9,7 +19,6 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
-import time
 
 BOT_NAME = 'amzbot'
 

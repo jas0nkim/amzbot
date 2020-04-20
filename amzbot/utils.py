@@ -72,12 +72,6 @@ def validate_image_size(url):
 def true_or_false(string):
     return string.lower() in ['true', '1', 't', 'y', 'yes', 'yeah', 'yup', 'certainly', 'uh-huh']
 
-def setup_djg():
-    import os
-    os.environ['DJANGO_SETTINGS_MODULE'] = 'djg.settings'
-    import django
-    django.setup()
-
 def class_fullname(o):
     """ https://stackoverflow.com/a/2020083
     """

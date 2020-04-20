@@ -5,13 +5,10 @@
 # See documentation in:
 # https://docs.scrapy.org/en/latest/topics/items.html
 
-from amzbot import utils
-utils.setup_djg()
-
 from scrapy import Field
 from scrapy_djangoitem import DjangoItem
 from django.forms.models import model_to_dict
-from djg_resources.models import AmazonParentListing, AmazonListing
+from djg.resources.models import AmazonParentListing, AmazonListing
 
 
 class AmzbotDjangoItem(DjangoItem):

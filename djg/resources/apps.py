@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class DjgResourcesConfig(AppConfig):
-    name = 'djg_resources'
+class ResourcesConfig(AppConfig):
+    name = 'djg.resources'
     verbose_name = 'Resources'
