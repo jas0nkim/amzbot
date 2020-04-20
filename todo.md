@@ -1,3 +1,12 @@
+## Apr 20 2020
+- deploy to scrapyd server
+- eBay publisher
+- login service
+- project focus
+    - price watch
+    - showing graph of price changing
+    - crawl price daily
+
 ## Apr 19 2020
 - improve tests
     - check variation asins
@@ -9,7 +18,6 @@
     - price
     - origina_price
     - created_at
-- deploy to scrapyd server
 
 ## Apr 18 2020
 - bug fix
