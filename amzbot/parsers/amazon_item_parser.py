@@ -1,4 +1,4 @@
-import re, json, urllib, uuid, logging
+import re, json, urllib, logging
 
 from scrapy import Request
 from scrapy.exceptions import IgnoreRequest
@@ -62,21 +62,71 @@ class AmazonItemParser(object):
         else:
             return self.__parse_item_helper(response)
 
-    def parse_parent_listing_item(self, response, parent_asin, asins):
-        parent_listing_item = ParentListingItem()
-        parent_listing_item['parent_asin'] = parent_asin
-        parent_listing_item['asins'] = asins
-        parent_listing_item['review_count'] = self.__extract_review_count(response)
-        parent_listing_item['avg_rating'] = self.__extract_avg_rating(response)
-        parent_listing_item['domain'] = response.meta['domain']
-        return parent_listing_item
+    def __parse_parent_listing_item(self, response, parent_asin, asins):
+        try:
+            parent_listing_item = ParentListingItem()
+            parent_listing_item['parent_asin'] = parent_asin
+            parent_listing_item['asins'] = asins
+            parent_listing_item['review_count'] = self.__extract_review_count(response)
+            parent_listing_item['avg_rating'] = self.__extract_avg_rating(response)
+            parent_listing_item['domain'] = response.meta['domain']
+            return parent_listing_item
+        except Exception as e:
+            self.logger.exception("{}: [ASIN:{}][PARENT ASIN:{}] failed passing item - {}".format(utils.class_fullname(e), self.__asin, parent_asin, str(e)))
+            return
+
+    def __parse_listing_item(self, response, parent_asin, asins):
+        listing_item = ListingItem()
+        listing_item['_cached'] = False
+        listing_item['asin'] = self.__asin
+        listing_item['domain'] = response.meta['domain']
+
+        _asin_on_content = self.__extract_asin_on_content(response)
+        if _asin_on_content != self.__asin:
+            # inactive amazon item
+            listing_item['status'] = False
+            return listing_item
+        elif self.__asin and parent_asin and self.__asin != parent_asin and len(asins) > 0 and self.__asin not in asins:
+            # a variation, but removed - inactive this variation
+            listing_item['status'] = False
+            return listing_item
+        else:
+            try:
+                listing_item['parent_asin'] = parent_asin
+                listing_item['picture_urls'] = self.__extract_picture_urls(response) if response.meta['parse_pictures'] else []
+                listing_item['url'] = response.url
+                listing_item['category'] = self.__extract_category(response)
+                listing_item['title'] = self.__extract_title(response)
+                listing_item['price'] = self.__extract_price(response)
+                listing_item['original_price'] = self.__extract_original_price(response, default_price=listing_item['price'])
+                listing_item['quantity'] = self.__extract_quantity(response)
+                listing_item['features'] = self.__extract_features(response)
+                listing_item['description'] = self.__extract_description(response)
+                listing_item['specifications'] = self.__extract_specifications(response)
+                listing_item['variation_specifics'] = self.__extract_variation_specifics(response)
+                listing_item['is_fba'] = self.__extract_is_fba(response)
+                listing_item['is_addon'] = self.__extract_is_addon(response)
+                listing_item['is_pantry'] = self.__extract_is_pantry(response)
+                listing_item['has_sizechart'] = self.__extract_has_sizechart(response)
+                listing_item['merchant_id'] = self.__extract_merchant_id(response)
+                listing_item['merchant_name'] = self.__extract_merchant_name(response)
+                listing_item['brand_name'] = self.__extract_brand_name(response)
+                listing_item['meta_title'] = self.__extract_meta_title(response)
+                listing_item['meta_description'] = self.__extract_meta_description(response)
+                listing_item['meta_keywords'] = self.__extract_meta_keywords(response)
+                listing_item['status'] = True
+                listing_item['_redirected_asins'] = self.__extract_redirected_asins(response)
+            except Exception as e:
+                listing_item['status'] = False
+                self.logger.exception("{}: [ASIN:{}] Failed to parse item - {}".format(utils.class_fullname(e), self.__asin, str(e)))
+            return listing_item
 
     def __parse_item_helper(self, response):
         __parent_asin = self.__extract_parent_asin(response)
         __variation_asins = self.__extract_variation_asins(response)
 
         if response.meta['parse_parent_listing']:
-            yield self.parse_parent_listing_item(response, parent_asin=__parent_asin, asins=__variation_asins)
+            yield self.__parse_parent_listing_item(response, parent_asin=__parent_asin, asins=__variation_asins)
 
         # check variations first
         """ TODO: __stored_variation_asins = amazon_parent_listings.asins in db
@@ -99,52 +149,7 @@ class AmazonItemParser(object):
                                 })
                 # self.logger.info("[ASIN:{}] Request Ignored - initial asin ignored".format(self.__asin))
                 # raise IgnoreRequest
-        else:
-            listing_item = ListingItem()
-            listing_item['_cached'] = False
-            listing_item['asin'] = self.__asin
-            listing_item['domain'] = response.meta['domain']
-
-            _asin_on_content = self.__extract_asin_on_content(response)
-            if _asin_on_content != self.__asin:
-                # inactive amazon item
-                listing_item['status'] = False
-                yield listing_item
-            elif self.__asin and __parent_asin and self.__asin != __parent_asin and len(__variation_asins) > 0 and self.__asin not in __variation_asins:
-                # a variation, but removed - inactive this variation
-                listing_item['status'] = False
-                yield listing_item
-            else:
-                try:
-                    listing_item['parent_asin'] = __parent_asin
-                    listing_item['picture_urls'] = self.__extract_picture_urls(response) if response.meta['parse_pictures'] else []
-                    listing_item['url'] = response.url
-                    listing_item['category'] = self.__extract_category(response)
-                    listing_item['title'] = self.__extract_title(response)
-                    listing_item['price'] = self.__extract_price(response)
-                    listing_item['original_price'] = self.__extract_original_price(response, default_price=listing_item['price'])
-                    listing_item['quantity'] = self.__extract_quantity(response)
-                    listing_item['features'] = self.__extract_features(response)
-                    listing_item['description'] = self.__extract_description(response)
-                    listing_item['specifications'] = self.__extract_specifications(response)
-                    listing_item['variation_specifics'] = self.__extract_variation_specifics(response)
-                    listing_item['is_fba'] = self.__extract_is_fba(response)
-                    listing_item['is_addon'] = self.__extract_is_addon(response)
-                    listing_item['is_pantry'] = self.__extract_is_pantry(response)
-                    listing_item['has_sizechart'] = self.__extract_has_sizechart(response)
-                    listing_item['merchant_id'] = self.__extract_merchant_id(response)
-                    listing_item['merchant_name'] = self.__extract_merchant_name(response)
-                    listing_item['brand_name'] = self.__extract_brand_name(response)
-                    listing_item['meta_title'] = self.__extract_meta_title(response)
-                    listing_item['meta_description'] = self.__extract_meta_description(response)
-                    listing_item['meta_keywords'] = self.__extract_meta_keywords(response)
-                    listing_item['status'] = True
-                    listing_item['_redirected_asins'] = self.__extract_redirected_asins(response)
-                except Exception as e:
-                    listing_item['status'] = False
-                    error_id = uuid.uuid4()
-                    self.logger.exception("{}: [ASIN:{}] Failed to parse item <{}> - {}".format(utils.class_fullname(e), self.__asin, error_id, str(e)))
-                yield listing_item
+        yield self.__parse_listing_item(response, parent_asin=__parent_asin, asins=__variation_asins)
 
                 # if listing_item.get('has_sizechart', False) and not AmazonItemApparelModelManager.fetch_one(parent_asin=__parent_asin):
                 #     amazon_apparel_parser = AmazonApparelParser()
