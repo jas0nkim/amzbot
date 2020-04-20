@@ -55,5 +55,35 @@ class AmazonListing(models.Model):
     def __str__(self):
         return "[{}] {}".format(self.asin, self.title)
 
+    def save(self, *args, **kwargs):
+        try:
+            super().save(*args, **kwargs)
+        except ValueError as ve:
+            raise ve
+        except Exception as e:
+            raise e
+        # insert new price, original_price
+        self._save_listing_price()
+
+    def _save_listing_price(self):
+        new_listing_price = AmazonListingPrice()
+        new_listing_price.asin = self.asin
+        new_listing_price.price = self.price
+        new_listing_price.original_price = self.original_price
+        new_listing_price.save()
+
     class Meta:
         db_table = 'amazon_listings'
+
+
+class AmazonListingPrice(models.Model):
+    asin = models.CharField(max_length=32, db_index=True)
+    price = models.DecimalField(max_digits=15, decimal_places=2)
+    original_price = models.DecimalField(max_digits=15, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return "{}".format(self.asin)
+
+    class Meta:
+        db_table = 'amazon_listing_prices'
