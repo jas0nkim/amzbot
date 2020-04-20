@@ -1,3 +1,12 @@
+# vs code
 .vscode/
-venv/
+
+# python virtual environment
+.venv/
+
+# .pyc
 **/__pycache__/
+
+# egg packages and build
+build/
+*.egg-info/
