@@ -1,7 +1,14 @@
-## Apr 20 2020
-- deploy to scrapyd server
+## Apr 21 2020
+- scrapyd
+    - test
+    - docker
+    - control scrapyd with python-scrapyd-api
+        https://github.com/djm/python-scrapyd-api
 - eBay publisher
 - login service
+
+## Apr 20 2020
+- deploy to scrapyd server
 - project focus
     - price watch
     - showing graph of price changing
