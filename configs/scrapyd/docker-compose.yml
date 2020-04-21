@@ -1,0 +1,19 @@
+version: '3.2'
+services:
+  # scrapyd: https://hub.docker.com/r/vimagick/scrapyd
+  scrapyd:
+    image: vimagick/scrapyd:py3
+    volumes:
+      - type: bind
+        source: ./data
+        target: /var/lib/scrapyd
+      - type: bind
+        source: ./config
+        target: /etc/scrapyd/
+        volume:
+          nocopy: true
+    ports:
+      # Scrapyd JSON API and web interface
+      - 6800:6800
+    restart:
+      always
