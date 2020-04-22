@@ -1,4 +1,8 @@
 ## Apr 21 2020
+- setup.py
+    - handle config files.. may not install config files within a package.. different approach..
+
+## Apr 21 2020
 - scrapyd
     - test
     - docker
