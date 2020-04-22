@@ -11,12 +11,15 @@
 
 FROM python:3.7-stretch
 
-COPY ./requirements.txt /usr/local/
+RUN mkdir -p /usr/local/etc/amzbot
+WORKDIR /usr/local/etc/amzbot
 
-RUN cd /usr/local \
-        && pip install scrapyd \
-        && pip install -r requirements.txt
+COPY ./requirements.txt .
 
+RUN pip install scrapyd \
+        && pip install -r ./requirements.txt
+
+WORKDIR /
 VOLUME /etc/scrapyd/ /var/lib/scrapyd/
 EXPOSE 6800
 
