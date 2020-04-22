@@ -1,6 +1,6 @@
 import unittest
 from scrapy.http import Request
-from amzbot.tests import utils
+from tests import utils
 
 
 # class TestRequester(unittest.TestCase):

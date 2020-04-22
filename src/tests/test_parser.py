@@ -2,7 +2,7 @@ import unittest, json
 from pathlib import Path
 from scrapy.http import HtmlResponse, Request
 from amzbot.parsers import parse_amazon_item
-from amzbot.tests import utils
+from tests import utils
 
 
 def build_response(url, html_filename, domain):

@@ -7,7 +7,7 @@ setup(
     name = 'amzbot',
     version = '0.0.1',
     package_dir = {'': 'src'},
-    packages = find_packages(where='src'),
+    packages = find_packages(where='src', exclude=["tests", "tests.*"]),
     install_requires = required,
     scripts = ['src/djg/manage.py'],
     entry_points = {'scrapy': ['settings = amzbot.settings']},
