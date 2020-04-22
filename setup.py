@@ -6,8 +6,9 @@ with open('requirements.txt') as f:
 setup(
     name = 'amzbot',
     version = '0.0.1',
-    packages = find_packages(),
+    package_dir = {'': 'src'},
+    packages = find_packages(where='src'),
     install_requires = required,
-    scripts = ['djg/manage.py'],
+    scripts = ['src/djg/manage.py'],
     entry_points = {'scrapy': ['settings = amzbot.settings']},
 )
