@@ -17,7 +17,6 @@ RUN cd /usr/local \
         && pip install scrapyd \
         && pip install -r requirements.txt
 
-COPY ./scrapyd.conf /etc/scrapyd/
 VOLUME /etc/scrapyd/ /var/lib/scrapyd/
 EXPOSE 6800
 
