@@ -9,6 +9,7 @@
 
 # egg packages and build
 build/
+dist/
 *.egg-info/
 
 .dockers/scrapyd/data
