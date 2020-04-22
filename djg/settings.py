@@ -13,7 +13,25 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath('.')))
+BASE_DIR = os.path.dirname(os.path.abspath('.'))
+
+# parse db config
+_db_name = None
+_db_user = None
+_db_pass = None
+_db_host = None
+_db_port = None
+try:
+    import configparser
+    _config = configparser.ConfigParser()
+    _config.read(os.path.join(BASE_DIR, 'configs', 'local.ini'))
+    _db_name = _config['Postgres']['database']
+    _db_user = _config['Postgres']['user']
+    _db_pass = _config['Postgres']['password']
+    _db_host = _config['Postgres']['host']
+    _db_port = _config['Postgres']['port']
+except Exception as e:
+    raise Exception("Failed to get database connection information - {}".format(str(e)))
 
 
 # Quick-start development settings - unsuitable for production
@@ -90,11 +108,11 @@ DATABASES = {
     # }
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'amzbot',
-        'USER': 'amzbotusr',
-        'PASSWORD': '20itSiT20',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': _db_name,
+        'USER': _db_user,
+        'PASSWORD': _db_pass,
+        'HOST': _db_host,
+        'PORT': _db_port,
     }
 }
 

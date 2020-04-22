@@ -1,15 +1,6 @@
 import re, json, urllib, logging
-
 from scrapy import Request
 from scrapy.exceptions import IgnoreRequest
-
-# from amazonmws import settings as amazonmws_settings, utils as amazonmws_utils
-# from amazonmws.loggers import GrayLogger as logger, StaticFieldFilter, get_logger_name
-# from amazonmws.model_managers import *
-# from amazonmws.errors import record_amazon_scrape_error
-
-# from amazon_apparel_parser import AmazonApparelParser
-
 from amzbot import utils, settings
 from amzbot.items import ParentListingItem, ListingItem
 

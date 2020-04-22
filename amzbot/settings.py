@@ -105,7 +105,7 @@ ITEM_PIPELINES = {
 # scrapy logging
 # https://docs.scrapy.org/en/latest/topics/logging.html#topics-logging-settings
 
-LOG_FILE = '/var/log/python/amzbot-{}.log'.format(time.time())
+# LOG_FILE = '/var/log/python/amzbot-{}.log'.format(time.time())
 LOG_LEVEL = 'DEBUG'
 
 # crawlera related
