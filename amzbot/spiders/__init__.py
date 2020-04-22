@@ -19,9 +19,9 @@ class BaseAmzBotCrawlSpider(CrawlSpider):
         _graylog_port = '0'
         try:
             import configparser
-            from djg.settings import BASE_DIR
+            from djg.settings import APP_CONFIG_FILEPATH
             _config = configparser.ConfigParser()
-            _config.read(os.path.join(BASE_DIR, 'configs', 'local.ini'))
+            _config.read(APP_CONFIG_FILEPATH)
             _graylog_host = _config['Graylog']['host']
             _graylog_port = _config['Graylog']['port']
         except Exception as e:

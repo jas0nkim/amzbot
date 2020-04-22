@@ -1,0 +1,12 @@
+# PostgreSQL config
+[Postgres]
+database = DATABASE_NAME_HERE
+user = USERNAME_HERE
+password = PASSWORD_HERE
+host = HOST_URL_HERE
+port = HOST_PORT_HERE
+
+# greylog config
+[Graylog]
+host = HOST_URL_HERE
+port = HOST_PORT_HERE

@@ -16,6 +16,8 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # parse db config
+# copy BASE_DIR/configs/amzbot.ini.default to /usr/local/etc/amzbot/amzbot.ini
+APP_CONFIG_FILEPATH = '/usr/local/etc/amzbot/amzbot.ini'
 _db_name = None
 _db_user = None
 _db_pass = None
@@ -24,7 +26,7 @@ _db_port = None
 try:
     import configparser
     _config = configparser.ConfigParser()
-    _config.read(os.path.join(BASE_DIR, 'configs', 'local.ini'))
+    _config.read(APP_CONFIG_FILEPATH)
     _db_name = _config['Postgres']['database']
     _db_user = _config['Postgres']['user']
     _db_pass = _config['Postgres']['password']
