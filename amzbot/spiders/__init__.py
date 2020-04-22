@@ -16,7 +16,7 @@ class BaseAmzBotCrawlSpider(CrawlSpider):
     def __set_gelfudphandler(self):
         # parse graylog config
         _graylog_host = None
-        _graylog_port = None
+        _graylog_port = '0'
         try:
             import configparser
             from djg.settings import BASE_DIR
@@ -27,4 +27,4 @@ class BaseAmzBotCrawlSpider(CrawlSpider):
         except Exception as e:
             raise Exception("Failed to get graylog connection information - {}".format(str(e)))
 
-        logging.root.addHandler(graypy.GELFUDPHandler(_graylog_host, _graylog_port))
+        logging.root.addHandler(graypy.GELFUDPHandler(_graylog_host, int(_graylog_port)))
