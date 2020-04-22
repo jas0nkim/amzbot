@@ -1,8 +1,8 @@
 version: '3.2'
 services:
-  # scrapyd: https://hub.docker.com/r/vimagick/scrapyd
+  # scrapyd: cusomized image
   scrapyd:
-    image: vimagick/scrapyd:py3
+    image: jasonkim/scrapyd:py3.7
     volumes:
       - type: bind
         source: ./data
