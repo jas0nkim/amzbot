@@ -10,3 +10,8 @@ port = HOST_PORT_HERE
 [Graylog]
 host = HOST_URL_HERE
 port = HOST_PORT_HERE
+
+# scrapyd config
+[Scrapyd]
+host = HOST_URL_HERE
+port = HOST_PORT_HERE
