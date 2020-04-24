@@ -15,9 +15,11 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+APP_DATA_DIRPATH = '/usr/local/etc/amzbot/'
+APP_DIST_DIRPATH = '/usr/local/etc/amzbot/' + 'dist/'
 # parse db config
 # copy BASE_DIR/configs/amzbot.ini.default to /usr/local/etc/amzbot/amzbot.ini
-APP_CONFIG_FILEPATH = '/usr/local/etc/amzbot/amzbot.ini'
+APP_CONFIG_FILEPATH = APP_DATA_DIRPATH + 'amzbot.ini'
 try:
     import configparser
     config = configparser.ConfigParser()

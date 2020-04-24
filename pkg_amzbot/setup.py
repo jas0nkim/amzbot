@@ -1,3 +1,5 @@
+# build egg command: python setup.py bdist_egg -d /usr/local/etc/amzbot/dist
+
 from setuptools import setup, find_packages
 
 with open('../requirements.txt') as f:

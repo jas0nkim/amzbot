@@ -6,7 +6,7 @@ from amzbot.tests import utils
 
 
 def build_response(url, html_filename, domain):
-    html_content = Path(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'htmls', html_filename)).read_text()
+    html_content = Path(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'testlists', html_filename)).read_text()
     encoding = 'utf-8'
     return HtmlResponse(url,
         request=Request(url,
