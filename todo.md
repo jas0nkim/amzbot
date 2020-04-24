@@ -1,15 +1,30 @@
-## Apr 21 2020
-- setup.py
-    - handle config files.. may not install config files within a package.. different approach..
+## Apr 23 2020
+- reports (analyse crawl) screen
+    - 매번 crawling 할때 마다 어떤 asin/link를 crawl 했는지 (scrapy schedule 할때 입력된 asin/link 보여주기)
+    - 각 schedule 당 에러가 몇개 났는지. 그리고 그 에러의 중요도는 어떤지
+    - 각 schedule/asin 당 에러가 몇개 났는지. 그리고 그 에러의 중요도는 어떤지. 중요한 에러 보여주기
+- scrapyd + python-scrapyd-api +  scrapy signals (https://docs.scrapy.org/en/latest/topics/signals.html)
+    - crawl_statuses (new db table)
+        - status
+        - scrapyd schedule id
+        - url
+        - asin
+        - error
+        - error message
+- eBay publisher
+- login service
+
+## Apr 22 2020
+- scrapyd
+    - setup.py
+        - handle config files.. may not install config files within a package.. different approach..
+    - control scrapyd with python-scrapyd-api (https://github.com/djm/python-scrapyd-api)
+        - schedule with given asins/urls
 
 ## Apr 21 2020
 - scrapyd
     - test
     - docker
-    - control scrapyd with python-scrapyd-api
-        https://github.com/djm/python-scrapyd-api
-- eBay publisher
-- login service
 
 ## Apr 20 2020
 - deploy to scrapyd server
