@@ -18,20 +18,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # parse db config
 # copy BASE_DIR/configs/amzbot.ini.default to /usr/local/etc/amzbot/amzbot.ini
 APP_CONFIG_FILEPATH = '/usr/local/etc/amzbot/amzbot.ini'
-_db_name = None
-_db_user = None
-_db_pass = None
-_db_host = None
-_db_port = None
 try:
     import configparser
-    _config = configparser.ConfigParser()
-    _config.read(APP_CONFIG_FILEPATH)
-    _db_name = _config['Postgres']['database']
-    _db_user = _config['Postgres']['user']
-    _db_pass = _config['Postgres']['password']
-    _db_host = _config['Postgres']['host']
-    _db_port = _config['Postgres']['port']
+    config = configparser.ConfigParser()
+    config.read(APP_CONFIG_FILEPATH)
 except Exception as e:
     raise Exception("Failed to get database connection information - {}".format(str(e)))
 
@@ -110,11 +100,11 @@ DATABASES = {
     # }
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': _db_name,
-        'USER': _db_user,
-        'PASSWORD': _db_pass,
-        'HOST': _db_host,
-        'PORT': _db_port,
+        'NAME': config['Postgres']['database'],
+        'USER': config['Postgres']['user'],
+        'PASSWORD': config['Postgres']['password'],
+        'HOST': config['Postgres']['host'],
+        'PORT': config['Postgres']['port'],
     }
 }
 

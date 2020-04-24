@@ -5,6 +5,7 @@
 
 import os
 import logging, graypy
+from amzbot.settings import config
 from scrapy.spiders import CrawlSpider
 
 class BaseAmzBotCrawlSpider(CrawlSpider):
@@ -14,17 +15,5 @@ class BaseAmzBotCrawlSpider(CrawlSpider):
         super().__init__(*a, **kw)
 
     def __set_gelfudphandler(self):
-        # parse graylog config
-        _graylog_host = None
-        _graylog_port = '0'
-        try:
-            import configparser
-            from djg.settings import APP_CONFIG_FILEPATH
-            _config = configparser.ConfigParser()
-            _config.read(APP_CONFIG_FILEPATH)
-            _graylog_host = _config['Graylog']['host']
-            _graylog_port = _config['Graylog']['port']
-        except Exception as e:
-            raise Exception("Failed to get graylog connection information - {}".format(str(e)))
-
-        logging.root.addHandler(graypy.GELFUDPHandler(_graylog_host, int(_graylog_port)))
+        # add graylog handler
+        logging.root.addHandler(graypy.GELFUDPHandler(config['Graylog']['host'], int(config['Graylog']['port'])))

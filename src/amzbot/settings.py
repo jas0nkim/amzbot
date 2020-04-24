@@ -1,9 +1,9 @@
-import os, time
+import time
 
 ## django integration
 
+import os, django
 os.environ['DJANGO_SETTINGS_MODULE'] = 'djg.settings'
-import django
 django.setup()
 
 ## django integration end
@@ -108,9 +108,33 @@ ITEM_PIPELINES = {
 # LOG_FILE = '/var/log/python/amzbot-{}.log'.format(time.time())
 LOG_LEVEL = 'DEBUG'
 
-# crawlera related
+## crawlera related
 CRAWLERA_ENABLED = True
 CRAWLERA_APIKEY = '191582bbbb4144519a78f00776896436'
+
+## config, custom logger
+import logging, graypy
+from djg.settings import APP_CONFIG_FILEPATH
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+formatter = logging.Formatter('%(asctime)s [%(name)s] %(levelname)s: %(message)s')
+
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(formatter)
+
+import configparser
+config = configparser.ConfigParser()
+config.read(APP_CONFIG_FILEPATH)
+
+graylog_handler = graypy.GELFUDPHandler(config['Graylog']['host'], int(config['Graylog']['port']))
+graylog_handler.setLevel(logging.DEBUG) # set logging.ERROR later
+graylog_handler.setFormatter(formatter)
+
+logger.addHandler(stream_handler)
+logger.addHandler(graylog_handler)
+
 
 ## amazon.com related
 AMAZON_COM_ITEM_LINK_PATTERN = r'^(https?://www.amazon.com)?/([^/]+/[^/]+|dp)/([A-Z0-9]{10})(/.*$)?'
