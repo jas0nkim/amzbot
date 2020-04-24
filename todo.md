@@ -1,4 +1,4 @@
-## Apr 23 2020
+## Apr 24 2020
 - reports (analyse crawl) screen
     - 매번 crawling 할때 마다 어떤 asin/link를 crawl 했는지 (scrapy schedule 할때 입력된 asin/link 보여주기)
     - 각 schedule 당 에러가 몇개 났는지. 그리고 그 에러의 중요도는 어떤지
@@ -13,6 +13,9 @@
         - error message
 - eBay publisher
 - login service
+
+## Apr 23 2020
+- schedular package based on python-scrapyd-api
 
 ## Apr 22 2020
 - scrapyd
