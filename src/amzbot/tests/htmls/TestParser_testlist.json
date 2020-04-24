@@ -3,7 +3,7 @@
         {
             "domain": "amazon.ca",
             "url": "https://www.amazon.ca/Hotel-Spa-Collection-Herringbone-Textured/dp/B008I25JB2/ref=sr_1_28?fst=as%3Aoff&qid=1587160260&refinements=p_85%3A5690392011&rnid=5690384011&rps=1&s=apparel&sr=1-28&th=1",
-            "html_filename": "htmls/TestParser_testcontent_001.html",
+            "html_filename": "TestParser_testcontent_001.html",
             "expected_asin": "B008I25JB2",
             "expected_variation_asins": ["B008I25JB2", "B008I25JAS", "B008I25J8U", "B008I25JKI", "B01MRFW9J3", "B008I25J7G", "B008I25J8K"],
             "expected_title": "Hotel Spa Collection Herringbone Textured Plush Robe, Bright Pink",
@@ -20,7 +20,7 @@
         {
             "domain": "amazon.ca",
             "url": "https://www.amazon.ca/Hotel-Spa-Collection-Herringbone-Textured/dp/B008I25J8K/ref=sr_1_28?fst=as%3Aoff&qid=1587160260&refinements=p_85%3A5690392011&rnid=5690384011&rps=1&s=apparel&sr=1-28&th=1",
-            "html_filename": "htmls/TestParser_testcontent_002.html",
+            "html_filename": "TestParser_testcontent_002.html",
             "expected_asin": "B008I25J8K",
             "expected_variation_asins": ["B008I25JB2", "B008I25JAS", "B008I25J8U", "B008I25JKI", "B01MRFW9J3", "B008I25J7G", "B008I25J8K"],
             "expected_title": "Seven Apparel Hotel Spa Collection Herringbone Textured Plush Robe, Bright Fuschia Pink",
@@ -37,7 +37,7 @@
         {
             "domain": "amazon.com",
             "url": "https://www.amazon.com/Achiou-Mask-Dust-Protection-Lightweight-Breathable/dp/B07T2MD442/ref=zg_bs_fashion_2?_encoding=UTF8&psc=1&refRID=T2EG1B3RB7X2P7R681FE",
-            "html_filename": "htmls/TestParser_testcontent_003.html",
+            "html_filename": "TestParser_testcontent_003.html",
             "expected_asin": "B07T2MD442",
             "expected_variation_asins": ["B07T2MD442", "B07SZKQXKY", "B07T6XL7LF", "B07T4V86LW", "B07T6XSN3M"],
             "expected_title": "Achiou Neck Gaiter Face Scarf Mask-Dust, Sun Protection Cool Lightweight Windproof, Breathable Fishing Hiking Running Cycling",
@@ -54,7 +54,7 @@
         {
             "domain": "amazon.com",
             "url": "https://www.amazon.com/Novelty-Bandanas-Paisley-Cotton-Black/dp/B00II9VACC/ref=zg_bs_fashion_7?_encoding=UTF8&refRID=T2EG1B3RB7X2P7R681FE&th=1",
-            "html_filename": "htmls/TestParser_testcontent_004.html",
+            "html_filename": "TestParser_testcontent_004.html",
             "expected_asin": "B00II9VACC",
             "expected_variation_asins": ["B00II9UGRW", "B00II9UNAM", "B07GJMNPCC", "B07GJFBTGF", "B00II9VJKK", "B00II9W42W", "B00II9UUPA", "B00II9UWW6", "B00II9VQLC", "B00II9VOFU", "B00II9V15I", "B00II9VCV6", "B00II9VSWE", "B00II9V5WC", "B00II9UL2M", "B00II9V7XE", "B00II9VACC", "B00II9VVEO", "B00II9VY7I", "B00II9VF6I", "B00II9UISO", "B00II9VHCU"],
             "expected_title": "Novelty Bandanas Paisley Cotton Bandanas Single Pack",
