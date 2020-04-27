@@ -47,6 +47,7 @@ def class_fullname(o):
 class Schedular(object):
 
     def __init__(self):
+        self._scrapyd = None
         try:
             self._scrapyd = ScrapydAPI('http://{}:{}'.format(config['Scrapyd']['host'], config['Scrapyd']['port']))
         except KeyError as e:
@@ -60,50 +61,54 @@ class Schedular(object):
         if not self._scrapyd:
             logger.error("No scrapyd object find. Unable to add a new version.")
             return None
+        num_of_spiders = None
         try:
             with open(os.path.join(os.path.dirname(APP_DIST_DIRPATH), egg_filename), 'rb') as egg:
                 num_of_spiders = self._scrapyd.add_version(project, version, egg)
-                """ TODO: store result in db
-                """ 
-            logger.info("new version '{}' for project '{}' added - {} spider(s)".format(project, version, num_of_spiders))
-            return num_of_spiders
         except FileNotFoundError as e:
             logger.error("{}: {}".format(class_fullname(e), str(e)))
-            return None
         except Exception as e:
             logger.error("{}: Failed to add a new version - {}".format(class_fullname(e), str(e)))
-            return None
+        else:
+            logger.info("new version '{}' for project '{}' added - {} spider(s)".format(project, version, num_of_spiders))
+            """ TODO: store result in db
+            """
+        finally:
+            return num_of_spiders
 
     def schedule(self, project, spider, settings=None, **kwargs):
         if not self._scrapyd:
             logger.error("No scrapyd object find. Unable to schedule a job.")
             return None
+        jobid = None
         try:
             jobid = self._scrapyd.schedule(project, spider, settings, **kwargs)
-            """ TODO: store result in db
-            """
-            logger.info("new scheduled job '{}' for project '{}', spider '{}' has been set".format(jobid, project, spider))
-            return jobid
         except Exception as e:
             logger.error("{}: Failed to schedule a job - {}".format(class_fullname(e), str(e)))
-            return None
+        else:
+            logger.info("new scheduled job '{}' for project '{}', spider '{}' has been set".format(jobid, project, spider))
+            """ TODO: store result in db
+            """
+        finally:
+            return jobid
 
     def listjobs(self, project):
         if not self._scrapyd:
             logger.error("No scrapyd object find. Unable to list jobs.")
-            return False
+            return None
+        jobs = None
         try:
             jobs = self._scrapyd.list_jobs(project)
-            """ TODO: store result in db
-            """
-            logger.info("list of jobs for project '{}' - {}".format(project, str(jobs)))
-            return jobs
         except ScrapydResponseError as e:
             logger.error("{}: Response error - {}".format(class_fullname(e), str(e)))
-            return False
         except Exception as e:
             logger.error("{}: Failed to list jobs - {}".format(class_fullname(e), str(e)))
-            return False
+        else:
+            logger.info("list of jobs for project '{}' - {}".format(project, str(jobs)))
+            """ TODO: store result in db
+            """
+        finally:
+            return jobs
 
     def close(self):
         self._scrapyd.client.close()
