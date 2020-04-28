@@ -51,7 +51,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # djg.* apps
-    'djg.resources.apps.ResourcesConfig'
+    'djg.resources.apps.ResourcesConfig',
+    'djg.schedules.apps.SchedulesConfig',
 ]
 
 MIDDLEWARE = [
