@@ -1,5 +1,43 @@
-## Apr 24 2020
+## Apr 27 2020
+- problem
+    - scraping monitoring
+    - ebay listing monitoring
+    - ordering automation
+## Apr 25-26 2020
+- good web crawling blogs
+    https://towardsdatascience.com/https-towardsdatascience-com-5-tips-to-create-a-more-reliable-web-crawler-3efb6878f8db
+    https://blog.hubspot.com/marketing/google-cache
+- scrapinghub crawlera alternative
+    - http://scrapoxy.io/
+    - https://infatica.io/
+- scrapy-splash: Scrapy & JavaScript integration through Splash
+    https://github.com/scrapy-plugins/scrapy-splash
+- dashboard screen
+    - show any asins/links NOT been crawled more than 24 hours
+    - list of asins/links got ERROR messages during the last 24 hours
+    - total number of links crawled during last 24 hours
+    - total number of links got ERRORS during last 24 hours
+    - price monitor
+- crawled_stacks
+    - link
+    - asin
+    - parent_asin
+    - jobid
+    - errors
+    - status (succeed, failed)
+    - created_at
+- jobs (db table)
+    - scheduled_at
+    - job_started_at
+    - job_ended_at
+    - project
+    - spider
+    - asins
+    - domain
+- build a test spider egg
 - reports (analyse crawl) screen
+    - number of crawled pages per day
+    - 
     - 매번 crawling 할때 마다 어떤 asin/link를 crawl 했는지 (scrapy schedule 할때 입력된 asin/link 보여주기)
     - 각 schedule 당 에러가 몇개 났는지. 그리고 그 에러의 중요도는 어떤지
     - 각 schedule/asin 당 에러가 몇개 났는지. 그리고 그 에러의 중요도는 어떤지. 중요한 에러 보여주기
