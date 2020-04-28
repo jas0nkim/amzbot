@@ -11,6 +11,6 @@ setup(
     package_dir = {'': 'src'},
     packages = find_packages(where='src', exclude=["amzbot.tests", "amzbot.tests.*"]),
     install_requires = required,
-    scripts = ['src/djg/manage.py'],
+    scripts = ['src/manage.py'],
     entry_points = {'scrapy': ['settings = amzbot.settings']},
 )
