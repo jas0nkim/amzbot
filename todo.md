@@ -1,3 +1,33 @@
+## Apr 28 2020
+- usd scrapy signals Deferred signal handlers https://docs.scrapy.org/en/latest/topics/signals.html#deferred-signal-handlers
+    - separate django and scrapy packages
+- Django REST framework https://www.django-rest-framework.org/
+- rprt_crawls
+    - link
+    - domain
+    - key_one
+    - key_two
+    - jobid
+    - errors
+    - status (succeed, failed)
+    - created_at
+- scrapy signals (https://docs.scrapy.org/en/latest/topics/signals.html)
+- reports (analyse crawl) screen
+    - number of crawled pages per day
+    - 매번 crawling 할때 마다 어떤 asin/link를 crawl 했는지 (scrapy schedule 할때 입력된 asin/link 보여주기)
+    - 각 schedule 당 에러가 몇개 났는지. 그리고 그 에러의 중요도는 어떤지
+    - 각 schedule/asin 당 에러가 몇개 났는지. 그리고 그 에러의 중요도는 어떤지. 중요한 에러 보여주기
+- eBay publisher
+- login service
+- dashboard screen
+    - show any asins/links NOT been crawled more than 24 hours
+    - list of asins/links got ERROR messages during the last 24 hours
+    - total number of links crawled during last 24 hours
+    - total number of links got ERRORS during last 24 hours
+    - price monitor
+- scrapinghub crawlera alternative
+    - http://scrapoxy.io/
+
 ## Apr 27 2020
 - problem
     - scraping monitoring
@@ -12,20 +42,6 @@
     - https://infatica.io/
 - scrapy-splash: Scrapy & JavaScript integration through Splash
     https://github.com/scrapy-plugins/scrapy-splash
-- dashboard screen
-    - show any asins/links NOT been crawled more than 24 hours
-    - list of asins/links got ERROR messages during the last 24 hours
-    - total number of links crawled during last 24 hours
-    - total number of links got ERRORS during last 24 hours
-    - price monitor
-- crawled_stacks
-    - link
-    - asin
-    - parent_asin
-    - jobid
-    - errors
-    - status (succeed, failed)
-    - created_at
 - jobs (db table)
     - scheduled_at
     - job_started_at
@@ -35,12 +51,6 @@
     - asins
     - domain
 - build a test spider egg
-- reports (analyse crawl) screen
-    - number of crawled pages per day
-    - 
-    - 매번 crawling 할때 마다 어떤 asin/link를 crawl 했는지 (scrapy schedule 할때 입력된 asin/link 보여주기)
-    - 각 schedule 당 에러가 몇개 났는지. 그리고 그 에러의 중요도는 어떤지
-    - 각 schedule/asin 당 에러가 몇개 났는지. 그리고 그 에러의 중요도는 어떤지. 중요한 에러 보여주기
 - scrapyd + python-scrapyd-api +  scrapy signals (https://docs.scrapy.org/en/latest/topics/signals.html)
     - crawl_statuses (new db table)
         - status
@@ -49,8 +59,6 @@
         - asin
         - error
         - error message
-- eBay publisher
-- login service
 
 ## Apr 23 2020
 - schedular package based on python-scrapyd-api
