@@ -2,5 +2,5 @@ from django.apps import AppConfig
 
 
 class SchedulesConfig(AppConfig):
-    name = 'djg.schedules'
+    name = 'pwweb.schedules'
     verbose_name = 'Schedules'
