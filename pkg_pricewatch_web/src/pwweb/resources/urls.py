@@ -8,6 +8,6 @@ router.register('amazon_parent_listing', views.AmazonParentListingViewSet)
 router.register('amazon_listing', views.AmazonListingViewSet)
 
 urlpatterns = [
-    path('amazon_listing_price/<str:asin>/', views.AmazonListingPriceList.as_view()),
+    path('amazon_listing_price/<str:asin>/<str:domain>/', views.AmazonListingPriceList.as_view()),
     path('', include(router.urls)),
 ]

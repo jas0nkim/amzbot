@@ -1,7 +1,7 @@
 from rest_framework import viewsets, generics
 from pwweb.resources.models import AmazonParentListing, AmazonListing, AmazonListingPrice
 from pwweb.resources.serializers import AmazonParentListingSerializer, AmazonListingSerializer, AmazonListingPriceSerializer
-
+from pwweb.views import MultipleFieldLookupMixin
 
 class AmazonParentListingViewSet(viewsets.ModelViewSet):
     """
@@ -42,11 +42,11 @@ class AmazonListingViewSet(viewsets.ModelViewSet):
 #     #                       IsOwnerOrReadOnly]
 
 
-class AmazonListingPriceList(generics.ListAPIView):
+class AmazonListingPriceList(MultipleFieldLookupMixin, generics.ListAPIView):
     queryset = AmazonListingPrice.objects.all()
     serializer_class = AmazonListingPriceSerializer
     # permission_classes = [IsAdminUser]
-    lookup_field = ['asin']
+    lookup_fields = ['asin', 'domain']
 
     # def post(self, request, *args, **kwargs):
     #     """ either create or update
