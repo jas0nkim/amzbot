@@ -33,7 +33,7 @@ SECRET_KEY = 'gd#o)))-@mkj$njs61!m@swg@%%n)ttg=s*7c^*ma+(vqkjk7x'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', config['PriceWatchWeb']['host'],]
 
 
 # Application definition
