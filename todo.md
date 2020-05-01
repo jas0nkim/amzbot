@@ -1,8 +1,12 @@
+## May 1 2020
+- fix api to handle 'bot', and 'schedular' package
+- build separate postgres docker container and network with 'web' package.
+
 ## Apr 30 2020
 - no 'treq' for scheduler... gave up. switch to 'requests'.
-- complete/test seperation of 'pricewatch-web' package
-    - test REST with scrapy deferred signal handlers (rename package from 'pwbot' to 'pricewatch-bot')
-    - make 'schedular' to work with REST (rename package from 'schedular' to 'pricewatch-schedular')
+- complete/test seperation of 'pricewatch_web' package
+    - test REST with scrapy deferred signal handlers (rename package from 'pwbot' to 'pricewatch_bot')
+    - make 'schedular' to work with REST (rename package from 'schedular' to 'pricewatch_schedular')
 - django-angular for the website
 
 ## Apr 29 2020
