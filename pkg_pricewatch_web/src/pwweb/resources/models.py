@@ -69,6 +69,7 @@ class AmazonListing(models.Model):
     def _save_listing_price(self):
         new_listing_price = AmazonListingPrice()
         new_listing_price.asin = self.asin
+        new_listing_price.domain = self.domain
         new_listing_price.price = self.price
         new_listing_price.original_price = self.original_price
         new_listing_price.save()
@@ -79,6 +80,7 @@ class AmazonListing(models.Model):
 
 class AmazonListingPrice(models.Model):
     asin = models.CharField(max_length=32, db_index=True)
+    domain = models.CharField(max_length=32, blank=True, null=True)
     price = models.DecimalField(max_digits=15, decimal_places=2)
     original_price = models.DecimalField(max_digits=15, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
