@@ -1,4 +1,4 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, generics
 from pwweb.resources.models import AmazonParentListing, AmazonListing, AmazonListingPrice
 from pwweb.resources.serializers import AmazonParentListingSerializer, AmazonListingSerializer, AmazonListingPriceSerializer
 
@@ -29,14 +29,35 @@ class AmazonListingViewSet(viewsets.ModelViewSet):
     #                       IsOwnerOrReadOnly]
 
 
-class AmazonListingPriceViewSet(viewsets.ModelViewSet):
-    """
-    This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions.
+# class AmazonListingPriceViewSet(viewsets.ModelViewSet):
+#     """
+#     This viewset automatically provides `list`, `create`, `retrieve`,
+#     `update` and `destroy` actions.
 
-    Additionally we also provide an extra `highlight` action.
-    """
+#     Additionally we also provide an extra `highlight` action.
+#     """
+#     queryset = AmazonListingPrice.objects.all()
+#     serializer_class = AmazonListingPriceSerializer
+#     # permission_classes = [permissions.IsAuthenticatedOrReadOnly,
+#     #                       IsOwnerOrReadOnly]
+
+
+class AmazonListingPriceList(generics.ListAPIView):
     queryset = AmazonListingPrice.objects.all()
     serializer_class = AmazonListingPriceSerializer
-    # permission_classes = [permissions.IsAuthenticatedOrReadOnly,
-    #                       IsOwnerOrReadOnly]
+    # permission_classes = [IsAdminUser]
+    lookup_field = ['asin']
+
+    # def post(self, request, *args, **kwargs):
+    #     """ either create or update
+    #     """
+
+    #     try:
+    #         # update
+    #         instance = self.get_object()
+    #     except Exception:
+    #         # create
+    #         instance = None
+    #     serializer = self.get_serializer(instance=instance)
+    #     serializer.is_valid(raise_exception=True)
+    #     serializer.save()

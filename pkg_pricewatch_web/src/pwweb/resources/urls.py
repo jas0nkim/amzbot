@@ -6,8 +6,8 @@ from pwweb.resources import views
 router = DefaultRouter()
 router.register('amazon_parent_listing', views.AmazonParentListingViewSet)
 router.register('amazon_listing', views.AmazonListingViewSet)
-router.register('amazon_listing_price', views.AmazonListingPriceViewSet)
 
 urlpatterns = [
+    path('amazon_listing_price/<str:asin>/', views.AmazonListingPriceList.as_view()),
     path('', include(router.urls)),
 ]
