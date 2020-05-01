@@ -11,8 +11,8 @@
 
 FROM python:3.7-stretch
 
-RUN mkdir -p /usr/local/etc/amzbot
-WORKDIR /usr/local/etc/amzbot
+RUN mkdir -p /usr/local/etc/pricewatch
+WORKDIR /usr/local/etc/pricewatch
 
 COPY ./requirements.txt .
 

@@ -1,3 +1,20 @@
+## Apr 30 2020
+- no 'treq' for scheduler... gave up. switch to 'requests'.
+- complete/test seperation of 'pricewatch-web' package
+    - test REST with scrapy deferred signal handlers (rename package from 'pwbot' to 'pricewatch-bot')
+    - make 'schedular' to work with REST (rename package from 'schedular' to 'pricewatch-schedular')
+- django-angular for the website
+
+## Apr 29 2020
+- "Coding is not enough. Software engineering is solving problems.. So what is my problem?"
+    - not accurate scraping
+        cannot handle scraping errors
+        slow scraping
+    - not accurate ebay listing
+        cannot handle ebay listing errors
+    - not fully automated order handling
+    - not a good customer services
+
 ## Apr 28 2020
 - usd scrapy signals Deferred signal handlers https://docs.scrapy.org/en/latest/topics/signals.html#deferred-signal-handlers
     - separate django and scrapy packages
@@ -107,11 +124,11 @@
     https://stackoverflow.com/questions/6456304/scrapy-unit-testing
 - microservices
     - crawling service (dockers)
-        - amzbot application
+        - pwbot application
         - scrapyd server
         - graylog
     - login service
-    - frontend - amzbotweb
+    - frontend - pwbotweb
         - display result
 
 ## Apr 16 2020
@@ -140,7 +157,7 @@
         https://docs.graylog.org/en/latest/pages/configuration/file_location.html
     - dashboard
         https://docs.graylog.org/en/latest/pages/dashboards.html
-- setup amzbot database, and django models
+- setup pwbot database, and django models
 
 ## Apr 04 2020
 - logging system
@@ -155,11 +172,11 @@
     1. scrapyd server
     2. mysql database server
     3. scrapy/django app
-        amzbot
+        pwbot
             scrapy.cfg
             requirements.txt
             ...
-            amzbot
+            pwbot
                 __init__.py
                 items.py
                 pipelines.py

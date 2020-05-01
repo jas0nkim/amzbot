@@ -5,7 +5,7 @@ services:
     image: mongo:3
     volumes:
       - type: volume
-        source: amzbotlog_mongodb_data
+        source: pricewatchlog_mongodb_data
         target: /data/db
         volume:
           nocopy: true
@@ -16,7 +16,7 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.8.5
     volumes:
       - type: volume
-        source: amzbotlog_elasticsearch_data
+        source: pricewatchlog_elasticsearch_data
         target: /usr/share/elasticsearch/data
         volume:
           nocopy: true
@@ -40,7 +40,7 @@ services:
     image: graylog/graylog:3.2
     volumes:
       - type: volume
-        source: amzbotlog_graylog_journal
+        source: pricewatchlog_graylog_journal
         target: /usr/share/graylog/data/journal
         volume:
           nocopy: true
@@ -67,9 +67,9 @@ services:
       # GELF UDP
       - 12201:12201/udp
 volumes:
-  amzbotlog_mongodb_data:
-  amzbotlog_elasticsearch_data:
-  amzbotlog_graylog_journal:
+  pricewatchlog_mongodb_data:
+  pricewatchlog_elasticsearch_data:
+  pricewatchlog_graylog_journal:
 networks:
   graylog:
     driver: bridge

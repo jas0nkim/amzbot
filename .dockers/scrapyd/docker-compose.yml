@@ -12,7 +12,7 @@ services:
         target: /etc/scrapyd/
       - type: bind
         source: ./config_app/
-        target: /usr/local/etc/amzbot/
+        target: /usr/local/etc/pricewatch/
     ports:
       # Scrapyd JSON API and web interface
       - 6800:6800
