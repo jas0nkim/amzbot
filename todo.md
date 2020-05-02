@@ -1,5 +1,10 @@
 ## May 1 2020
 - fix api to handle 'bot', and 'schedular' package
+    - for schedular
+        - create Version
+        - update Version
+        - create Job
+        - update Job
 - build separate postgres docker container and network with 'web' package.
 
 ## Apr 30 2020
