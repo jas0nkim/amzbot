@@ -1,7 +1,7 @@
 from rest_framework.generics import get_object_or_404
 
 
-class MultipleFieldLookupMixin(object):
+class MultipleFieldLookupMixin:
     """
     Apply this mixin to any view or viewset to get multiple field filtering
     based on a `lookup_fields` attribute, instead of the default single field filtering.

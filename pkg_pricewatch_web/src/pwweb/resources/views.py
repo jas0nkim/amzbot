@@ -1,7 +1,7 @@
 from rest_framework import viewsets, generics
 from pwweb.resources.models import AmazonParentListing, AmazonListing, AmazonListingPrice
 from pwweb.resources.serializers import AmazonParentListingSerializer, AmazonListingSerializer, AmazonListingPriceSerializer
-from pwweb.views import MultipleFieldLookupMixin
+from pwweb.mixins import MultipleFieldLookupMixin
 
 class AmazonParentListingViewSet(viewsets.ModelViewSet):
     """
