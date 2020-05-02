@@ -34,4 +34,6 @@ class Version(models.Model):
 
     class Meta:
         db_table = 'sched_versions'
-        unique_together = ['project', 'version']
+        constraints = [
+            models.UniqueConstraint(fields=['project', 'version'], name='unique_project_version')
+        ]
