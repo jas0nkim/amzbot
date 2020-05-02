@@ -75,11 +75,10 @@ class Schedular(object):
             # call API to create a version
             response = requests.post('http://{}:{}/api/schedule/version/'.format(
                     config['PriceWatchWeb']['host'], config['PriceWatchWeb']['port']),
-                headers={'Content-Type': ['application/json'],},
-                data={'project': project,
+                json={'project': project,
                     'version': version,
                     'status': s.SCHEDULES_VERSION_STATUS_ADDED,
-                    'added_at': datetime.now(),
+                    'added_at': str(datetime.now()),
                 })
             if response.status_code != 201:
                 logger.error("{} HTTP Error: Failed to add a new version - {}".format(response.status_code, response.reason))
@@ -102,8 +101,9 @@ class Schedular(object):
             # call API to create a job
             response = requests.post('http://{}:{}/api/schedule/job/'.format(
                     config['PriceWatchWeb']['host'], config['PriceWatchWeb']['port']),
-                headers={'Content-Type': ['application/json'],},
-                data={'project': project,
+                json={'job_id': jobid,
+                    'project': project,
+                    'spider': spider,
                     'version': kwargs.pop('_version', None),
                     'settings': settings,
                     'other_params': kwargs,
@@ -144,20 +144,18 @@ class Schedular(object):
         else:
             for x in d['running']:
                 # call API to update a running job
-                response = requests.post('http://{}:{}/api/schedule/job/{}'.format(
+                response = requests.put('http://{}:{}/api/schedule/job/{}/'.format(
                         config['PriceWatchWeb']['host'], config['PriceWatchWeb']['port'], x['id']),
-                    headers={'Content-Type': ['application/json'],},
-                    data={'start_time': x['start_time'],
+                    json={'start_time': x['start_time'],
                         'status': s.SCHEDULES_JOB_STATUS_RUNNING,
                     })
                 if response.status_code != 200:
                     logger.error("{} HTTP Error: Failed to update a running job - {}".format(response.status_code, response.reason))
             for x in d['finished']:
                 # call API to update a finished job
-                response = requests.post('http://{}:{}/api/schedule/job/{}'.format(
+                response = requests.put('http://{}:{}/api/schedule/job/{}/'.format(
                         config['PriceWatchWeb']['host'], config['PriceWatchWeb']['port'], x['id']),
-                    headers={'Content-Type': ['application/json'],},
-                    data={'start_time': x['start_time'],
+                    json={'start_time': x['start_time'],
                         'end_time': x['end_time'],
                         'status': s.SCHEDULES_JOB_STATUS_FINISHED,
                     })
@@ -182,8 +180,7 @@ class Schedular(object):
             # update deleted version
             response = requests.post('http://{}:{}/api/schedule/version/'.format(
                     config['PriceWatchWeb']['host'], config['PriceWatchWeb']['port']),
-                headers={'Content-Type': ['application/json'],},
-                data={'project': project,
+                json={'project': project,
                     'version': version,
                     'status': s.SCHEDULES_VERSION_STATUS_DELETED,
                 })
@@ -210,8 +207,7 @@ class Schedular(object):
             # update deleted project
             response = requests.post('http://{}:{}/api/schedule/version/'.format(
                     config['PriceWatchWeb']['host'], config['PriceWatchWeb']['port']),
-                headers={'Content-Type': ['application/json'],},
-                data={'project': project,
+                json={'project': project,
                     'status': s.SCHEDULES_VERSION_STATUS_DELETED,
                 })
             if response.status_code != 200:
