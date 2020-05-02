@@ -3,13 +3,13 @@ from django.contrib.postgres.fields import ArrayField
 
 
 class AmazonParentListing(models.Model):
-    parent_asin = models.CharField(max_length=32, primary_key=True)
+    parent_asin = models.CharField(max_length=32, db_index=True)
+    domain = models.CharField(max_length=32, db_index=True)
     asins = ArrayField(
         base_field=models.CharField(max_length=32, blank=True, null=True), blank=True,
         null=True)
     review_count = models.SmallIntegerField(blank=True, null=True, default=0)
     avg_rating = models.FloatField(blank=True, null=True, default=0)
-    domain = models.CharField(max_length=32, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -18,10 +18,14 @@ class AmazonParentListing(models.Model):
 
     class Meta:
         db_table = 'amazon_parent_listings'
+        constraints = [
+            models.UniqueConstraint(fields=['parent_asin', 'domain'],name='unique_parent_asin_domain')
+        ]
 
 
 class AmazonListing(models.Model):
-    asin = models.CharField(max_length=32, primary_key=True)
+    asin = models.CharField(max_length=32, db_index=True)
+    domain = models.CharField(max_length=32, db_index=True)
     parent_asin = models.CharField(max_length=32, db_index=True)
     picture_urls = ArrayField(
         base_field=models.CharField(
@@ -45,7 +49,6 @@ class AmazonListing(models.Model):
     merchant_id = models.CharField(max_length=32, blank=True, null=True)
     merchant_name = models.CharField(max_length=100, blank=True, null=True)
     brand_name = models.CharField(max_length=100, blank=True, null=True)
-    domain = models.CharField(max_length=32, blank=True, null=True)
     meta_title = models.TextField(blank=True, null=True)
     meta_description = models.TextField(blank=True, null=True)
     meta_keywords = models.TextField(blank=True, null=True)
@@ -76,11 +79,14 @@ class AmazonListing(models.Model):
 
     class Meta:
         db_table = 'amazon_listings'
+        constraints = [
+            models.UniqueConstraint(fields=['asin', 'domain'],name='unique_asin_domain')
+        ]
 
 
 class AmazonListingPrice(models.Model):
     asin = models.CharField(max_length=32, db_index=True)
-    domain = models.CharField(max_length=32, blank=True, null=True)
+    domain = models.CharField(max_length=32, db_index=True)
     price = models.DecimalField(max_digits=15, decimal_places=2)
     original_price = models.DecimalField(max_digits=15, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -90,3 +96,6 @@ class AmazonListingPrice(models.Model):
 
     class Meta:
         db_table = 'amazon_listing_prices'
+        constraints = [
+            models.UniqueConstraint(fields=['asin', 'domain'],name='unique_asin_price_domain')
+        ]
