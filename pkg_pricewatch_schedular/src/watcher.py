@@ -31,7 +31,7 @@ config.read(s.APP_CONFIG_FILEPATH)
 
 
 PROJECT = 'pricewatch_bot'
-VERISON = 'v05'
+VERISON = 'v01'
 SPIDER = 'ListingItemsSpider'
 
 _schedular = Schedular()
@@ -58,8 +58,8 @@ def get_available_parent_asins(domain):
         raise Exception(
             "Failed retrieving parent asins ({})".format(domain))
     r = resp.json()
-    return [] if 'results' not in r else [
-        x['parent_asin'] for x in r['results']]
+    return '' if 'results' not in r else ','.join([
+        x['parent_asin'] for x in r['results']])
 
 def schedule_jobs(asins, domain, settings=None):
     if _schedular.schedule(project=PROJECT,

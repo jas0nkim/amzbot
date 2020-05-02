@@ -69,9 +69,9 @@ class Schedular(object):
         except ScrapydResponseError as e:
             logger.error("{}: Response error - {}".format(class_fullname(e), str(e)))
         except Exception as e:
-            logger.error("{}: Failed to add a new version - {}".format(class_fullname(e), str(e)))
+            logger.error("{}: Failed to add a version - {}".format(class_fullname(e), str(e)))
         else:
-            logger.info("new version '{}' for project '{}' added - {} spider(s)".format(project, version, num_of_spiders))
+            logger.info("version '{}' for project '{}' added/updated - {} spider(s)".format(project, version, num_of_spiders))
             # call API to create a version
             response = requests.post('http://{}:{}/api/schedule/version/'.format(
                     config['PriceWatchWeb']['host'], config['PriceWatchWeb']['port']),
@@ -80,8 +80,8 @@ class Schedular(object):
                     'status': s.SCHEDULES_VERSION_STATUS_ADDED,
                     'added_at': str(datetime.now()),
                 })
-            if response.status_code != 201:
-                logger.error("{} HTTP Error: Failed to add a new version - {}".format(response.status_code, response.reason))
+            if not response.ok:
+                logger.error("{} HTTP Error: Failed to add a version - {}".format(response.status_code, response.reason))
         finally:
             return num_of_spiders
 
@@ -109,7 +109,7 @@ class Schedular(object):
                     'other_params': kwargs,
                     'status': s.SCHEDULES_JOB_STATUS_PENDING,
                 })
-            if response.status_code != 201:
+            if not response.ok:
                 logger.error("{} HTTP Error: Failed to add a new job - {}".format(response.status_code, response.reason))
         finally:
             return jobid
@@ -149,7 +149,7 @@ class Schedular(object):
                     json={'start_time': x['start_time'],
                         'status': s.SCHEDULES_JOB_STATUS_RUNNING,
                     })
-                if response.status_code != 200:
+                if not response.ok:
                     logger.error("{} HTTP Error: Failed to update a running job - {}".format(response.status_code, response.reason))
             for x in d['finished']:
                 # call API to update a finished job
@@ -159,7 +159,7 @@ class Schedular(object):
                         'end_time': x['end_time'],
                         'status': s.SCHEDULES_JOB_STATUS_FINISHED,
                     })
-                if response.status_code != 200:
+                if not response.ok:
                     logger.error("{} HTTP Error: Failed to update a finished job - {}".format(response.status_code, response.reason))
 
     def delversion(self, project, version):
@@ -184,7 +184,7 @@ class Schedular(object):
                     'version': version,
                     'status': s.SCHEDULES_VERSION_STATUS_DELETED,
                 })
-            if response.status_code != 200:
+            if not response.ok:
                 logger.error("{} HTTP Error: Failed to update a deleted version - {}".format(response.status_code, response.reason))
         finally:
             return deleted
@@ -210,7 +210,7 @@ class Schedular(object):
                 json={'project': project,
                     'status': s.SCHEDULES_VERSION_STATUS_DELETED,
                 })
-            if response.status_code != 200:
+            if not response.ok:
                 logger.error("{} HTTP Error: Failed to update deleted project - {}".format(response.status_code, response.reason))
         finally:
             return deleted
