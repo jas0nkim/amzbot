@@ -17,7 +17,7 @@ class AmazonParentListing(models.Model):
         return self.parent_asin
 
     class Meta:
-        db_table = 'amazon_parent_listings'
+        db_table = 'resrc_amazon_parent_listings'
         constraints = [
             models.UniqueConstraint(fields=['parent_asin', 'domain'],name='unique_parent_asin_domain')
         ]
@@ -78,7 +78,7 @@ class AmazonListing(models.Model):
         new_listing_price.save()
 
     class Meta:
-        db_table = 'amazon_listings'
+        db_table = 'resrc_amazon_listings'
         constraints = [
             models.UniqueConstraint(fields=['asin', 'domain'],name='unique_asin_domain')
         ]
@@ -95,7 +95,7 @@ class AmazonListingPrice(models.Model):
         return "{}".format(self.asin)
 
     class Meta:
-        db_table = 'amazon_listing_prices'
+        db_table = 'resrc_amazon_listing_prices'
         constraints = [
             models.UniqueConstraint(fields=['asin', 'domain'],name='unique_asin_price_domain')
         ]
