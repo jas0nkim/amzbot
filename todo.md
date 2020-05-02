@@ -1,3 +1,7 @@
+## May 2 2020
+- need to fix 'bot' treq calls.. 'bot' only 'post' to api. api server need to decide either create or update from the 'post' calls. just like 'schedule.vision' we did.
+- build separate postgres docker container and network with 'web' package.
+
 ## May 1 2020
 - fix api to handle 'bot', and 'schedular' package
     - for schedular
@@ -5,7 +9,6 @@
         - update Version
         - create Job
         - update Job
-- build separate postgres docker container and network with 'web' package.
 
 ## Apr 30 2020
 - no 'treq' for scheduler... gave up. switch to 'requests'.
