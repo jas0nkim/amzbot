@@ -23,25 +23,25 @@
 import sys, os, getopt
 import requests
 from pwschedular import Schedular, logger, class_fullname
-from pwschedular import _common_settings as s
+from pwschedular import _common_settings as settings
 
 import configparser
 config = configparser.ConfigParser()
-config.read(s.APP_CONFIG_FILEPATH)
+config.read(settings.APP_CONFIG_FILEPATH)
 
 
 PROJECT = 'pricewatch_bot'
 VERISON = 'v01'
 SPIDER = 'ListingItemsSpider'
 
-_schedular = Schedular()
+schedular = None
 
 
 def addversion_if_non():
     egg = 'pricewatch_bot-0.0.1-py3.7.egg'
     num_of_spiders = 0
     try:
-        num_of_spiders = _schedular.addversion(project=PROJECT,version=VERISON)
+        num_of_spiders = schedular.addversion(project=PROJECT,version=VERISON)
     except Exception as e:
         logger.error("{}: {}".format(
             class_fullname(e), str(e)))
@@ -62,7 +62,7 @@ def get_available_parent_asins(domain):
         x['parent_asin'] for x in r['results']])
 
 def schedule_jobs(asins, domain, settings=None):
-    if _schedular.schedule(project=PROJECT,
+    if schedular.schedule(project=PROJECT,
         spider=SPIDER,
         settings=settings,
         _version=VERISON,
@@ -89,6 +89,8 @@ def main(argv):
     # run(order, restockonly)
 
     domain = 'amazon.com'
+    global schedular
+    schedular = Schedular()
 
     addversion_if_non()
     schedule_jobs(asins=get_available_parent_asins(domain=domain),
