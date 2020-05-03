@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-from pwweb import _common_settings as s
+from pwweb._common_settings import *
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -19,7 +19,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 try:
     import configparser
     config = configparser.ConfigParser()
-    config.read(s.APP_CONFIG_FILEPATH)
+    config.read(APP_CONFIG_FILEPATH)
 except Exception as e:
     raise Exception("Failed to get database connection information - {}".format(str(e)))
 

@@ -24,8 +24,8 @@ class AmazonParentListingList(CreateModelMixin, UpdateModelMixin, generics.ListA
         """ handle both create and update on post method
         """
         try:
-            self._instance = AmazonParentListing.objects.get(project=request.data.get('parent_asin'),
-                version=request.data.get('domain'))
+            self._instance = AmazonParentListing.objects.get(parent_asin=request.data.get('parent_asin'),
+                domain=request.data.get('domain'))
         except AmazonParentListing.DoesNotExist:
             # create
             return self.create(request, *args, **kwargs)
@@ -62,8 +62,8 @@ class AmazonListingList(CreateModelMixin, UpdateModelMixin, generics.ListAPIView
         """ handle both create and update on post method
         """
         try:
-            self._instance = AmazonListing.objects.get(project=request.data.get('asin'),
-                version=request.data.get('domain'))
+            self._instance = AmazonListing.objects.get(asin=request.data.get('asin'),
+                domain=request.data.get('domain'))
         except AmazonListing.DoesNotExist:
             # create
             return self.create(request, *args, **kwargs)

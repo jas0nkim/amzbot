@@ -9,7 +9,7 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
-from pwbot import _common_settings as s
+from pwbot._common_settings import *
 
 BOT_NAME = 'pwbot'
 
@@ -117,7 +117,7 @@ stream_handler.setFormatter(formatter)
 
 import configparser
 config = configparser.ConfigParser()
-config.read(s.APP_CONFIG_FILEPATH)
+config.read(APP_CONFIG_FILEPATH)
 
 graylog_handler = graypy.GELFUDPHandler(config['Graylog']['host'], int(config['Graylog']['port']))
 graylog_handler.setLevel(logging.DEBUG) # set logging.ERROR later
