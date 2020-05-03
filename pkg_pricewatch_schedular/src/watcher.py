@@ -31,7 +31,7 @@ config.read(settings.APP_CONFIG_FILEPATH)
 
 
 PROJECT = 'pricewatch_bot'
-VERISON = 'v01'
+VERISON = 'v02'
 SPIDER = 'ListingItemsSpider'
 
 schedular = None

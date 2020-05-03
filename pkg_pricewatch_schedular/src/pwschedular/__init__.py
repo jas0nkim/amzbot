@@ -1,7 +1,7 @@
 ## config, custom logger
 
 import logging, graypy
-from pwschedular import _common_settings as settings
+from pwschedular import _common_settings as _settings
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -13,7 +13,7 @@ stream_handler.setFormatter(formatter)
 
 import configparser
 config = configparser.ConfigParser()
-config.read(settings.APP_CONFIG_FILEPATH)
+config.read(_settings.APP_CONFIG_FILEPATH)
 
 graylog_handler = graypy.GELFUDPHandler(config['Graylog']['host'], int(config['Graylog']['port']))
 graylog_handler.setLevel(logging.DEBUG) # set logging.ERROR later
@@ -62,7 +62,7 @@ class Schedular(object):
             return None
         num_of_spiders = None
         try:
-            with open(os.path.join(settings.APP_DIST_DIRPATH, egg_filename), 'rb') as egg:
+            with open(os.path.join(_settings.APP_DIST_DIRPATH, egg_filename), 'rb') as egg:
                 num_of_spiders = self._scrapyd.add_version(project, version, egg)
         except FileNotFoundError as e:
             logger.error("{}: {}".format(class_fullname(e), str(e)))
@@ -77,7 +77,7 @@ class Schedular(object):
                     config['PriceWatchWeb']['host'], config['PriceWatchWeb']['port']),
                 json={'project': project,
                     'version': version,
-                    'status': settings.SCHEDULES_VERSION_STATUS_ADDED,
+                    'status': _settings.SCHEDULES_VERSION_STATUS_ADDED,
                     'added_at': str(datetime.now()),
                 })
             if not response.ok:
@@ -107,7 +107,7 @@ class Schedular(object):
                     'version': kwargs.pop('_version', None),
                     'settings': settings,
                     'other_params': kwargs,
-                    'status': settings.SCHEDULES_JOB_STATUS_PENDING,
+                    'status': _settings.SCHEDULES_JOB_STATUS_PENDING,
                 })
             if not response.ok:
                 logger.error("{} HTTP Error: Failed to add a new job - {}".format(response.status_code, response.reason))
@@ -147,7 +147,7 @@ class Schedular(object):
                 response = requests.put('http://{}:{}/api/schedule/job/{}/'.format(
                         config['PriceWatchWeb']['host'], config['PriceWatchWeb']['port'], x['id']),
                     json={'start_time': x['start_time'],
-                        'status': settings.SCHEDULES_JOB_STATUS_RUNNING,
+                        'status': _settings.SCHEDULES_JOB_STATUS_RUNNING,
                     })
                 if not response.ok:
                     logger.error("{} HTTP Error: Failed to update a running job - {}".format(response.status_code, response.reason))
@@ -157,7 +157,7 @@ class Schedular(object):
                         config['PriceWatchWeb']['host'], config['PriceWatchWeb']['port'], x['id']),
                     json={'start_time': x['start_time'],
                         'end_time': x['end_time'],
-                        'status': settings.SCHEDULES_JOB_STATUS_FINISHED,
+                        'status': _settings.SCHEDULES_JOB_STATUS_FINISHED,
                     })
                 if not response.ok:
                     logger.error("{} HTTP Error: Failed to update a finished job - {}".format(response.status_code, response.reason))
@@ -182,7 +182,7 @@ class Schedular(object):
                     config['PriceWatchWeb']['host'], config['PriceWatchWeb']['port']),
                 json={'project': project,
                     'version': version,
-                    'status': settings.SCHEDULES_VERSION_STATUS_DELETED,
+                    'status': _settings.SCHEDULES_VERSION_STATUS_DELETED,
                 })
             if not response.ok:
                 logger.error("{} HTTP Error: Failed to update a deleted version - {}".format(response.status_code, response.reason))
@@ -208,7 +208,7 @@ class Schedular(object):
             response = requests.post('http://{}:{}/api/schedule/version/'.format(
                     config['PriceWatchWeb']['host'], config['PriceWatchWeb']['port']),
                 json={'project': project,
-                    'status': settings.SCHEDULES_VERSION_STATUS_DELETED,
+                    'status': _settings.SCHEDULES_VERSION_STATUS_DELETED,
                 })
             if not response.ok:
                 logger.error("{} HTTP Error: Failed to update deleted project - {}".format(response.status_code, response.reason))
