@@ -43,7 +43,7 @@ class AmazonItemParser(object):
             listing_item = ListingItem()
             listing_item['asin'] = self.__asin
             listing_item['domain'] = response.meta['domain']
-            listing_item['status'] = False
+            listing_item['status'] = settings.RESOURCES_AMAZONLISTING_STATUS_INACTIVE
             if response.status == 404:
                 # RemovedVariationHandleMiddleware.__handle_removed_variations related
                 listing_item['parent_asin'] = None
@@ -73,11 +73,11 @@ class AmazonItemParser(object):
         _asin_on_content = self.__extract_asin_on_content(response)
         if _asin_on_content != self.__asin:
             # inactive amazon item
-            listing_item['status'] = False
+            listing_item['status'] = settings.RESOURCES_AMAZONLISTING_STATUS_INACTIVE
             return listing_item
         elif self.__asin and parent_asin and self.__asin != parent_asin and len(asins) > 0 and self.__asin not in asins:
             # a variation, but removed - inactive this variation
-            listing_item['status'] = False
+            listing_item['status'] = settings.RESOURCES_AMAZONLISTING_STATUS_INACTIVE
             return listing_item
         else:
             try:
@@ -103,9 +103,9 @@ class AmazonItemParser(object):
                 listing_item['meta_title'] = self.__extract_meta_title(response)
                 listing_item['meta_description'] = self.__extract_meta_description(response)
                 listing_item['meta_keywords'] = self.__extract_meta_keywords(response)
-                listing_item['status'] = True
+                listing_item['status'] = settings.RESOURCES_AMAZONLISTING_STATUS_ACTIVE
             except Exception as e:
-                listing_item['status'] = False
+                listing_item['status'] = settings.RESOURCES_AMAZONLISTING_STATUS_INACTIVE
                 self.logger.exception("{}: [ASIN:{}] Failed to parse item - {}".format(utils.class_fullname(e), self.__asin, str(e)))
             return listing_item
 
