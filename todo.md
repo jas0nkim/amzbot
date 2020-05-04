@@ -1,3 +1,9 @@
+## May 3 2020
+- finish discovery.py and watcher.py. and combine into a single script
+    - 1. add new job to discover new product/listing
+    - 2. add new job to track existing products/listings
+    - 3. monitor jobs
+
 ## May 2 2020
 - need to fix 'bot' treq calls.. 'bot' only 'post' to api. api server need to decide either create or update from the 'post' calls. just like 'schedule.vision' we did.
 - build separate postgres docker container and network with 'web' package.
