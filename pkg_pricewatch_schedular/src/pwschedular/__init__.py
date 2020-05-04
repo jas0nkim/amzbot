@@ -1,7 +1,7 @@
 ## config, custom logger
 
 import logging, graypy
-from pwschedular import _common_settings as _settings
+from pwschedular import settings
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -13,7 +13,7 @@ stream_handler.setFormatter(formatter)
 
 import configparser
 config = configparser.ConfigParser()
-config.read(_settings.APP_CONFIG_FILEPATH)
+config.read(settings.APP_CONFIG_FILEPATH)
 
 graylog_handler = graypy.GELFUDPHandler(config['Graylog']['host'], int(config['Graylog']['port']))
 graylog_handler.setLevel(logging.DEBUG) # set logging.ERROR later
@@ -33,6 +33,57 @@ import requests
 # from djg.schedules.models import Job, Version
 
 
+class Runner:
+    def _schedule_jobs(self, **kwargs):
+        if self.schdlr.schedule(project=settings.BOT_PROJECT,
+            spider='ListingItemsSpider',
+            _version=settings.BOT_VERISON,
+            **kwargs) is None:
+            raise Exception("Failed schedule a job")
+
+    def _addversion_if_non(self):
+        num_of_spiders = 0
+        try:
+            num_of_spiders = self.schdlr.addversion(project=settings.BOT_PROJECT,
+                version=settings.BOT_VERISON)
+        except Exception as e:
+            logger.error("{}: {}".format(
+                class_fullname(e), str(e)))
+        if num_of_spiders < 1:
+            raise Exception("Failed adding new project version.")
+
+    def _get_available_parent_asins(self, domain):
+        """ todo: filter parent asins with 'domain'
+        """
+        resp = requests.get(
+            'http://{}:{}/api/resource/amazon_parent_listing/?format=json'.format(
+                config['PriceWatchWeb']['host'], config['PriceWatchWeb']['port']))
+        if resp.status_code != 200:
+            raise Exception(
+                "Failed retrieving parent asins ({})".format(domain))
+        r = resp.json()
+        return '' if 'results' not in r else ','.join([
+            x['parent_asin'] for x in r['results']])
+
+    def __init__(self):
+        self.schdlr = Schedular()
+
+    def discover(self, domain, urls=None, asins=None, add_version=False):
+        if add_version:
+            self._addversion_if_non()
+        self._schedule_jobs(**{'domain':domain, 'urls':urls, 'asins':asins})
+
+    def track(self, domain, urls=None, asins=None, add_version=False):
+        if add_version:
+            self._addversion_if_non()
+        if not asins:
+            asins = self._get_available_parent_asins(domain=domain)
+        self._schedule_jobs(**{'domain':domain, 'urls':urls, 'asins':asins})
+
+    def jobs(self):
+        self.schdlr.listjobs(project=settings.BOT_PROJECT)
+
+
 
 def class_fullname(o):
     """ https://stackoverflow.com/a/2020083
@@ -43,7 +94,7 @@ def class_fullname(o):
     else:
         return module + '.' + o.__class__.__name__
 
-class Schedular(object):
+class Schedular:
 
     def __init__(self):
         self._scrapyd = None
@@ -62,7 +113,7 @@ class Schedular(object):
             return None
         num_of_spiders = None
         try:
-            with open(os.path.join(_settings.APP_DIST_DIRPATH, egg_filename), 'rb') as egg:
+            with open(os.path.join(settings.APP_DIST_DIRPATH, egg_filename), 'rb') as egg:
                 num_of_spiders = self._scrapyd.add_version(project, version, egg)
         except FileNotFoundError as e:
             logger.error("{}: {}".format(class_fullname(e), str(e)))
@@ -77,21 +128,22 @@ class Schedular(object):
                     config['PriceWatchWeb']['host'], config['PriceWatchWeb']['port']),
                 json={'project': project,
                     'version': version,
-                    'status': _settings.SCHEDULES_VERSION_STATUS_ADDED,
+                    'status': settings.SCHEDULES_VERSION_STATUS_ADDED,
                     'added_at': str(datetime.now()),
                 })
             if not response.ok:
-                logger.error("{} HTTP Error: Failed to add a version - {}".format(response.status_code, response.reason))
+                logger.error("{} HTTP Error: Failed to add a version - {} - {}".format(response.status_code, response.reason, response.text))
         finally:
             return num_of_spiders
 
-    def schedule(self, project, spider, settings=None, **kwargs):
+    def schedule(self, project, spider, **kwargs):
         if not self._scrapyd:
             logger.error("No scrapyd object find. Unable to schedule a job.")
             return None
         jobid = None
         try:
-            jobid = self._scrapyd.schedule(project, spider, settings, **kwargs)
+            _s = None # scrapy settings in dict. eg {'DOWNLOAD_DELAY': 2}
+            jobid = self._scrapyd.schedule(project, spider, settings=_s, **kwargs)
         except ScrapydResponseError as e:
             logger.error("{}: Response error - {}".format(class_fullname(e), str(e)))
         except Exception as e:
@@ -105,12 +157,12 @@ class Schedular(object):
                     'project': project,
                     'spider': spider,
                     'version': kwargs.pop('_version', None),
-                    'settings': settings,
+                    'settings': _s,
                     'other_params': kwargs,
-                    'status': _settings.SCHEDULES_JOB_STATUS_PENDING,
+                    'status': settings.SCHEDULES_JOB_STATUS_PENDING,
                 })
             if not response.ok:
-                logger.error("{} HTTP Error: Failed to add a new job - {}".format(response.status_code, response.reason))
+                logger.error("{} HTTP Error: Failed to add a new job - {} - {}".format(response.status_code, response.reason, response.text))
         finally:
             return jobid
 
@@ -127,40 +179,39 @@ class Schedular(object):
             logger.error("{}: Failed to list jobs - {}".format(class_fullname(e), str(e)))
         else:
             logger.info("list of jobs for project '{}' - {}".format(project, str(jobs)))
-            self._store_jobs(jobs)
+            self._store_jobs(project, jobs)
         finally:
             return jobs
 
-    def _store_jobs(self, jobs):
+    def _store_jobs(self, project, jobs):
         """ parse jobs and store information into db
         """
-        try:
-            d = ast.literal_eval(jobs)
-            """ convert string to dictionaty
-                https://www.geeksforgeeks.org/python-convert-string-dictionary-to-dictionary/
-            """
-        except Exception as e:
-            logger.error("{}: Failed to parse jobs - {}".format(class_fullname(e), str(e)))
-        else:
-            for x in d['running']:
+        if all(_j in jobs for _j in ['running', 'finished']):
+            for x in jobs['running']:
                 # call API to update a running job
                 response = requests.put('http://{}:{}/api/schedule/job/{}/'.format(
                         config['PriceWatchWeb']['host'], config['PriceWatchWeb']['port'], x['id']),
-                    json={'start_time': x['start_time'],
-                        'status': _settings.SCHEDULES_JOB_STATUS_RUNNING,
+                    json={'job_id': x['id'],
+                        'project': project,
+                        'spider': x['spider'],
+                        'start_time': x['start_time'],
+                        'status': settings.SCHEDULES_JOB_STATUS_RUNNING,
                     })
                 if not response.ok:
-                    logger.error("{} HTTP Error: Failed to update a running job - {}".format(response.status_code, response.reason))
-            for x in d['finished']:
+                    logger.error("{} HTTP Error: Failed to update a running job - {} - {}".format(response.status_code, response.reason, response.text))
+            for x in jobs['finished']:
                 # call API to update a finished job
                 response = requests.put('http://{}:{}/api/schedule/job/{}/'.format(
                         config['PriceWatchWeb']['host'], config['PriceWatchWeb']['port'], x['id']),
-                    json={'start_time': x['start_time'],
+                    json={'job_id': x['id'],
+                        'project': project,
+                        'spider': x['spider'],
+                        'start_time': x['start_time'],
                         'end_time': x['end_time'],
-                        'status': _settings.SCHEDULES_JOB_STATUS_FINISHED,
+                        'status': settings.SCHEDULES_JOB_STATUS_FINISHED,
                     })
                 if not response.ok:
-                    logger.error("{} HTTP Error: Failed to update a finished job - {}".format(response.status_code, response.reason))
+                    logger.error("{} HTTP Error: Failed to update a finished job - {} - {}".format(response.status_code, response.reason, response.text))
 
     def delversion(self, project, version):
         """ delversion
@@ -182,10 +233,10 @@ class Schedular(object):
                     config['PriceWatchWeb']['host'], config['PriceWatchWeb']['port']),
                 json={'project': project,
                     'version': version,
-                    'status': _settings.SCHEDULES_VERSION_STATUS_DELETED,
+                    'status': settings.SCHEDULES_VERSION_STATUS_DELETED,
                 })
             if not response.ok:
-                logger.error("{} HTTP Error: Failed to update a deleted version - {}".format(response.status_code, response.reason))
+                logger.error("{} HTTP Error: Failed to update a deleted version - {} - {}".format(response.status_code, response.reason, response.text))
         finally:
             return deleted
 
@@ -208,10 +259,10 @@ class Schedular(object):
             response = requests.post('http://{}:{}/api/schedule/version/'.format(
                     config['PriceWatchWeb']['host'], config['PriceWatchWeb']['port']),
                 json={'project': project,
-                    'status': _settings.SCHEDULES_VERSION_STATUS_DELETED,
+                    'status': settings.SCHEDULES_VERSION_STATUS_DELETED,
                 })
             if not response.ok:
-                logger.error("{} HTTP Error: Failed to update deleted project - {}".format(response.status_code, response.reason))
+                logger.error("{} HTTP Error: Failed to update deleted project - {} - {}".format(response.status_code, response.reason, response.text))
         finally:
             return deleted
 
