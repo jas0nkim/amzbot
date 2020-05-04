@@ -42,7 +42,7 @@ class BasePwbotCrawlSpider(CrawlSpider):
         def _cb(resp):
             text = yield resp.text(encoding='UTF-8')
             if resp.code >= 400:
-                _logger.error("Error on treq response: {}".format(text))
+                _logger.error("{}: HTTP Error: Failed to create/update item - {}".format(resp.code, text))
 
         d = treq.post('http://{}:{}/api/resource/{}/'.format(
                     config['PriceWatchWeb']['host'], config['PriceWatchWeb']['port'], x),
