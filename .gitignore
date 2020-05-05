@@ -12,4 +12,8 @@ build/
 dist/
 *.egg-info/
 
+# coverage
+**/.coverage
+**/htmlcov/
+
 .dockers/scrapyd/data
