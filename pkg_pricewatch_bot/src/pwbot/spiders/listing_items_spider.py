@@ -39,7 +39,6 @@ class ListingItemsSpider(BasePwbotCrawlSpider):
     # _scraped_parent_asins_cache = {}
     __parse_pictures = True
     __parse_variations = True
-    __parse_parent_listing = True
 
     def __init__(self, *a, **kw):
         super().__init__(*a, **kw)
@@ -55,8 +54,6 @@ class ListingItemsSpider(BasePwbotCrawlSpider):
             self.__parse_pictures = utils.true_or_false(kw['parse_pictures'])
         if 'parse_variations' in kw:
             self.__parse_variations = utils.true_or_false(kw['parse_variations'])
-        if 'parse_parent_listing' in kw:
-            self.__parse_parent_listing = utils.true_or_false(kw['parse_parent_listing'])
     #     if 'premium' in kw and kw['premium'] == True:
     #         self.tor_privoxy_enabled = False
     #         self.crawlera_enabled = True
@@ -87,7 +84,6 @@ class ListingItemsSpider(BasePwbotCrawlSpider):
                         meta={
                             'parse_pictures': self.__parse_pictures,
                             'parse_variations': self.__parse_variations,
-                            'parse_parent_listing': self.__parse_parent_listing,
                             'domain': self.__domain,
                         })
 

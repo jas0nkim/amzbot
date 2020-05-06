@@ -8,17 +8,13 @@
 from scrapy import Item, Field
 
 
-class ParentListingItem(Item):
-    parent_asin = Field()
-    asins = Field()
-    review_count = Field()
-    avg_rating = Field()
+class AmazonItem(Item):
+    """ amazon(.com, .ca) item
+    """
     domain = Field()
-
-
-class ListingItem(Item):
     asin = Field()
     parent_asin = Field()
+    variation_asins = Field()
     picture_urls = Field()
     description = Field()
     url = Field()
@@ -30,6 +26,8 @@ class ListingItem(Item):
     features = Field()
     specifications = Field()
     variation_specifics = Field()
+    review_count = Field()
+    avg_rating = Field()
     is_fba = Field()
     is_addon = Field()
     is_pantry = Field()
@@ -38,10 +36,10 @@ class ListingItem(Item):
     merchant_id = Field()
     merchant_name = Field()
     brand_name = Field()
-    domain = Field()
     meta_title = Field()
     meta_description = Field()
     meta_keywords = Field()
+    http_status = Field()
     status = Field()
 
 

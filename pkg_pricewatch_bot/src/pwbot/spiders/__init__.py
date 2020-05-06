@@ -30,11 +30,7 @@ class BasePwbotCrawlSpider(CrawlSpider):
 
     def item_scraped(self, item, response, spider):
         # Send the scraped item to the server
-        if type(item).__name__ == 'ParentListingItem':
-            x = 'amazon_parent_listing'
-        elif type(item).__name__ == 'ListingItem':
-            x = 'amazon_listing'
-        else:
+        if type(item).__name__ not in ['AmazonItem',]:
             raise DropItem("Invalid item type - {}".format(type(item).__name__))
 
         _logger = self.logger
@@ -44,8 +40,8 @@ class BasePwbotCrawlSpider(CrawlSpider):
             if resp.code >= 400:
                 _logger.error("{}: HTTP Error: Failed to create/update item - {}".format(resp.code, text))
 
-        d = treq.post('http://{}:{}/api/resource/{}/'.format(
-                    config['PriceWatchWeb']['host'], config['PriceWatchWeb']['port'], x),
+        d = treq.post('http://{}:{}/api/resource/raw_data/'.format(
+                    config['PriceWatchWeb']['host'], config['PriceWatchWeb']['port']),
             json.dumps(self._serialize(item)).encode('ascii'),
             headers={b'Content-Type': [b'application/json']}
         )
