@@ -1,5 +1,15 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
+from django.contrib.postgres.fields import JSONField
+
+class RawData(models.Model):
+    url = models.TextField(db_index=True)
+    domain = models.CharField(max_length=32, db_index=True)
+    data = JSONField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'resrc_raw_data'
 
 
 class AmazonParentListing(models.Model):
