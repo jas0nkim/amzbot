@@ -1,5 +1,10 @@
 from rest_framework import serializers
-from pwweb.resources.models import AmazonParentListing, AmazonListing, AmazonListingPrice
+from pwweb.resources.models import AmazonParentListing, AmazonListing, AmazonListingPrice, RawData
+
+class RawDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RawData
+        fields = '__all__'
 
 class AmazonParentListingSerializer(serializers.ModelSerializer):
     class Meta:

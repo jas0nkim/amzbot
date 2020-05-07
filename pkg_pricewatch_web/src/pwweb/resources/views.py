@@ -1,9 +1,19 @@
 from django.http import Http404
 from rest_framework import viewsets, generics
 from rest_framework.mixins import CreateModelMixin, UpdateModelMixin
-from pwweb.resources.models import AmazonParentListing, AmazonListing, AmazonListingPrice
-from pwweb.resources.serializers import AmazonParentListingSerializer, AmazonListingSerializer, AmazonListingPriceSerializer
 from pwweb.mixins import MultipleFieldLookupMixin
+from pwweb.resources.serializers import *
+
+
+class RawDataListCreate(generics.ListCreateAPIView):
+    queryset = RawData.objects.all()
+    serializer_class = RawDataSerializer
+    # permission_classes = [IsAdminUser]
+
+    # def post(self, request, *args, **kwargs):
+    #     """ handle create on post method
+    #     """
+    #     return self.update(request, *args, **kwargs)
 
 
 class AmazonParentListingList(CreateModelMixin, UpdateModelMixin, generics.ListAPIView):
