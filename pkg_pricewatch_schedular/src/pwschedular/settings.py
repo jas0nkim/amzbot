@@ -23,4 +23,13 @@ jobs                    monitor/update existing jobs
 Options
 =======
 --help, -h              show this help message and exit
+--deploy, -d            deploy new egg to scrapyd server
+--project=PROJECT, -p=PROJECT
+                        project name
+--version=VERSION, -v=VERSION
+                        version name
+--spider=SPIDER, -s=SPIDER
+                        spider name
 -a NAME=VALUE           set spider argument (may be repeated)"""
+
+DEFAULT_SPIDER = 'AmazonItemPageSpider'

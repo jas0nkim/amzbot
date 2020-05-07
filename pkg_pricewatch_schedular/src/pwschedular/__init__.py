@@ -1,7 +1,23 @@
 ## config, custom logger
 
-import logging, graypy
+import os
+import ast
+import json
+import logging
+import configparser
+import requests
+import graypy
+from datetime import datetime
+from scrapyd_api import ScrapydAPI
+from scrapyd_api.exceptions import ScrapydResponseError
 from pwschedular import settings
+
+
+## config, custom logger end
+
+# from django.core.exceptions import ObjectDoesNotExist
+# from djg.schedules.models import Job, Version
+
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -11,7 +27,6 @@ formatter = logging.Formatter('%(asctime)s [%(name)s] %(levelname)s: %(message)s
 stream_handler = logging.StreamHandler()
 stream_handler.setFormatter(formatter)
 
-import configparser
 config = configparser.ConfigParser()
 config.read(settings.APP_CONFIG_FILEPATH)
 
@@ -22,22 +37,13 @@ graylog_handler.setFormatter(formatter)
 logger.addHandler(stream_handler)
 logger.addHandler(graylog_handler)
 
-## config, custom logger end
-
-import os, ast, json
-from datetime import datetime
-from scrapyd_api import ScrapydAPI
-from scrapyd_api.exceptions import ScrapydResponseError
-import requests
-# from django.core.exceptions import ObjectDoesNotExist
-# from djg.schedules.models import Job, Version
 
 
 class Runner:
-    def _schedule_jobs(self, **kwargs):
-        if self.schdlr.schedule(project=settings.BOT_PROJECT,
-            spider='ListingItemsSpider',
-            _version=settings.BOT_VERISON,
+    def _schedule_jobs(self, project, version, spider, **kwargs):
+        if self.schdlr.schedule(project=project,
+            spider=spider,
+            _version=version,
             **kwargs) is None:
             raise Exception("Failed schedule a job")
 
@@ -68,17 +74,29 @@ class Runner:
     def __init__(self):
         self.schdlr = Schedular()
 
-    def discover(self, domain, urls=None, asins=None, add_version=False):
+    def discover(self, domain, urls=None, asins=None, add_version=False, project=None, version=None, spider=None):
         if add_version:
             self._addversion_if_non()
-        self._schedule_jobs(**{'domain':domain, 'urls':urls, 'asins':asins})
+        if project is None:
+            project = settings.BOT_PROJECT
+        if version is None:
+            version = settings.BOT_VERISON
+        if spider is None:
+            spider = settings.DEFAULT_SPIDER
+        self._schedule_jobs(project, version, spider, **{'domain':domain, 'urls':urls, 'asins':asins})
 
-    def track(self, domain, urls=None, asins=None, add_version=False):
+    def track(self, domain, urls=None, asins=None, add_version=False, project=None, version=None, spider=None):
         if add_version:
             self._addversion_if_non()
         if not asins:
             asins = self._get_available_parent_asins(domain=domain)
-        self._schedule_jobs(**{'domain':domain, 'urls':urls, 'asins':asins})
+        if project is None:
+            project = settings.BOT_PROJECT
+        if version is None:
+            version = settings.BOT_VERISON
+        if spider is None:
+            spider = settings.DEFAULT_SPIDER
+        self._schedule_jobs(project, version, spider **{'domain':domain, 'urls':urls, 'asins':asins})
 
     def jobs(self):
         self.schdlr.listjobs(project=settings.BOT_PROJECT)

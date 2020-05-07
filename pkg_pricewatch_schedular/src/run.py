@@ -26,7 +26,7 @@ def main(func, argv):
         print(HELP_MESSAGE)
         sys.exit(2)
     try:
-        opts, _ = getopt.getopt(argv, "ha:v", ["help", "add-version"])
+        opts, _ = getopt.getopt(argv, "hda:", ["help", "deploy"])
     except getopt.GetoptError as e:
         print(e)
         print("")
@@ -36,12 +36,21 @@ def main(func, argv):
     domain = None
     urls = None
     asins = None
+    project = None
+    version = None
+    spider = None
     for opt, arg in opts:
         if opt in ('-h', '--help'):
             print(HELP_MESSAGE)
             sys.exit()
-        elif opt in ('-v', '--add-version'):
+        elif opt in ('-d', '--deploy'):
             add_version = True
+        elif opt in ('-p', '--project'):
+            project = arg
+        elif opt in ('-v', '--version'):
+            version = arg
+        elif opt in ('-s', '--spider'):
+            spider = arg
         elif opt == '-a':
             name, value = arg.split('=', 1)
             if name == 'domain':
@@ -56,7 +65,13 @@ def main(func, argv):
     if func == 'jobs':
         getattr(runner, func)()
     else:
-        getattr(runner, func)(domain, urls=urls, asins=asins, add_version=add_version)
+        getattr(runner, func)(domain,
+            urls=urls,
+            asins=asins,
+            add_version=add_version,
+            project=project,
+            version=version,
+            spider=spider)
 
 
 if __name__ == "__main__":

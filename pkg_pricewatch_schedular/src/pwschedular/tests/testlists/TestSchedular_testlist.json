@@ -3,7 +3,7 @@
         {
             "project": "pricewatch_bot",
             "version": "v01",
-            "spider": "ListingItemsSpider",
+            "spider": "AmazonItemPageSpider",
             "asins": "B00II9VHCU",
             "domain": "amazon.com",
             "expected_number_of_spiders": 1
