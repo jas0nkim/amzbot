@@ -1,4 +1,38 @@
-## May 3 2020
+## May 6 2020
+- store original crawling data in raw_* table
+    - domain
+    - url
+    - data (json)
+    - created_at
+- build separate postgres docker container and network with 'web' package.
+    - docker-composer
+        - web/api (django)
+        - db (postgres)
+        - scrapyd (bot egg)
+        - schedular
+        - graylog
+        - mongodb (graylog-related)
+        - elasticsearch (graylog-related)
+
+## May 5 2020
+- research mongodb and ScrapydWeb https://github.com/my8100/scrapydweb
+    - mongodb for django: djongo https://djongo.readthedocs.io/docs/get-started/
+- use coverage.py (https://coverage.readthedocs.io/en/latest/) for testing
+    - command line:
+        coverage run -m unittest discover src/ -v
+        coverage report -m
+        coverage html
+- what are the problems again?
+    - "Coding is not enough. Software engineering is solving problems.. So what is my problem?"
+        - not accurate scraping
+            cannot handle scraping errors
+            slow scraping
+        - not accurate ebay listing
+            cannot handle ebay listing errors
+        - not fully automated order handling
+        - not a good customer services
+
+## May 4 2020
 - finish discovery.py and watcher.py. and combine into a single script
     - 1. add new job to discover new product/listing
     - 2. add new job to track existing products/listings
@@ -6,7 +40,6 @@
 
 ## May 2 2020
 - need to fix 'bot' treq calls.. 'bot' only 'post' to api. api server need to decide either create or update from the 'post' calls. just like 'schedule.vision' we did.
-- build separate postgres docker container and network with 'web' package.
 
 ## May 1 2020
 - fix api to handle 'bot', and 'schedular' package
