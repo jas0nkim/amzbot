@@ -5,11 +5,11 @@ from pwbot import settings, parsers, utils
 from pwbot.spiders import BasePwbotCrawlSpider
 
 
-class ListingItemsSpider(BasePwbotCrawlSpider):
+class AmazonItemPageSpider(BasePwbotCrawlSpider):
 
     """ crawl amazon items
     """
-    name = 'ListingItemsSpider'
+    name = 'AmazonItemPageSpider'
 
     allowed_domains = ['amazon.com', 'amazon.ca',]
     # handle_httpstatus_list = [404]
