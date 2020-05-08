@@ -2,7 +2,7 @@ from pwschedular._common_settings import *
 
 HELP_MESSAGE = """Usage
 =====
-    python run.py [command] [options]
+    python run.py <command> [options]
 
 Run a schedular
 

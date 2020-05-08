@@ -74,7 +74,7 @@ class Runner:
     def __init__(self):
         self.schdlr = Schedular()
 
-    def discover(self, domain, urls=None, asins=None, add_version=False, project=None, version=None, spider=None):
+    def discover(self, add_version, project=None, version=None, spider=None, **kwargs):
         if add_version:
             self._addversion_if_non()
         if project is None:
@@ -83,20 +83,20 @@ class Runner:
             version = settings.BOT_VERISON
         if spider is None:
             spider = settings.DEFAULT_SPIDER
-        self._schedule_jobs(project, version, spider, **{'domain':domain, 'urls':urls, 'asins':asins})
+        self._schedule_jobs(project, version, spider, **kwargs)
 
-    def track(self, domain, urls=None, asins=None, add_version=False, project=None, version=None, spider=None):
+    def track(self, add_version, project=None, version=None, spider=None, **kwargs):
         if add_version:
             self._addversion_if_non()
-        if not asins:
-            asins = self._get_available_parent_asins(domain=domain)
         if project is None:
             project = settings.BOT_PROJECT
         if version is None:
             version = settings.BOT_VERISON
         if spider is None:
             spider = settings.DEFAULT_SPIDER
-        self._schedule_jobs(project, version, spider **{'domain':domain, 'urls':urls, 'asins':asins})
+        if 'domain' in kwargs and 'asins' not in kwargs:
+            kwargs['asins'] = self._get_available_parent_asins(domain=kwargs['domain'])
+        self._schedule_jobs(project, version, spider **kwargs)
 
     def jobs(self):
         self.schdlr.listjobs(project=settings.BOT_PROJECT)

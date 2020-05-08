@@ -33,12 +33,10 @@ def main(func, argv):
         print(HELP_MESSAGE)
         sys.exit(2)
     add_version = False
-    domain = None
-    urls = None
-    asins = None
     project = None
     version = None
     spider = None
+    kwargs = {}
     for opt, arg in opts:
         if opt in ('-h', '--help'):
             print(HELP_MESSAGE)
@@ -53,25 +51,16 @@ def main(func, argv):
             spider = arg
         elif opt == '-a':
             name, value = arg.split('=', 1)
-            if name == 'domain':
-                domain = value
-            elif name == 'urls':
-                urls = value
-            elif name == 'asins':
-                asins = value
-            else:
-                pass
+            kwargs[name] = value
     runner = Runner()
     if func == 'jobs':
         getattr(runner, func)()
     else:
-        getattr(runner, func)(domain,
-            urls=urls,
-            asins=asins,
-            add_version=add_version,
+        getattr(runner, func)(add_version=add_version,
             project=project,
             version=version,
-            spider=spider)
+            spider=spider,
+            **kwargs)
 
 
 if __name__ == "__main__":
