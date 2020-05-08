@@ -1,3 +1,11 @@
+## May 7 2020
+- either 'domain' + 'asins' OR 'urls'
+    if 'urls' entered 'domain' will be ignored
+- listing_item_spider.py line 78 error:
+    unable to retrieve asin from url - check function utils.extract_asin_from_url:
+    https://www.amazon.com/Gildan-Mens-T-Shirt-Assortment-Small/dp/B077ZKF9ZN/ref=zg_bs_fashion_1?_encoding=UTF8&refRID=NSX2F9SWW59TZN9SDX7K&th=1
+- how would handle http errors on api?? log in db?
+
 ## May 6 2020
 - store original crawling data in raw_* table
     - domain
