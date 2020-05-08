@@ -30,19 +30,7 @@ class BasePwbotCrawlSpider(CrawlSpider):
 
     def item_scraped(self, item, response, spider):
         # Send the scraped item to the server
-        if type(item).__name__ == 'AmazonItem':
-            # matching api requirement
-            # {
-            #     'url': URL,
-            #     'domain': DOMAIN,
-            #     'data': JSON DATA
-            # }
-            post_data = {
-                'url': item.get('url', None),
-                'domain': item.get('domain', None),
-                'data': self._serialize(item)
-            }
-        else:
+        if type(item).__name__ not in ['ListingItem',]:
             raise DropItem("Invalid item type - {}".format(type(item).__name__))
 
         _logger = self.logger
@@ -54,7 +42,7 @@ class BasePwbotCrawlSpider(CrawlSpider):
 
         d = treq.post('http://{}:{}/api/resource/raw_data/'.format(
                     config['PriceWatchWeb']['host'], config['PriceWatchWeb']['port']),
-            json.dumps(post_data).encode('ascii'),
+            json.dumps(self._serialize(item)).encode('ascii'),
             headers={b'Content-Type': [b'application/json']}
         )
         d.addCallback(_cb)

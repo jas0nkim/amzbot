@@ -34,8 +34,8 @@ class TestAmazonItemParser(unittest.TestCase):
             for i in t['items']:
                 # unittest.TestCase.subTest(msg: Any = ...)
                 with self.subTest(asin=t['expected_asin']):
-                    if i.__class__.__name__ == 'AmazonItem':
-                        self.assertEqual(i['asin'], t['expected_asin'])
+                    if i.__class__.__name__ == 'ListingItem':
+                        self.assertEqual(i['data']['asin'], t['expected_asin'])
                     else:
                         raise Exception("Invalid 'item' object passed - {}".format(i.__class__.__name__))
 
@@ -43,8 +43,8 @@ class TestAmazonItemParser(unittest.TestCase):
         for t in self.testlist:
             for i in t['items']:
                 with self.subTest(asin=t['expected_asin']):
-                    if i.__class__.__name__ == 'AmazonItem':
-                        self.assertEqual(set(i['variation_asins']), set(t['expected_variation_asins']))
+                    if i.__class__.__name__ == 'ListingItem':
+                        self.assertEqual(set(i['data']['variation_asins']), set(t['expected_variation_asins']))
                     else:
                         raise Exception("Invalid 'item' object passed - {}".format(i.__class__.__name__))
 
@@ -52,8 +52,8 @@ class TestAmazonItemParser(unittest.TestCase):
         for t in self.testlist:
             for i in t['items']:
                 with self.subTest(asin=t['expected_asin']):
-                    if i.__class__.__name__ == 'AmazonItem':
-                        self.assertEqual(i['title'], t['expected_title'])
+                    if i.__class__.__name__ == 'ListingItem':
+                        self.assertEqual(i['data']['title'], t['expected_title'])
                     else:
                         raise Exception("Invalid 'item' object passed - {}".format(i.__class__.__name__))
 
@@ -61,10 +61,8 @@ class TestAmazonItemParser(unittest.TestCase):
         for t in self.testlist:
             for i in t['items']:
                 with self.subTest(asin=t['expected_asin']):
-                    if i.__class__.__name__ == 'AmazonItem':
-                        self.assertEqual(i['price'], t['expected_price'])
-                    elif i.__class__.__name__ == 'ParentListingItem':
-                        pass
+                    if i.__class__.__name__ == 'ListingItem':
+                        self.assertEqual(i['data']['price'], t['expected_price'])
                     else:
                         raise Exception("Invalid 'item' object passed - {}".format(i.__class__.__name__))
 
@@ -72,8 +70,8 @@ class TestAmazonItemParser(unittest.TestCase):
         for t in self.testlist:
             for i in t['items']:
                 with self.subTest(asin=t['expected_asin']):
-                    if i.__class__.__name__ == 'AmazonItem':
-                        self.assertEqual(i['original_price'], t['expected_original_price'])
+                    if i.__class__.__name__ == 'ListingItem':
+                        self.assertEqual(i['data']['original_price'], t['expected_original_price'])
                     else:
                         raise Exception("Invalid 'item' object passed - {}".format(i.__class__.__name__))
 
@@ -81,8 +79,8 @@ class TestAmazonItemParser(unittest.TestCase):
         for t in self.testlist:
             for i in t['items']:
                 with self.subTest(asin=t['expected_asin']):
-                    if i.__class__.__name__ == 'AmazonItem':
-                        self.assertEqual(i['avg_rating'], t['expected_avg_rating'])
+                    if i.__class__.__name__ == 'ListingItem':
+                        self.assertEqual(i['data']['avg_rating'], t['expected_avg_rating'])
                     else:
                         raise Exception("Invalid 'item' object passed - {}".format(i.__class__.__name__))
 
@@ -90,8 +88,8 @@ class TestAmazonItemParser(unittest.TestCase):
         for t in self.testlist:
             for i in t['items']:
                 with self.subTest(asin=t['expected_asin']):
-                    if i.__class__.__name__ == 'AmazonItem':
-                        self.assertEqual(i['review_count'], t['expected_review_count'])
+                    if i.__class__.__name__ == 'ListingItem':
+                        self.assertEqual(i['data']['review_count'], t['expected_review_count'])
                     else:
                         raise Exception("Invalid 'item' object passed - {}".format(i.__class__.__name__))
 
@@ -99,8 +97,8 @@ class TestAmazonItemParser(unittest.TestCase):
         for t in self.testlist:
             for i in t['items']:
                 with self.subTest(asin=t['expected_asin']):
-                    if i.__class__.__name__ == 'AmazonItem':
-                        self.assertEqual(i['is_fba'], t['expected_is_fba'])
+                    if i.__class__.__name__ == 'ListingItem':
+                        self.assertEqual(i['data']['is_fba'], t['expected_is_fba'])
                     else:
                         raise Exception("Invalid 'item' object passed - {}".format(i.__class__.__name__))
 
@@ -108,8 +106,8 @@ class TestAmazonItemParser(unittest.TestCase):
         for t in self.testlist:
             for i in t['items']:
                 with self.subTest(asin=t['expected_asin']):
-                    if i.__class__.__name__ == 'AmazonItem':
-                        self.assertEqual(i['is_addon'], t['expected_is_addon'])
+                    if i.__class__.__name__ == 'ListingItem':
+                        self.assertEqual(i['data']['is_addon'], t['expected_is_addon'])
                     else:
                         raise Exception("Invalid 'item' object passed - {}".format(i.__class__.__name__))
 
@@ -117,8 +115,8 @@ class TestAmazonItemParser(unittest.TestCase):
         for t in self.testlist:
             for i in t['items']:
                 with self.subTest(asin=t['expected_asin']):
-                    if i.__class__.__name__ == 'AmazonItem':
-                        self.assertEqual(i['is_pantry'], t['expected_is_pantry'])
+                    if i.__class__.__name__ == 'ListingItem':
+                        self.assertEqual(i['data']['is_pantry'], t['expected_is_pantry'])
                     else:
                         raise Exception("Invalid 'item' object passed - {}".format(i.__class__.__name__))
 
@@ -126,8 +124,8 @@ class TestAmazonItemParser(unittest.TestCase):
         for t in self.testlist:
             for i in t['items']:
                 with self.subTest(asin=t['expected_asin']):
-                    if i.__class__.__name__ == 'AmazonItem':
-                        self.assertEqual(i['brand_name'], t['expected_brand_name'])
+                    if i.__class__.__name__ == 'ListingItem':
+                        self.assertEqual(i['data']['brand_name'], t['expected_brand_name'])
                     else:
                         raise Exception("Invalid 'item' object passed - {}".format(i.__class__.__name__))
 
@@ -135,8 +133,8 @@ class TestAmazonItemParser(unittest.TestCase):
         for t in self.testlist:
             for i in t['items']:
                 with self.subTest(asin=t['expected_asin']):
-                    if i.__class__.__name__ == 'AmazonItem':
-                        self.assertEqual(i['status'], t['expected_status'])
+                    if i.__class__.__name__ == 'ListingItem':
+                        self.assertEqual(i['data']['status'], t['expected_status'])
                     else:
                         raise Exception("Invalid 'item' object passed - {}".format(i.__class__.__name__))
 

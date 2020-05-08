@@ -8,39 +8,11 @@
 from scrapy import Item, Field
 
 
-class AmazonItem(Item):
-    """ amazon(.com, .ca) item
-    """
-    domain = Field()
-    asin = Field()
-    parent_asin = Field()
-    variation_asins = Field()
-    picture_urls = Field()
-    description = Field()
+class ListingItem(Item):
     url = Field()
-    category = Field()
-    title = Field()
-    price = Field()
-    original_price = Field()
-    quantity = Field()
-    features = Field()
-    specifications = Field()
-    variation_specifics = Field()
-    review_count = Field()
-    avg_rating = Field()
-    is_fba = Field()
-    is_addon = Field()
-    is_pantry = Field()
-    has_sizechart = Field()
-    international_shipping = Field()
-    merchant_id = Field()
-    merchant_name = Field()
-    brand_name = Field()
-    meta_title = Field()
-    meta_description = Field()
-    meta_keywords = Field()
+    domain = Field()
     http_status = Field()
-    status = Field()
+    data = Field()
 
 
 # class PwbotDjangoItem(DjangoItem):

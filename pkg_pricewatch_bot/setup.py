@@ -13,6 +13,7 @@ setup(
         'scrapy-crawlera==1.7.0',
         'graypy==2.1.0',
         'treq==20.4.1',
+        'tldextract==2.2.2',
     ],
     # scripts = ['src/manage.py'],
     entry_points = {'scrapy': ['settings = pwbot.settings']},

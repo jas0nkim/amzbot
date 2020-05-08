@@ -1,5 +1,9 @@
-import re, urllib, io
-
+""" utils.py
+"""
+import re
+import urllib
+import io
+import tldextract
 from PIL import Image
 from pwbot import settings
 
@@ -80,3 +84,6 @@ def class_fullname(o):
         return o.__class__.__name__  # Avoid reporting __builtin__
     else:
         return module + '.' + o.__class__.__name__
+
+def extract_domain_from_url(url):
+    return tldextract.extract(url).registered_domain

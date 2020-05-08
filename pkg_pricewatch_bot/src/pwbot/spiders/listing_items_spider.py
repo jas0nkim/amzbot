@@ -37,6 +37,7 @@ class AmazonItemPageSpider(BasePwbotCrawlSpider):
     __asins = []
     __asin_cache = {}
     # _scraped_parent_asins_cache = {}
+    __urls = []
     __parse_pictures = True
     __parse_variations = True
 
@@ -46,10 +47,11 @@ class AmazonItemPageSpider(BasePwbotCrawlSpider):
             self.__domain = kw['domain'] if kw['domain'] in self.allowed_domains else self.__domain
         if 'asins' in kw:
             self.__asins = self.__filter_asins(kw['asins'])
-        if 'url' in kw:
-            _asin_from_url = utils.extract_asin_from_url(kw['url'], self.__domain)
-            if _asin_from_url is not None:
-                self.__asins.append(_asin_from_url)
+        if 'urls' in kw:
+            self.__urls = kw['urls'].split(',')
+            # _set_asins_from_urls = ( utils.extract_asin_from_url(u, self.__domain) for u in kw['urls'].split(',') )
+            # if _set_asins_from_urls is not None:
+            #     self.__asins = self.__asins + list(_set_asins_from_urls - set(self.__asins))
         if 'parse_pictures' in kw:
             self.__parse_pictures = utils.true_or_false(kw['parse_pictures'])
         if 'parse_variations' in kw:
@@ -75,17 +77,24 @@ class AmazonItemPageSpider(BasePwbotCrawlSpider):
     #         self.dont_list_ebay = kw['dont_list_ebay']
 
     def start_requests(self):
-        if len(self.__asins) < 1:
-            raise CloseSpider
-
-        for asin in self.__asins:
-            yield Request(settings.AMAZON_ITEM_LINK_FORMAT.format(self.__domain, asin, settings.AMAZON_ITEM_VARIATION_LINK_POSTFIX),
-                        callback=parsers.parse_amazon_item,
-                        meta={
-                            'parse_pictures': self.__parse_pictures,
-                            'parse_variations': self.__parse_variations,
-                            'domain': self.__domain,
-                        })
+        if len(self.__asins) > 0:
+            for asin in self.__asins:
+                yield Request(settings.AMAZON_ITEM_LINK_FORMAT.format(self.__domain, asin, settings.AMAZON_ITEM_VARIATION_LINK_POSTFIX),
+                            callback=parsers.parse_amazon_item,
+                            meta={
+                                'parse_pictures': self.__parse_pictures,
+                                'parse_variations': self.__parse_variations,
+                                'domain': self.__domain,
+                            })
+        if len(self.__urls) > 0:
+            for url in self.__urls:
+                yield Request(url,
+                            callback=parsers.parse_amazon_item,
+                            meta={
+                                'parse_pictures': self.__parse_pictures,
+                                'parse_variations': self.__parse_variations,
+                                'domain': utils.extract_domain_from_url(url),
+                            })
 
     def __filter_asins(self, asins):
         filtered_asins = []
