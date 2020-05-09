@@ -1,4 +1,6 @@
 #
+# scrapyd
+#
 # inspired by vimagick/scrapyd
 # https://github.com/vimagick/dockerfiles/tree/master/scrapyd
 # 
@@ -9,17 +11,13 @@
 # this image is too bulky (approx. 1.0 GB). need to reduce like vimagick/scrapyd
 #
 
-FROM python:3.7-stretch
+FROM python:3.7-slim
 
-RUN mkdir -p /usr/local/etc/pricewatch
-WORKDIR /usr/local/etc/pricewatch
-
-COPY ./requirements.txt .
-
+COPY ./requirements.txt /requirements.txt
 RUN pip install scrapyd \
-        && pip install -r ./requirements.txt
+    && pip install -r ./requirements.txt
 
-WORKDIR /
+COPY ./scrapyd.conf /etc/scrapyd/
 VOLUME /etc/scrapyd/ /var/lib/scrapyd/
 EXPOSE 6800
 

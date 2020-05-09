@@ -1,0 +1,178 @@
+# 'docker-compose up -d' would give an WARNING: Some services (elasticsearch)
+#   use the 'deploy' key, which will be ignored. Compose does not support
+#   'deploy' configuration - use `docker stack deploy` to deploy to a swarm.
+#   
+# use following commands instead to ignore the warning:
+#
+#   docker-compose --compatibility up -d
+#   docker-compose --compatibility down
+#
+
+version: '3.2'
+services:
+  # Scrapyd: https://scrapyd.readthedocs.io/en/stable/
+  scrapyd:
+    build:
+        context: ./.docker/scrapyd
+    container_name: scrapyd
+    volumes:
+      # scrapyd data directory (items, eggs, logs, and so on)
+      - type: volume
+        source: scrapyd_data
+        target: /var/lib/scrapyd/
+        volume:
+          nocopy: true
+      # scrapyd config file
+      - type: bind
+        source: ./.docker/scrapyd/scrapyd.conf
+        target: /etc/scrapyd/scrapyd.conf
+      # app config file
+      - type: bind
+        source: ./.config/pricewatch.ini
+        target: /usr/local/etc/pricewatch/pricewatch.ini
+    networks:
+      - pricewatch
+    ports:
+      # Scrapyd JSON API and web interface
+      - 6800:6800
+    restart:
+      always
+  # schedular
+  schedular:
+    build:
+      context: ./.docker/schedular
+    container_name: schedular
+    volumes:
+      # src directory
+      - type: bind
+        source: ./pkg_pricewatch_schedular/src/
+        target: /app/
+      # common file
+      - type: bind
+        source: ./.common/_common_settings.py
+        target: /app/pwschedular/_common_settings.py
+      # app config file
+      - type: bind
+        source: ./.config/pricewatch.ini
+        target: /usr/local/etc/pricewatch/pricewatch.ini
+    networks:
+      - pricewatch
+    # long-live command
+    command: tail -F /usr/local/etc/pricewatch/pricewatch.ini
+  # postgres
+  postgres:
+    image: postgres:12
+    container_name: postgres
+    environment:
+      POSTGRES_USER: pricewatchuser
+      POSTGRES_PASSWORD: qwer1234
+      PGDATA: /data/postgres
+    volumes:
+      - ./.pg_data:/data/postgres
+    ports:
+      - 5433:5432
+    networks:
+      - pricewatch
+    restart:
+      unless-stopped
+  # web
+  web:
+    build:
+      context: ./.docker/web
+    container_name: web
+    volumes:
+      # src directory
+      - type: bind
+        source: ./pkg_pricewatch_web/src/
+        target: /app/
+      # common file
+      - type: bind
+        source: ./.common/_common_settings.py
+        target: /app/pwweb/_common_settings.py
+      # app config file
+      - type: bind
+        source: ./.config/pricewatch.ini
+        target: /usr/local/etc/pricewatch/pricewatch.ini
+    ports:
+      - 8000:8000
+    depends_on:
+      - postgres
+    networks:
+      - pricewatch
+    # command: tail -F /usr/local/etc/pricewatch/pricewatch.ini
+    command: python manage.py runserver 0.0.0.0:8000
+  # MongoDB: https://hub.docker.com/_/mongo/
+  mongo:
+    image: mongo:3
+    volumes:
+      - type: volume
+        source: log_mongodb_data
+        target: /data/db
+        volume:
+          nocopy: true
+    networks:
+      - pricewatch
+  # Elasticsearch: https://www.elastic.co/guide/en/elasticsearch/reference/6.x/docker.html
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.8.5
+    volumes:
+      - type: volume
+        source: log_elasticsearch_data
+        target: /usr/share/elasticsearch/data
+        volume:
+          nocopy: true
+    environment:
+      - http.host=0.0.0.0
+      - transport.host=localhost
+      - network.host=0.0.0.0
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+    networks:
+      - pricewatch
+  # Graylog: https://hub.docker.com/r/graylog/graylog/
+  graylog:
+    image: graylog/graylog:3.2
+    volumes:
+      - type: volume
+        source: log_graylog_journal
+        target: /usr/share/graylog/data/journal
+        volume:
+          nocopy: true
+    environment:
+      # CHANGE ME (must be at least 16 characters)!
+      - GRAYLOG_PASSWORD_SECRET=somepasswordpepper
+      # Password: admin
+      - GRAYLOG_ROOT_PASSWORD_SHA2=8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918
+      - GRAYLOG_HTTP_EXTERNAL_URI=http://127.0.0.1:9000/
+    networks:
+      - pricewatch
+    depends_on:
+      - mongo
+      - elasticsearch
+    ports:
+      # Graylog web interface and REST API
+      - 9000:9000
+      # Syslog TCP
+      - 1514:1514
+      # Syslog UDP
+      - 1514:1514/udp
+      # GELF TCP
+      - 12201:12201
+      # GELF UDP
+      - 12201:12201/udp
+volumes:
+  scrapyd_data:
+  log_mongodb_data:
+  log_elasticsearch_data:
+  log_graylog_journal:
+networks:
+  pricewatch:
+    driver: bridge
+
