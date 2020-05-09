@@ -16,4 +16,5 @@ dist/
 **/.coverage
 **/htmlcov/
 
-.dockers/scrapyd/data
+# postgres
+.pg_data/
