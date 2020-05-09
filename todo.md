@@ -1,35 +1,4 @@
-## May 7 2020
-- either 'domain' + 'asins' OR 'urls'
-    if 'urls' entered 'domain' will be ignored
-- listing_item_spider.py line 78 error:
-    unable to retrieve asin from url - check function utils.extract_asin_from_url:
-    https://www.amazon.com/Gildan-Mens-T-Shirt-Assortment-Small/dp/B077ZKF9ZN/ref=zg_bs_fashion_1?_encoding=UTF8&refRID=NSX2F9SWW59TZN9SDX7K&th=1
-- how would handle http errors on api?? log in db?
-
-## May 6 2020
-- store original crawling data in raw_* table
-    - domain
-    - url
-    - data (json)
-    - created_at
-- build separate postgres docker container and network with 'web' package.
-    - docker-composer
-        - web/api (django)
-        - db (postgres)
-        - scrapyd (bot egg)
-        - schedular
-        - graylog
-        - mongodb (graylog-related)
-        - elasticsearch (graylog-related)
-
-## May 5 2020
-- research mongodb and ScrapydWeb https://github.com/my8100/scrapydweb
-    - mongodb for django: djongo https://djongo.readthedocs.io/docs/get-started/
-- use coverage.py (https://coverage.readthedocs.io/en/latest/) for testing
-    - command line:
-        coverage run -m unittest discover src/ -v
-        coverage report -m
-        coverage html
+## May 8 2020
 - what are the problems again?
     - "Coding is not enough. Software engineering is solving problems.. So what is my problem?"
         - not accurate scraping
@@ -39,6 +8,45 @@
             cannot handle ebay listing errors
         - not fully automated order handling
         - not a good customer services
+- build separate postgres docker container and network with 'web' package.
+    - docker-composer
+        - nginx
+        - web/api app (django)
+        - db (postgres)
+        - scrapyd (bot egg)
+        - scrapy schedular
+        - graylog
+        - mongodb (graylog-related)
+        - elasticsearch (graylog-related)
+- UI
+    - scraping status screen (error report)
+- secure API connection
+    - provide token
+    - check out django + django restful framework
+- how would handle http errors on api?? log in db?
+
+## May 7 2020
+- either 'domain' + 'asins' OR 'urls'
+    if 'urls' entered 'domain' will be ignored
+- listing_item_spider.py line 78 error:
+    unable to retrieve asin from url - check function utils.extract_asin_from_url:
+    https://www.amazon.com/Gildan-Mens-T-Shirt-Assortment-Small/dp/B077ZKF9ZN/ref=zg_bs_fashion_1?_encoding=UTF8&refRID=NSX2F9SWW59TZN9SDX7K&th=1
+
+## May 6 2020
+- store original crawling data in raw_* table
+    - domain
+    - url
+    - data (json)
+    - created_at
+
+## May 5 2020
+- research mongodb and ScrapydWeb https://github.com/my8100/scrapydweb
+    - mongodb for django: djongo https://djongo.readthedocs.io/docs/get-started/
+- use coverage.py (https://coverage.readthedocs.io/en/latest/) for testing
+    - command line:
+        coverage run -m unittest discover src/ -v
+        coverage report -m
+        coverage html
 
 ## May 4 2020
 - finish discovery.py and watcher.py. and combine into a single script
