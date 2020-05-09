@@ -8,7 +8,7 @@ setup(
     package_dir = {'': 'src'},
     packages = find_packages(where='src', exclude=["pwschedular.tests", "pwschedular.tests.*"]),
     install_requires = [
-        'treq==20.4.1',
+        'requests==2.23.0',
         'python-scrapyd-api==2.1.2',
         'graypy==2.1.0',
     ],

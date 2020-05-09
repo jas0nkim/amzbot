@@ -9,7 +9,7 @@ setup(
     packages = find_packages(where='src', exclude=["pwbot.tests", "pwbot.tests.*"]),
     install_requires = [
         'Scrapy==2.0.1',
-        'Pillow==7.0.0',
+        'Pillow==7.1.2',
         'scrapy-crawlera==1.7.0',
         'graypy==2.1.0',
         'treq==20.4.1',
