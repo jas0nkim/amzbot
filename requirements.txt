@@ -11,5 +11,6 @@ djangorestframework==3.11.0
 requests==2.23.0
 treq==20.4.1
 tldextract==2.2.2
+gunicorn==20.0.4
 
 # 'pip install -e .' (editable, dev files) would automatically install these dependences

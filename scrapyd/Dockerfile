@@ -13,9 +13,9 @@
 
 FROM python:3.7-slim
 
-COPY ./requirements.txt /requirements.txt
+COPY ./requirements.txt /opt/requirements.txt
 RUN pip install scrapyd \
-    && pip install -r ./requirements.txt
+    && pip install -r /opt/requirements.txt
 
 COPY ./scrapyd.conf /etc/scrapyd/
 VOLUME /etc/scrapyd/ /var/lib/scrapyd/
