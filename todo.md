@@ -1,4 +1,7 @@
-## May 8 2020
+## May 9 2020
+- finish docker/docker-compose.yml
+    - django migrate database
+    - setup Gunicorn + Nginx for production (keep django built-in web server for development)
 - what are the problems again?
     - "Coding is not enough. Software engineering is solving problems.. So what is my problem?"
         - not accurate scraping
@@ -8,6 +11,14 @@
             cannot handle ebay listing errors
         - not fully automated order handling
         - not a good customer services
+- UI
+    - scraping status screen (error report)
+- secure API connection
+    - provide token
+    - check out django + django restful framework
+- how would handle http errors on api?? log in db?
+
+## May 8 2020
 - build separate postgres docker container and network with 'web' package.
     - docker-composer
         - nginx
@@ -18,12 +29,6 @@
         - graylog
         - mongodb (graylog-related)
         - elasticsearch (graylog-related)
-- UI
-    - scraping status screen (error report)
-- secure API connection
-    - provide token
-    - check out django + django restful framework
-- how would handle http errors on api?? log in db?
 
 ## May 7 2020
 - either 'domain' + 'asins' OR 'urls'
