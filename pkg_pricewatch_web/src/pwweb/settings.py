@@ -11,13 +11,13 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+import configparser
 from pwweb._common_settings import *
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 try:
-    import configparser
     config = configparser.ConfigParser()
     config.read(APP_CONFIG_FILEPATH)
 except Exception as e:
@@ -28,12 +28,12 @@ except Exception as e:
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'gd#o)))-@mkj$njs61!m@swg@%%n)ttg=s*7c^*ma+(vqkjk7x'
+SECRET_KEY = config['PriceWatchWeb']['secret_key']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config['PriceWatchWeb']['debug']
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', config['PriceWatchWeb']['host'],]
+ALLOWED_HOSTS = config['PriceWatchWeb']['allowed_hosts'].split(" ")
 
 
 # Application definition

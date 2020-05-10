@@ -9,6 +9,9 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
+import logging
+import configparser
+import graypy
 from pwbot._common_settings import *
 
 BOT_NAME = 'pwbot'
@@ -105,7 +108,6 @@ CRAWLERA_ENABLED = True
 CRAWLERA_APIKEY = '191582bbbb4144519a78f00776896436'
 
 ## config, custom logger
-import logging, graypy
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -115,7 +117,6 @@ formatter = logging.Formatter('%(asctime)s [%(name)s] %(levelname)s: %(message)s
 stream_handler = logging.StreamHandler()
 stream_handler.setFormatter(formatter)
 
-import configparser
 config = configparser.ConfigParser()
 config.read(APP_CONFIG_FILEPATH)
 

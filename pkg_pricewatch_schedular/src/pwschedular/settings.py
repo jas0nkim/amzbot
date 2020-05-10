@@ -30,6 +30,6 @@ Options
                         version name
 --spider=SPIDER, -s=SPIDER
                         spider name
--a NAME=VALUE           set spider argument (may be repeated)"""
+-a NAME=VALUE list      set spider argument (may be repeated)"""
 
 DEFAULT_SPIDER = 'AmazonItemPageSpider'

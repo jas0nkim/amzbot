@@ -9,6 +9,7 @@ setup(
     packages = find_packages(where='src'),
     install_requires = [
         'psycopg2==2.8.5',
+        'gunicorn==20.0.4',
         'Django==3.0.5',
         'djangorestframework==3.11.0',
     ],
