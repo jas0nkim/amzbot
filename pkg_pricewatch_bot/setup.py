@@ -3,11 +3,11 @@
 from setuptools import setup, find_packages
 
 setup(
-    name = 'pricewatch_bot',
-    version = '0.0.1',
-    package_dir = {'': 'src'},
-    packages = find_packages(where='src', exclude=["pwbot.tests", "pwbot.tests.*"]),
-    install_requires = [
+    name='pricewatch_bot',
+    version='0.0.1',
+    package_dir={'': 'src'},
+    packages=find_packages(where='src', exclude=["pwbot.tests", "pwbot.tests.*", "pwbot_schedular", "pwbot_schedular.*", "run"]),
+    install_requires=[
         'Scrapy==2.0.1',
         'Pillow==7.1.2',
         'scrapy-crawlera==1.7.0',
@@ -15,6 +15,6 @@ setup(
         'treq==20.4.1',
         'tldextract==2.2.2',
     ],
-    # scripts = ['src/manage.py'],
-    entry_points = {'scrapy': ['settings = pwbot.settings']},
+    script_args=['bdist_egg', '-d', '/usr/local/etc/pricewatch/dist',],
+    entry_points={'scrapy': ['settings = pwbot.settings']},
 )

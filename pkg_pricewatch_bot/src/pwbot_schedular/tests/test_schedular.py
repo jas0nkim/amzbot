@@ -1,6 +1,6 @@
 import unittest
-from pwschedular import Schedular
-from pwschedular.tests import utils
+from pwbot_schedular import Schedular
+from pwbot_schedular.tests import utils
 
 class TestSchedular(unittest.TestCase):
 

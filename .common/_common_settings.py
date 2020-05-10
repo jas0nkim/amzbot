@@ -6,9 +6,6 @@ BOT_VERISON = '0.0.1'
 WEB_PROJECT = 'pricewatch_web'
 WEB_VERISON = '0.0.1'
 
-SCHEDULAR_PROJECT = 'pricewatch_schedular'
-SCHEDULAR_VERSION = '0.0.1'
-
 APP_DATA_DIRPATH = '/usr/local/etc/pricewatch/'
 APP_DIST_DIRPATH = APP_DATA_DIRPATH + 'dist/'
 APP_CONFIG_FILEPATH = APP_DATA_DIRPATH + 'pricewatch.ini'

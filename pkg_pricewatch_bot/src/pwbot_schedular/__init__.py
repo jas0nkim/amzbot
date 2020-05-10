@@ -10,7 +10,7 @@ import graypy
 from datetime import datetime
 from scrapyd_api import ScrapydAPI
 from scrapyd_api.exceptions import ScrapydResponseError
-from pwschedular import settings
+from pwbot_schedular import settings
 
 
 ## config, custom logger end

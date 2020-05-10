@@ -1,4 +1,4 @@
-from pwschedular._common_settings import *
+from pwbot_schedular._common_settings import *
 
 HELP_MESSAGE = """Usage
 =====

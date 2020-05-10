@@ -8,13 +8,13 @@
 #   docker-compose --compatibility down
 #
 #
-# installation
+# * installation
 #
 # 1. docker-compose up -d
 #
 # 2. if no 'pricewatch' database installed
 #     1) create database
-#          docker-compose run postgres createdb -h postgres -U pricewatchuser pricewatch
+#         docker-compose run postgres createdb -h postgres -U pricewatchuser pricewatch
 #     2) django migration
 #         docker-compose run web python manage.py migrate
 #
@@ -22,9 +22,20 @@
 #       Edit DEBUG=False and save, and then edit back DEBUG=True and save would help.
 #
 #
-# attach to a running container
+# * how to run postgres db terminal
+#
+#   docker-compose run postgres psql -h postgres -U pricewatchuser
+#
+#
+# * attach to a running container
 #
 #   docker attach --sig-proxy=false CONTAINER_ID
+#
+#
+# * how to schedule bot:
+#
+#   docker-compose run bot python run.py discover
+#     -a urls="https://www.amazon.com/Gildan-Mens-T-Shirt-Assortment-Small/dp/B077ZKF9ZN/?_encoding=UTF8&refRID=NSX2F9SWW59TZN9SDX7K&th=1" -d
 #
 
 version: '3.2'
@@ -59,28 +70,29 @@ services:
     restart:
       always
 
-  # schedular
-  schedular:
+  # bot
+  bot:
     build:
-      context: ./pkg_pricewatch_schedular/
-    container_name: schedular
+      context: ./pkg_pricewatch_bot/
+    container_name: bot
     volumes:
       # src directory
       - type: bind
-        source: ./pkg_pricewatch_schedular/src/
+        source: ./pkg_pricewatch_bot/src/
         target: /app/
       # common file
       - type: bind
         source: ./.common/_common_settings.py
-        target: /app/pwschedular/_common_settings.py
+        target: /app/pwbot/_common_settings.py
+      - type: bind
+        source: ./.common/_common_settings.py
+        target: /app/pwbot_schedular/_common_settings.py
       # app config file
       - type: bind
         source: ./.config/pricewatch.ini
         target: /usr/local/etc/pricewatch/pricewatch.ini
     networks:
       - pricewatch
-    # long-live command
-    command: tail -F /usr/local/etc/pricewatch/pricewatch.ini
 
   # postgres
   postgres:
