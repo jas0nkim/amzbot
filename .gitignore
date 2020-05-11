@@ -19,6 +19,6 @@ dist/
 # postgres
 .pg_data/
 
-# config files
-.config/pricewatch.ini
-.config/pricewatch.ini.prod
+# prod files
+.config/pricewatch.prod.ini
+docker-compose.prod.yml
