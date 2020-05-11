@@ -31,7 +31,8 @@ except Exception as e:
 SECRET_KEY = config['PriceWatchWeb']['secret_key']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config['PriceWatchWeb']['debug']
+# DEBUG = config['PriceWatchWeb']['debug']
+DEBUG = True
 
 ALLOWED_HOSTS = config['PriceWatchWeb']['allowed_hosts'].split(" ")
 
