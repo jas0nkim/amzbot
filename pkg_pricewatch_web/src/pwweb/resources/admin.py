@@ -52,6 +52,7 @@ from pwweb.resources.models import RawData
 
 @admin.register(RawData)
 class RawDataAdmin(admin.ModelAdmin):
+    ordering = ['-created_at',]
     list_display = ['sku', 'url_short', 'item_title_short', 'price', 'status_str', 'http_status', 'domain', 'created_at', ]
     search_fields = ['data__asin', 'url', 'data__title', 'domain', 'data__status', 'http_status',]
     list_filter = ['domain', 'http_status',]

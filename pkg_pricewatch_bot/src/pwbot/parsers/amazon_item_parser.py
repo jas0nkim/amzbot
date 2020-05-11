@@ -7,7 +7,7 @@ import urllib
 import logging
 from scrapy import Request
 from scrapy.exceptions import IgnoreRequest
-from pwbot import utils, settings
+from pwbot import utils, settings, parsers
 from pwbot.items import ListingItem
 
 class AmazonItemParser(object):
@@ -54,103 +54,96 @@ class AmazonItemParser(object):
                 # RemovedVariationHandleMiddleware.__handle_removed_variations related
                 # amazon_item['parent_asin'] = None
                 # self.logger.error('[ASIN:null] Request Ignored - No ASIN')
-            return amazon_item
+            yield amazon_item
         else:
-            return self.__parse_item_helper(response)
+            # check variations first
+            """ TODO: __stored_variation_asins = amazon_parent_listings.asins in db
+            """
+            __variation_asins = []
+            __stored_variation_asins = []
+            if response.meta['parse_variations']:
+                __variation_asins = self.__extract_variation_asins(response)
+                if len(__variation_asins) > 0:
+                    for v_asin in __variation_asins:
+                        if v_asin not in __stored_variation_asins:
+                            """ TODO: change settings.AMAZON_ITEM_LINK_FORMAT.format(response.meta['domain'], v_asin, settings.AMAZON_ITEM_VARIATION_LINK_POSTFIX to real amazon url (db query) : avoid ban
+                            """
+                            yield Request(settings.AMAZON_ITEM_LINK_FORMAT.format(response.meta['domain'], v_asin, settings.AMAZON_ITEM_VARIATION_LINK_POSTFIX),
+                                    callback=parsers.parse_amazon_item,
+                                    headers={ 'Referer': 'https://www.{}/'.format(response.meta['domain']), },
+                                    meta={
+                                        'parse_pictures': response.meta['parse_pictures'],
+                                        'parse_variations': False,
+                                        'domain': response.meta['domain'],
+                                    })
+                    # self.logger.info("[ASIN:{}] Request Ignored - initial asin ignored".format(self.__asin))
+                    # raise IgnoreRequest
+            yield self.__parse_amazon_item(response, variation_asins=__variation_asins)
 
-    def __parse_amazon_item(self, response, parent_asin, variation_asins):
+                    # if listing_item.get('has_sizechart', False) and not AmazonItemApparelModelManager.fetch_one(parent_asin=__parent_asin):
+                    #     amazon_apparel_parser = AmazonApparelParser()
+                    #     yield Request(amazonmws_settings.AMAZON_ITEM_APPAREL_SIZE_CHART_LINK_FORMAT % __parent_asin,
+                    #             callback=amazon_apparel_parser.parse_apparel_size_chart,
+                    #             meta={'asin': __parent_asin},
+                    #             dont_filter=True) # we have own filtering function: _filter_asins()
+
+
+    def __parse_amazon_item(self, response, variation_asins):
         amazon_item = ListingItem()
         amazon_item['url'] = response.url
         amazon_item['domain'] = response.meta['domain']
         amazon_item['http_status'] = response.status
 
-        if self.__extract_asin_on_content(response) != self.__asin:
-            # inactive amazon item
-            amazon_item['data'] = {
-                'status': settings.RESOURCES_AMAZONLISTING_STATUS_INVALID_ASIN
-            }
-            return amazon_item
-        elif self.__asin and parent_asin and self.__asin != parent_asin and len(variation_asins) > 0 and self.__asin not in variation_asins:
+        _parent_asin = self.__extract_parent_asin(response)
+        amazon_item['data'] = {
+            'asin': self.__asin,
+            'parent_asin': _parent_asin,
+            'variation_asins': variation_asins,
+        }
+        _price = self.__extract_price(response)
+        _quantity = self.__extract_quantity(response)
+        if _price is None:
+            amazon_item['data']['status'] = settings.RESOURCES_AMAZONLISTING_STATUS_NO_PRICE_GIVEN
+        elif _quantity == 0:
+            amazon_item['data']['status'] = settings.RESOURCES_AMAZONLISTING_STATUS_OUT_OF_STOCK
+        elif self.__extract_asin_on_content(response) != self.__asin:
+            # invalid asin
+            amazon_item['data']['status'] = settings.RESOURCES_AMAZONLISTING_STATUS_INVALID_SKU
+        elif self.__asin and _parent_asin and self.__asin != _parent_asin and len(variation_asins) > 0 and self.__asin not in variation_asins:
             # a variation, but removed - inactive this variation
-            amazon_item['data'] = {
-                'status': settings.RESOURCES_AMAZONLISTING_STATUS_ASIN_NOT_IN_VARIATION
-            }
-            return amazon_item
+            amazon_item['data']['status'] = settings.RESOURCES_AMAZONLISTING_STATUS_SKU_NOT_IN_VARIATION
         else:
             try:
-                amazon_item['data'] = {
-                    'asin': self.__asin,
-                    'parent_asin': parent_asin,
-                    'variation_asins': variation_asins,
-                    'picture_urls': self.__extract_picture_urls(response) if response.meta['parse_pictures'] else [],
-                    'category': self.__extract_category(response),
-                    'title': self.__extract_title(response),
-                    'price': self.__extract_price(response),
-                    'quantity': self.__extract_quantity(response),
-                    'features': self.__extract_features(response),
-                    'description': self.__extract_description(response),
-                    'specifications': self.__extract_specifications(response),
-                    'variation_specifics': self.__extract_variation_specifics(response),
-                    'is_fba': self.__extract_is_fba(response),
-                    'review_count': self.__extract_review_count(response),
-                    'avg_rating': self.__extract_avg_rating(response),
-                    'is_addon': self.__extract_is_addon(response),
-                    'is_pantry': self.__extract_is_pantry(response),
-                    'has_sizechart': self.__extract_has_sizechart(response),
-                    'merchant_id': self.__extract_merchant_id(response),
-                    'merchant_name': self.__extract_merchant_name(response),
-                    'brand_name': self.__extract_brand_name(response),
-                    'meta_title': self.__extract_meta_title(response),
-                    'meta_description': self.__extract_meta_description(response),
-                    'meta_keywords': self.__extract_meta_keywords(response),
-                }
-                amazon_item['data']['original_price'] = self.__extract_original_price(response, default_price=amazon_item['data']['price'])
-
-                if amazon_item['data']['price'] is None:
-                    amazon_item['data']['status'] = settings.RESOURCES_AMAZONLISTING_STATUS_NO_PRICE_GIVEN
-                elif amazon_item['data']['quantity'] == 0:
-                    amazon_item['data']['status'] = settings.RESOURCES_AMAZONLISTING_STATUS_OUT_OF_STOCK
-                else:
-                    amazon_item['data']['status'] = settings.RESOURCES_AMAZONLISTING_STATUS_GOOD
+                amazon_item['data']['picture_urls'] = self.__extract_picture_urls(response) if response.meta['parse_pictures'] else []
+                amazon_item['data']['category'] = self.__extract_category(response)
+                amazon_item['data']['title'] = self.__extract_title(response)
+                amazon_item['data']['price'] = _price
+                amazon_item['data']['original_price'] = self.__extract_original_price(response, default_price=_price)
+                amazon_item['data']['quantity'] = _quantity
+                amazon_item['data']['features'] = self.__extract_features(response)
+                amazon_item['data']['description'] = self.__extract_description(response)
+                amazon_item['data']['specifications'] = self.__extract_specifications(response)
+                amazon_item['data']['variation_specifics'] = self.__extract_variation_specifics(response)
+                amazon_item['data']['is_fba'] = self.__extract_is_fba(response)
+                amazon_item['data']['review_count'] = self.__extract_review_count(response)
+                amazon_item['data']['avg_rating'] = self.__extract_avg_rating(response)
+                amazon_item['data']['is_addon'] = self.__extract_is_addon(response)
+                amazon_item['data']['is_pantry'] = self.__extract_is_pantry(response)
+                amazon_item['data']['is_pantry'] = self.__extract_is_pantry(response)
+                amazon_item['data']['has_sizechart'] = self.__extract_has_sizechart(response)
+                amazon_item['data']['merchant_id'] = self.__extract_merchant_id(response)
+                amazon_item['data']['merchant_name'] = self.__extract_merchant_name(response)
+                amazon_item['data']['brand_name'] = self.__extract_brand_name(response)
+                amazon_item['data']['meta_title'] = self.__extract_meta_title(response)
+                amazon_item['data']['meta_description'] = self.__extract_meta_description(response)
+                amazon_item['data']['meta_keywords'] = self.__extract_meta_keywords(response)
             except Exception as e:
                 self.logger.exception("{}: [ASIN:{}] Failed parsing page - {}".format(utils.class_fullname(e), self.__asin, str(e)))
-                amazon_item['data'] = {
-                    'status': settings.RESOURCES_AMAZONLISTING_STATUS_FAILED_PARSING_PAGE
-                }
-            return amazon_item
+                amazon_item['data']['status'] = settings.RESOURCES_AMAZONLISTING_STATUS_PARSING_FAILED_UNKNOWN_ERROR
+            else:
+                amazon_item['data']['status'] = settings.RESOURCES_AMAZONLISTING_STATUS_GOOD
+        return amazon_item
 
-    def __parse_item_helper(self, response):
-        __parent_asin = self.__extract_parent_asin(response)
-        __variation_asins = self.__extract_variation_asins(response)
-
-        # check variations first
-        """ TODO: __stored_variation_asins = amazon_parent_listings.asins in db
-        """
-        __stored_variation_asins = []
-        if response.meta['parse_variations']:
-            if len(__variation_asins) > 0:
-                for v_asin in __variation_asins:
-                    if v_asin not in __stored_variation_asins:
-                        """ TODO: change settings.AMAZON_ITEM_LINK_FORMAT.format(response.meta['domain'], v_asin, settings.AMAZON_ITEM_VARIATION_LINK_POSTFIX to real amazon url (db query) : avoid ban
-                        """
-                        yield Request(settings.AMAZON_ITEM_LINK_FORMAT.format(response.meta['domain'], v_asin, settings.AMAZON_ITEM_VARIATION_LINK_POSTFIX),
-                                callback=self.parse_item,
-                                headers={ 'Referer': 'https://www.{}/'.format(response.meta['domain']), },
-                                meta={
-                                    'parse_pictures': response.meta['parse_pictures'],
-                                    'parse_variations': False,
-                                    'domain': response.meta['domain'],
-                                })
-                # self.logger.info("[ASIN:{}] Request Ignored - initial asin ignored".format(self.__asin))
-                # raise IgnoreRequest
-        yield self.__parse_amazon_item(response, parent_asin=__parent_asin, variation_asins=__variation_asins)
-
-                # if listing_item.get('has_sizechart', False) and not AmazonItemApparelModelManager.fetch_one(parent_asin=__parent_asin):
-                #     amazon_apparel_parser = AmazonApparelParser()
-                #     yield Request(amazonmws_settings.AMAZON_ITEM_APPAREL_SIZE_CHART_LINK_FORMAT % __parent_asin,
-                #             callback=amazon_apparel_parser.parse_apparel_size_chart,
-                #             meta={'asin': __parent_asin},
-                #             dont_filter=True) # we have own filtering function: _filter_asins()
 
     # def __build_amazon_item_from_cache(self, response):
     #     a = AmazonItemModelManager.fetch_one(asin=self.__asin)
