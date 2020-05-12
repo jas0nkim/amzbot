@@ -1,7 +1,12 @@
-## May 9 2020
-- finish docker/docker-compose.yml
-    - django migrate database
-    - setup Gunicorn + Nginx for production (keep django built-in web server for development)
+## May 11 2020
+- Invalid sku - crawl the url once again.
+- UI
+    - 'item status' (raw_data.data -> status field) needs to be improved, currenly the error messages are not accurate
+    - need to check if there are any missing important fields on json data (raw_data.data)
+        - price
+        - stock level
+        - sku
+    - need a customized admin screen for showing errors only
 - what are the problems again?
     - "Coding is not enough. Software engineering is solving problems.. So what is my problem?"
         - not accurate scraping
@@ -11,12 +16,20 @@
             cannot handle ebay listing errors
         - not fully automated order handling
         - not a good customer services
-- UI
-    - scraping status screen (error report)
 - secure API connection
     - provide token
     - check out django + django restful framework
 - how would handle http errors on api?? log in db?
+
+## May 10 2020
+- UI
+    - scraping status screen (error report)
+        - django admin
+
+## May 9 2020
+- finish docker/docker-compose.yml
+    - django migrate database
+    - setup Gunicorn + Nginx for production (keep django built-in web server for development)
 
 ## May 8 2020
 - build separate postgres docker container and network with 'web' package.
