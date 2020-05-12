@@ -10,5 +10,3 @@ def parse_amazon_item(response):
         return parser.parse_item(response)
     except IgnoreRequest:
         return None
-
-

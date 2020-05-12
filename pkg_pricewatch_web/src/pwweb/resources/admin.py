@@ -47,12 +47,27 @@ admin screen
 
 
 from django.contrib import admin
+from django.db.models import Q
 from pwweb.resources.models import RawData
 
 
 @admin.register(RawData)
 class RawDataAdmin(admin.ModelAdmin):
+    date_hierarchy = 'created_at'
     ordering = ['-created_at',]
-    list_display = ['sku', 'url_short', 'item_title_short', 'price', 'status_str', 'http_status', 'domain', 'created_at', ]
+    empty_value_display = '???'
+    list_display = ('sku', 'url_short', 'item_title_short', 'price', 'status_str', 'http_status', 'domain', 'created_at', )
+    list_filter = ('domain', 'http_status',)
     search_fields = ['data__asin', 'url', 'data__title', 'domain', 'data__status', 'http_status',]
-    list_filter = ['domain', 'http_status',]
+    # radio_fields = {"http_status": admin.VERTICAL}
+    show_full_result_count = False
+
+    def get_search_results(self, request, queryset, search_term):
+        """ modify ModelAdmin.get_search_results
+        """
+        if search_term == '#erroronly':
+            _queryset, use_distinct = super().get_search_results(request, queryset, search_term=None)
+            _queryset = _queryset.filter(Q(http_status__gte=400) | Q(data__status__gt=1000))
+        else:
+            _queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+        return _queryset, use_distinct

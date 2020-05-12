@@ -22,3 +22,6 @@ dist/
 # prod files
 .config/pricewatch.prod.ini
 docker-compose.prod.yml
+
+# django admin templates (for reference only)
+**/templates/_admin/
