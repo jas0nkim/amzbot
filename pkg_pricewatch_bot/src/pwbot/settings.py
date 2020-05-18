@@ -123,7 +123,7 @@ config = configparser.ConfigParser()
 config.read(APP_CONFIG_FILEPATH)
 
 graylog_handler = graypy.GELFUDPHandler(config['Graylog']['host'], int(config['Graylog']['port']))
-graylog_handler.setLevel(logging.DEBUG) # set logging.ERROR later
+graylog_handler.setLevel(logging.ERROR) # set logging.ERROR later
 graylog_handler.setFormatter(formatter)
 
 logger.addHandler(stream_handler)
@@ -144,10 +144,10 @@ AMAZON_ITEM_IMAGE_CONVERT_STRING_TO_SECONDARY = '._SX522_.'
 
 
 ## walmart.com related
-WALMART_COM_ITEM_LINK_PATTERN = r'^(https?://www.walmart.com)?/([^/]+/[^/]+|ip)/([0-9]{8,15})(/.*$)?'
+WALMART_COM_ITEM_LINK_PATTERN = r'^(https?://www.walmart.com)?/([^/]+/[^/]+|ip)/([A-Z0-9]{8,15})(/.*$)?'
 WALMART_COM_ITEM_LINK_FORMAT = 'https://www.{}/ip/{}'
 
 ## walmart.ca related
-WALMART_CA_ITEM_LINK_PATTERN = r'^(https?://www.walmart.ca)?/(en|fr)/([^/]+/[^/]+|ip)/([0-9]{8,15})(/.*$)?'
+WALMART_CA_ITEM_LINK_PATTERN = r'^(https?://www.walmart.ca)?/(en|fr)/([^/]+/[^/]+|ip)/([A-Z0-9]{8,15})(/.*$)?'
 WALMART_CA_ITEM_LINK_FORMAT = 'https://www.{}/en/ip/{}'
 WALMART_CA_API_ITEM_PRICE_LINK = 'https://www.walmart.ca/api/product-page/price-offer'

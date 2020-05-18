@@ -52,6 +52,7 @@ class AmazonItemParser(object):
             amazon_item['url'] = response.url
             amazon_item['domain'] = self._domain
             amazon_item['http_status'] = response.status
+            amazon_item['job_id'] = self._job_id
             # if response.status == 404:
                 # RemovedVariationHandleMiddleware.__handle_removed_variations related
                 # amazon_item['parent_asin'] = None
@@ -72,8 +73,8 @@ class AmazonItemParser(object):
                             yield Request(settings.AMAZON_ITEM_LINK_FORMAT.format(self._domain, v_asin, settings.AMAZON_ITEM_VARIATION_LINK_POSTFIX),
                                     callback=parsers.parse_amazon_item,
                                     errback=parsers.resp_error_handler,
-                                    headers={ 'Referer': 'https://www.{}/'.format(self._domain), },
-                                    cb_kwarg={
+                                    headers={'Referer': 'https://www.{}/'.format(self._domain),},
+                                    cb_kwargs={
                                         'domain': self._domain,
                                         'job_id': self._job_id,
                                         'crawl_variations': False,

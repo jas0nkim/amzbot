@@ -16,19 +16,31 @@ class RawData(models.Model):
 
     @property
     def item_title(self):
-        return self.data.get('title', None)
+        if self.data:
+            return self.data.get('title', None)
+        else:
+            return None
 
     @property
     def sku(self):
-        return self.data.get('asin', None)
+        if self.data:
+            return self.data.get('asin', None)
+        else:
+            return None
 
     @property
     def price(self):
-        return self.data.get('price', None)
+        if self.data:
+            return self.data.get('price', None)
+        else:
+            return None
 
     @property
     def status(self):
-        return self.data.get('status', None)
+        if self.data:
+            return self.data.get('status', None)
+        else:
+            return None
 
     def status_str(self):
         if self.status:

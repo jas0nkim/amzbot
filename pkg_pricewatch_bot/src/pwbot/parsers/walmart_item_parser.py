@@ -149,7 +149,7 @@ class WalmartCaItemParser(object):
             #                     },
             #                 ],
             #             },
-            #             cb_kwarg={
+            #             cb_kwargs={
             #                 'domain': self._domain,
             #                 'job_id': self._job_id,
             #                 'crawl_variations': crawl_variations,
@@ -186,6 +186,7 @@ class WalmartCaItemParser(object):
         listing_item['domain'] = self._domain
         listing_item['http_status'] = response.status
         listing_item['data'] = data
+        listing_item['job_id'] = self._job_id
         return listing_item
 
     # def __parse_item_helper(self, response):

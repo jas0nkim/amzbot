@@ -46,6 +46,11 @@
 #
 #   docker-compose run bot python -m unittest discover -v
 #
+#
+# * restart single service within docker-compose.yml
+#
+#   docker-compose restart elasticsearch
+#
 
 version: '3.2'
 
