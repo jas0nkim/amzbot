@@ -41,6 +41,11 @@
 #
 #   docker-compose run bot python run.py discover -a asins="B087K45RSF" -a domain="amazon.com"
 #
+#
+# * how to test bot
+#
+#   docker-compose run bot python -m unittest discover -v
+#
 
 version: '3.2'
 

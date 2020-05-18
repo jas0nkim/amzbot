@@ -1,12 +1,39 @@
-## May 11 2020
-- Invalid sku - crawl the url once again.
-- UI
-    - 'item status' (raw_data.data -> status field) needs to be improved, currenly the error messages are not accurate
-    - need to check if there are any missing important fields on json data (raw_data.data)
-        - price
-        - stock level
+## May 15 2020
+- raw_data.data: key element
+    - url
+    - domain
+    - http_status
+    - data
         - sku
-    - need a customized admin screen for showing errors only
+        - parent_sku
+        - variation_skus
+        - price
+        - original_price
+        - quantity
+        - title
+        - description
+        - specifications
+        - features
+        - review_count
+        - avg_rating
+        - brand_name
+        - merchant_id
+        - merchant_name
+        - status
+
+## May 14 2020
+- schedule scrapes
+- scrape target sites/platforms
+    - amazon (.com, .ca)
+    - walmart (.com, .ca)
+        https://www.walmart.ca/api/product-page/price-offer
+        https://www.walmart.ca/api/product-page/find-in-store
+        walmart open api https://developer.walmartlabs.com/ (Registration is currently disabled....)
+        - check available online
+        - check available store
+    - ebay (.com, .ca)
+        https://developer.ebay.com
+    - shopify
 - what are the problems again?
     - "Coding is not enough. Software engineering is solving problems.. So what is my problem?"
         - not accurate scraping
@@ -20,6 +47,29 @@
     - provide token
     - check out django + django restful framework
 - how would handle http errors on api?? log in db?
+- resrc_raw_data.data json needs to be changed - NO (collect the data just needs, don't collect them all.)
+    {
+        'scraped': ...
+        'api': {
+            'main': {
+                ...
+            },
+            '...': {
+                ...
+            },
+            ...
+        }
+    }
+
+## May 11 2020
+- Invalid sku - crawl the url once again.
+- UI
+    - 'item status' (raw_data.data -> status field) needs to be improved, currenly the error messages are not accurate
+    - need to check if there are any missing important fields on json data (raw_data.data)
+        - price
+        - stock level
+        - sku
+    - need a customized admin screen for showing errors only
 
 ## May 10 2020
 - UI
