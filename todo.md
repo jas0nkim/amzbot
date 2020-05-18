@@ -1,3 +1,13 @@
+## May 18 2020
+- scrape walmart.com
+- re-visit amazon.com/.ca, and get more data/information from json/ajax if possible.
+- fix pwbot_schedular.tests test cases
+- convert raw_data.data to more readable data, and insert into different tables
+    - amazon
+    - walmart
+    - ebay
+    - shopify
+
 ## May 15 2020
 - raw_data.data: key element
     - url
