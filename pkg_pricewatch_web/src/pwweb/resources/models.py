@@ -10,6 +10,7 @@ class RawData(models.Model):
     domain = models.CharField(max_length=32, db_index=True)
     http_status = models.SmallIntegerField(blank=True, null=True)
     data = JSONField(blank=True, null=True)
+    job_id = models.CharField(max_length=64, db_index=True, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     created_at.short_description = 'collected time'
 
