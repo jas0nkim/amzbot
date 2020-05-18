@@ -12,4 +12,4 @@ class BasePwbotCrawlSpider(CrawlSpider):
         # add graylog handler
         logging.root.addHandler(graylog_handler)
         super().__init__(*a, **kw)
-        self._job_id = kw['job_id']
+        self._job_id = kw['job_id'] if 'job_id' in kw else None

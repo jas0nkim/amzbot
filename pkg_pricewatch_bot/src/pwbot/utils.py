@@ -33,7 +33,7 @@ def extract_sku_from_url(url, domain):
     elif domain in ['walmart.com',]:
         match = is_valid_walmart_com_item_url(url)
         if match:
-            return match.group(4)
+            return match.group(3)
         else:
             return None
     elif domain in ['walmart.ca',]:

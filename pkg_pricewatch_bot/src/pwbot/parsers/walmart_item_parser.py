@@ -11,8 +11,46 @@ from pwbot.items import ListingItem
 
 
 class WalmartComItemParser(object):
+    _domain = None
+    _job_id = None
+    _parent_sku = None
+
+    def __init__(self):
+        self.logger = logging.getLogger(utils.class_fullname(self))
+
+    def __get_preloaded_data(self, response):
+        try:
+            _data = response.xpath('//script[@id="item"]/text()').extract()[0]
+        except IndexError as e:
+            self.logger.exception("{}: [{}][{}] unable to find preloaded data - {}".format(utils.class_fullname(e), self._domain, self._parent_sku, str(e)))
+            raise IgnoreRequest
+        return json.loads(_data)
+
     def parse_item(self, response, domain, job_id, crawl_variations=False):
-        pass
+        self._domain = domain
+        self._job_id = job_id
+        self._parent_sku = utils.extract_sku_from_url(response.url, self._domain)
+        if not self._parent_sku:
+            self.logger.exception("[{}][null] Request ignored - no parent SKU".format(self._domain))
+            raise IgnoreRequest
+        if response.status != 200:
+            # broken link or inactive item
+            yield self.build_listing_item(response)
+        else:
+            _data = self.__get_preloaded_data(response)
+            yield self.build_listing_item(response, data=_data)
+
+    def build_listing_item(self, response, data=None):
+        """ response: scrapy.http.response.html.HtmlResponse
+            data: json
+        """
+        listing_item = ListingItem()
+        listing_item['url'] = response.url
+        listing_item['domain'] = self._domain
+        listing_item['http_status'] = response.status
+        listing_item['data'] = data
+        listing_item['job_id'] = self._job_id
+        return listing_item
 
 class WalmartCaItemParser(object):
     _domain = None
@@ -176,9 +214,7 @@ class WalmartCaItemParser(object):
             return self.build_listing_item(response, data=json_data)
 
     def build_listing_item(self, response, data=None):
-        """ pwbot.parsers.walmart_item_parser.build_listing_item
-            
-            response: scrapy.http.response.html.HtmlResponse
+        """ response: scrapy.http.response.html.HtmlResponse
             data: json
         """
         listing_item = ListingItem()
