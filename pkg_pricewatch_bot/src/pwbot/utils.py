@@ -21,6 +21,30 @@ def extract_asin_from_url(url, domain='amazon.com'):
     else:
         return None
 
+def is_valid_walmart_com_item_url(url):
+    return re.match(settings.WALMART_COM_ITEM_LINK_PATTERN, url)
+
+def is_valid_walmart_ca_item_url(url):
+    return re.match(settings.WALMART_CA_ITEM_LINK_PATTERN, url)
+
+def extract_sku_from_url(url, domain):
+    if domain in ['amazon.com', 'amazon.ca',]:
+        return extract_asin_from_url(url, domain)
+    elif domain in ['walmart.com',]:
+        match = is_valid_walmart_com_item_url(url)
+        if match:
+            return match.group(4)
+        else:
+            return None
+    elif domain in ['walmart.ca',]:
+        match = is_valid_walmart_ca_item_url(url)
+        if match:
+            return match.group(4)
+        else:
+            return None
+    else:
+        return None
+
 def money_to_float(string):
     # trim everything except number and dot(.)
     return float(re.sub(r'[^\d.]+', '', string))

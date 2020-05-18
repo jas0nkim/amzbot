@@ -13,6 +13,7 @@ class ListingItem(Item):
     domain = Field()
     http_status = Field()
     data = Field()
+    job_id = Field()
 
 
 # class PwbotDjangoItem(DjangoItem):

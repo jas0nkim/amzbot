@@ -1,1 +1,1 @@
-../../../../pkg_pricewatch_bot/src/pwbot/tests/utils.py
+../../pwbot/tests/utils.py

@@ -32,4 +32,4 @@ Options
                         spider name
 -a NAME=VALUE list      set spider argument (may be repeated)"""
 
-DEFAULT_SPIDER = 'AmazonItemPageSpider'
+DEFAULT_SPIDER = 'StoreItemPageSpider'

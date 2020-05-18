@@ -2,6 +2,7 @@
 
 import os
 import ast
+import uuid
 import json
 import logging
 import configparser
@@ -158,7 +159,9 @@ class Schedular:
         if not self._scrapyd:
             logger.error("No scrapyd object find. Unable to schedule a job.")
             return None
-        jobid = None
+        _jobid = str(uuid.uuid4())
+        kwargs['jobid'] = _jobid # a scrapyd parameter
+        kwargs['job_id'] = _jobid # passing to a spider
         try:
             _s = None # scrapy settings in dict. eg {'DOWNLOAD_DELAY': 2}
             jobid = self._scrapyd.schedule(project, spider, settings=_s, **kwargs)
@@ -167,20 +170,23 @@ class Schedular:
         except Exception as e:
             logger.error("{}: Failed to schedule a job - {}".format(class_fullname(e), str(e)))
         else:
-            logger.info("new scheduled job '{}' for project '{}', spider '{}' has been set".format(jobid, project, spider))
-            # call API to create a job
-            response = requests.post('http://{}:{}/api/schedule/job/'.format(
-                    config['PriceWatchWeb']['host'], config['PriceWatchWeb']['port']),
-                json={'job_id': jobid,
-                    'project': project,
-                    'spider': spider,
-                    'version': kwargs.pop('_version', None),
-                    'settings': _s,
-                    'other_params': kwargs,
-                    'status': settings.SCHEDULES_JOB_STATUS_PENDING,
-                })
-            if not response.ok:
-                logger.error("{} HTTP Error: Failed to add a new job - {} - {}".format(response.status_code, response.reason, response.text))
+            if jobid != _jobid:
+                logger.error("{}: Invalid jobid [enteredid vs returnedid] [{} vs {}] - {}".format(class_fullname(e), _jobid, jobid, str(e)))
+            else:
+                logger.info("new scheduled job '{}' for project '{}', spider '{}' has been set".format(jobid, project, spider))
+                # call API to create a job
+                response = requests.post('http://{}:{}/api/schedule/job/'.format(
+                        config['PriceWatchWeb']['host'], config['PriceWatchWeb']['port']),
+                    json={'job_id': jobid,
+                        'project': project,
+                        'spider': spider,
+                        'version': kwargs.pop('_version', None),
+                        'settings': _s,
+                        'other_params': kwargs,
+                        'status': settings.SCHEDULES_JOB_STATUS_PENDING,
+                    })
+                if not response.ok:
+                    logger.error("{} HTTP Error: Failed to add a new job - {} - {}".format(response.status_code, response.reason, response.text))
         finally:
             return jobid
 

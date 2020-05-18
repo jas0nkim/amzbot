@@ -104,8 +104,10 @@ ITEM_PIPELINES = {
 LOG_LEVEL = 'DEBUG'
 
 ## crawlera related
-CRAWLERA_ENABLED = True
+CRAWLERA_HOST = 'proxy.crawlera.com'
+CRAWLERA_PORT = '8010'
 CRAWLERA_APIKEY = '191582bbbb4144519a78f00776896436'
+CRAWLERA_ENABLED = True
 
 ## config, custom logger
 
@@ -139,3 +141,13 @@ AMAZON_ITEM_VARIATION_LINK_POSTFIX = '/?th=1&psc=1'
 AMAZON_ITEM_IMAGE_CONVERT_PATTERN_FROM = r'\._([^_]+)_\.'
 AMAZON_ITEM_IMAGE_CONVERT_STRING_TO_PRIMARY = '._SL1500_.'
 AMAZON_ITEM_IMAGE_CONVERT_STRING_TO_SECONDARY = '._SX522_.'
+
+
+## walmart.com related
+WALMART_COM_ITEM_LINK_PATTERN = r'^(https?://www.walmart.com)?/([^/]+/[^/]+|ip)/([0-9]{8,15})(/.*$)?'
+WALMART_COM_ITEM_LINK_FORMAT = 'https://www.{}/ip/{}'
+
+## walmart.ca related
+WALMART_CA_ITEM_LINK_PATTERN = r'^(https?://www.walmart.ca)?/(en|fr)/([^/]+/[^/]+|ip)/([0-9]{8,15})(/.*$)?'
+WALMART_CA_ITEM_LINK_FORMAT = 'https://www.{}/en/ip/{}'
+WALMART_CA_API_ITEM_PRICE_LINK = 'https://www.walmart.ca/api/product-page/price-offer'
