@@ -31,7 +31,7 @@ admin screen
         - url (first 10 letters)
         - title (first 10 letters)
         - price
-        - item status
+        - quantity
         - http status
         - domain
         - collected time
@@ -40,7 +40,6 @@ admin screen
         - title
         - sku
         - http status
-        - item status
     - filtered by
         - domain
 """
@@ -56,9 +55,9 @@ class RawDataAdmin(admin.ModelAdmin):
     date_hierarchy = 'created_at'
     ordering = ['-created_at',]
     empty_value_display = '???'
-    list_display = ('sku', 'url_short', 'item_title_short', 'price', 'status_str', 'http_status', 'domain', 'created_at', )
+    list_display = ('sku', 'url_short', 'item_title_short', 'price', 'quantity', 'http_status', 'domain', 'created_at', )
     list_filter = ('domain', 'http_status',)
-    search_fields = ['data__asin', 'url', 'data__title', 'domain', 'data__status', 'http_status',]
+    search_fields = ['url', 'domain', 'http_status',]
     # radio_fields = {"http_status": admin.VERTICAL}
     show_full_result_count = False
 
@@ -67,7 +66,7 @@ class RawDataAdmin(admin.ModelAdmin):
         """
         if search_term == '#erroronly':
             _queryset, use_distinct = super().get_search_results(request, queryset, search_term=None)
-            _queryset = _queryset.filter(Q(http_status__gte=400) | Q(data__status__gt=1000))
+            _queryset = _queryset.filter(Q(http_status__gte=400))
         else:
             _queryset, use_distinct = super().get_search_results(request, queryset, search_term)
         return _queryset, use_distinct

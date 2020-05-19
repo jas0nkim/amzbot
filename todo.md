@@ -1,5 +1,6 @@
 ## May 18 2020
 - scrape walmart.com
+- update django admin raw data screen to support walmart.com/.ca
 - re-visit amazon.com/.ca, and get more data/information from json/ajax if possible.
 - fix pwbot_schedular.tests test cases
 - convert raw_data.data to more readable data, and insert into different tables

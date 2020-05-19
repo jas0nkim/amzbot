@@ -146,6 +146,7 @@ AMAZON_ITEM_IMAGE_CONVERT_STRING_TO_SECONDARY = '._SX522_.'
 ## walmart.com related
 WALMART_COM_ITEM_LINK_PATTERN = r'^(https?://www.walmart.com)?/([^/]+/[^/]+|ip)/([A-Z0-9]{8,15})(/.*$)?'
 WALMART_COM_ITEM_LINK_FORMAT = 'https://www.{}/ip/{}'
+WALMART_COM_ITEM_VARIATION_LINK_POSTFIX = '?selected=true'
 
 ## walmart.ca related
 WALMART_CA_ITEM_LINK_PATTERN = r'^(https?://www.walmart.ca)?/(en|fr)/([^/]+/[^/]+|ip)/([A-Z0-9]{8,15})(/.*$)?'

@@ -24,29 +24,55 @@ class RawData(models.Model):
     @property
     def sku(self):
         if self.data:
-            return self.data.get('asin', None)
+            if self.domain in ['amazon.com', 'amazon.ca',]:
+                if 'asin' in self.data:
+                    return self.data['asin']
+            elif self.domain in ['walmart.com',]:
+                if 'item' in self.data and 'product' in self.data['item'] and 'buyBox' in self.data['item']['product'] and 'primaryUsItemId' in self.data['item']['product']['buyBox']:
+                    return self.data['item']['product']['buyBox']['primaryUsItemId']
+            elif self.domain in ['walmart.ca',]:
+                if 'product' in self.data and 'item' in self.data['product'] and 'skus' in self.data['product']['item']:
+                    return truncatechars(','.join(self.data['product']['item']['skus']), 50)
         else:
             return None
 
     @property
     def price(self):
         if self.data:
-            return self.data.get('price', None)
+            if self.domain in ['amazon.com', 'amazon.ca',]:
+                if 'price' in self.data:
+                    return self.data['price']
+            elif self.domain in ['walmart.com',]:
+                if 'item' in self.data and 'product' in self.data['item'] and 'buyBox' in self.data['item']['product'] and 'products' in self.data['item']['product']['buyBox']:
+                    return self.data['item']['product']['buyBox']['products'][0]['priceMap']['price']
+            elif self.domain in ['walmart.ca',]:
+                if 'skus' in self.data and 'offers' in self.data:
+                    prices = {}
+                    for sku, offerid in self.data['skus'].items():
+                        if len(offerid) < 1:
+                            continue
+                        prices[sku] = self.data['offers'][offerid[0]]['currentPrice']
+                    return truncatechars(str(prices), 50)
         else:
             return None
 
     @property
-    def status(self):
+    def quantity(self):
         if self.data:
-            return self.data.get('status', None)
+            if self.domain in ['amazon.com', 'amazon.ca',]:
+                if 'quantity' in self.data:
+                    return self.data['quantity']
+            elif self.domain in ['walmart.com',]:
+                if 'item' in self.data and 'product' in self.data['item'] and 'buyBox' in self.data['item']['product'] and 'products' in self.data['item']['product']['buyBox']:
+                    if self.data['item']['product']['buyBox']['products'][0]['urgentQuantity']:
+                        return self.data['item']['product']['buyBox']['products'][0]['urgentQuantity']
+                    else:
+                        return 'in stock'
+            elif self.domain in ['walmart.ca',]:
+                if 'product' in self.data and 'quantity' in self.data['product']:
+                    return self.data['product']['quantity']
         else:
             return None
-
-    def status_str(self):
-        if self.status:
-            return '{} ({})'.format(settings.RESOURCES_AMAZONLISTING_STATUS_STR_SET[self.status], self.status)
-        return None
-    status_str.short_description = 'item status'
 
     def url_short(self):
         return mark_safe('<a href="{}" target="_blank">{}</a>'.format(self.url, truncatechars(self.url, 50)))

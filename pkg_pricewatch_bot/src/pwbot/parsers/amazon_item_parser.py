@@ -107,15 +107,15 @@ class AmazonItemParser(object):
         _price = self.__extract_price(response)
         _quantity = self.__extract_quantity(response)
         if _price is None:
-            amazon_item['data']['status'] = settings.RESOURCES_AMAZONLISTING_STATUS_NO_PRICE_GIVEN
+            amazon_item['data']['status'] = settings.RESOURCES_LISTING_ITEM_STATUS_NO_PRICE_GIVEN
         elif _quantity == 0:
-            amazon_item['data']['status'] = settings.RESOURCES_AMAZONLISTING_STATUS_OUT_OF_STOCK
+            amazon_item['data']['status'] = settings.RESOURCES_LISTING_ITEM_STATUS_OUT_OF_STOCK
         elif self.__extract_asin_on_content(response) != self._asin:
             # invalid asin
-            amazon_item['data']['status'] = settings.RESOURCES_AMAZONLISTING_STATUS_INVALID_SKU
+            amazon_item['data']['status'] = settings.RESOURCES_LISTING_ITEM_STATUS_INVALID_SKU
         elif self._asin and _parent_asin and self._asin != _parent_asin and len(variation_asins) > 0 and self._asin not in variation_asins:
             # a variation, but removed - inactive this variation
-            amazon_item['data']['status'] = settings.RESOURCES_AMAZONLISTING_STATUS_SKU_NOT_IN_VARIATION
+            amazon_item['data']['status'] = settings.RESOURCES_LISTING_ITEM_STATUS_SKU_NOT_IN_VARIATION
         else:
             try:
                 amazon_item['data']['picture_urls'] = self.__extract_picture_urls(response)
@@ -143,9 +143,9 @@ class AmazonItemParser(object):
                 amazon_item['data']['meta_keywords'] = self.__extract_meta_keywords(response)
             except Exception as e:
                 self.logger.exception("{}: [ASIN:{}] Failed parsing page - {}".format(utils.class_fullname(e), self._asin, str(e)))
-                amazon_item['data']['status'] = settings.RESOURCES_AMAZONLISTING_STATUS_PARSING_FAILED_UNKNOWN_ERROR
+                amazon_item['data']['status'] = settings.RESOURCES_LISTING_ITEM_STATUS_PARSING_FAILED_UNKNOWN_ERROR
             else:
-                amazon_item['data']['status'] = settings.RESOURCES_AMAZONLISTING_STATUS_GOOD
+                amazon_item['data']['status'] = settings.RESOURCES_LISTING_ITEM_STATUS_GOOD
         return amazon_item
 
 
