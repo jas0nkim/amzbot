@@ -64,13 +64,23 @@ class RawData(models.Model):
                     return self.data['quantity']
             elif self.domain in ['walmart.com',]:
                 if 'item' in self.data and 'product' in self.data['item'] and 'buyBox' in self.data['item']['product'] and 'products' in self.data['item']['product']['buyBox']:
-                    if self.data['item']['product']['buyBox']['products'][0]['urgentQuantity']:
-                        return self.data['item']['product']['buyBox']['products'][0]['urgentQuantity']
+                    if self.data['item']['product']['buyBox']['products'][0]['availabilityStatus'] == 'OUT_OF_STACK':
+                        return 'out of stock'
+                    elif self.data['item']['product']['buyBox']['products'][0]['availabilityStatus'] == 'IN_STOCK':
+                        if self.data['item']['product']['buyBox']['products'][0]['urgentQuantity']:
+                            return self.data['item']['product']['buyBox']['products'][0]['urgentQuantity']
+                        else:
+                            return 'in stock'
                     else:
-                        return 'in stock'
+                        return 'N/A'
             elif self.domain in ['walmart.ca',]:
-                if 'product' in self.data and 'quantity' in self.data['product']:
-                    return self.data['product']['quantity']
+                if 'skus' in self.data and 'offers' in self.data:
+                    prices = {}
+                    for sku, offerid in self.data['skus'].items():
+                        if len(offerid) < 1:
+                            continue
+                        prices[sku] = self.data['offers'][offerid[0]]['availableQuantity']
+                    return truncatechars(str(prices), 50)
         else:
             return None
 
