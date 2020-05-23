@@ -1,13 +1,24 @@
-## May 18 2020
-- scrape walmart.com
-- update django admin raw data screen to support walmart.com/.ca
-- re-visit amazon.com/.ca, and get more data/information from json/ajax if possible.
-- fix pwbot_schedular.tests test cases
+## May 23 2020
+- fixing pwbot_schedular.tests test cases
+    - 400 HTTP Error: Failed to update a deleted version - Bad Request - {"added_at":["This field is required."]}
+    - AssertionError: 2 != 1 (test_1_addversion)
 - convert raw_data.data to more readable data, and insert into different tables
     - amazon
     - walmart
     - ebay
     - shopify
+
+## May 22 2020
+- fix pwbot_schedular.tests test cases
+
+## May 20 2020
+- quantity? for walmart.com/.ca
+- re-visit amazon.com/.ca, and get more data/information from json/ajax if possible.
+    - amazon.com/.ca pages are old styled... no ajax data found...
+
+## May 18 2020
+- scrape walmart.com
+- update django admin raw data screen to support walmart.com/.ca
 
 ## May 15 2020
 - raw_data.data: key element
