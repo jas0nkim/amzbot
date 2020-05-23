@@ -9,6 +9,8 @@ import configparser
 import requests
 import graypy
 from datetime import datetime
+from setuptools import setup, find_packages
+from setuptools.dist import Distribution
 from scrapyd_api import ScrapydAPI
 from scrapyd_api.exceptions import ScrapydResponseError
 from pwbot_schedular import settings
@@ -38,6 +40,27 @@ graylog_handler.setFormatter(formatter)
 logger.addHandler(stream_handler)
 logger.addHandler(graylog_handler)
 
+def build_bot(project=settings.BOT_PROJECT, version=settings.BOT_VERISON, path=settings.APP_DIST_DIRPATH):
+    setup(
+        name=project,
+        version=version,
+        packages=find_packages(exclude=[
+            'pwbot.tests',
+            'pwbot.tests.*',
+            'pwbot_schedular',
+            'pwbot_schedular.*',
+            'run',]),
+        install_requires=[
+            'Scrapy==2.0.1',
+            'Pillow==7.1.2',
+            'scrapy-crawlera==1.7.0',
+            'graypy==2.1.0',
+            'treq==20.4.1',
+            'tldextract==2.2.2',
+        ],
+        script_args=['bdist_egg', '-d', path,],
+        entry_points={'scrapy': ['settings = pwbot.settings']},
+    )
 
 
 class Runner:
@@ -51,11 +74,13 @@ class Runner:
     def _addversion_if_non(self):
         num_of_spiders = 0
         try:
+            egg_filename = '{}-{}-py3.7.egg'.format(settings.BOT_PROJECT, settings.BOT_VERISON)
+            build_bot(project=settings.BOT_PROJECT, version=settings.BOT_VERISON)
             num_of_spiders = self.schdlr.addversion(project=settings.BOT_PROJECT,
-                version=settings.BOT_VERISON)
+                                                    version=settings.BOT_VERISON,
+                                                    egg_filename=egg_filename)
         except Exception as e:
-            logger.error("{}: {}".format(
-                class_fullname(e), str(e)))
+            logger.error("{}: {}".format(class_fullname(e), str(e)))
         if num_of_spiders < 1:
             raise Exception("Failed adding new project version.")
 

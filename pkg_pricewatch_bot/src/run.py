@@ -17,7 +17,6 @@ features
 
 import sys
 import getopt
-from setuptools import setup, find_packages
 from pwbot_schedular import Runner
 from pwbot_schedular import settings
 
@@ -46,26 +45,6 @@ def main(func, argv):
             sys.exit()
         elif opt in ('-d', '--deploy'):
             add_version = True
-            setup(
-                name=settings.BOT_PROJECT,
-                version=settings.BOT_VERISON,
-                packages=find_packages(exclude=[
-                    'pwbot.tests',
-                    'pwbot.tests.*',
-                    'pwbot_schedular',
-                    'pwbot_schedular.*',
-                    'run',]),
-                install_requires=[
-                    'Scrapy==2.0.1',
-                    'Pillow==7.1.2',
-                    'scrapy-crawlera==1.7.0',
-                    'graypy==2.1.0',
-                    'treq==20.4.1',
-                    'tldextract==2.2.2',
-                ],
-                script_args=['bdist_egg', '-d', '/usr/local/etc/pricewatch/dist',],
-                entry_points={'scrapy': ['settings = pwbot.settings']},
-            )
         elif opt in ('-p', '--project'):
             project = arg
         elif opt in ('-v', '--version'):
