@@ -52,7 +52,7 @@
 #   docker-compose restart elasticsearch
 #
 
-version: '3.2'
+version: '3.4'
 
 services:
 
@@ -88,6 +88,7 @@ services:
   bot:
     build:
       context: ./pkg_pricewatch_bot/
+      target: base
     container_name: bot
     volumes:
       # src directory
@@ -105,6 +106,8 @@ services:
       - type: bind
         source: ./.config/pricewatch.ini
         target: /usr/local/etc/pricewatch/pricewatch.ini
+    ports:
+      - 5677:5678
     networks:
       - pricewatch
 
@@ -129,6 +132,7 @@ services:
   web:
     build:
       context: ./pkg_pricewatch_web/
+      target: debug
     container_name: web
     volumes:
       # src directory
@@ -145,16 +149,11 @@ services:
         target: /usr/local/etc/pricewatch/pricewatch.ini
     ports:
       - 8000:8000
+      - 5678:5678
     depends_on:
       - postgres
     networks:
       - pricewatch
-    # command: tail -F /usr/local/etc/pricewatch/pricewatch.ini
-    command:
-      python manage.py runserver 0.0.0.0:8000
-      # for production
-      # https://docs.gunicorn.org/en/stable/
-      # gunicorn -b 127.0.0.1:8000 pwweb.wsgi:application
 
   # MongoDB: https://hub.docker.com/_/mongo/
   mongo:
