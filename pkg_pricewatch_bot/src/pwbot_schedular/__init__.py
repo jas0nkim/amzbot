@@ -174,6 +174,7 @@ class Schedular:
                     'version': version,
                     'status': settings.SCHEDULES_VERSION_STATUS_ADDED,
                     'added_at': str(datetime.now()),
+                    'deleted_at': None,
                 })
             if not response.ok:
                 logger.error("{} HTTP Error: Failed to add a version - {} - {}".format(response.status_code, response.reason, response.text))
@@ -278,11 +279,12 @@ class Schedular:
         else:
             logger.info("successfully deleted project '{}' version '{}'".format(project, version))
             # update deleted version
-            response = requests.post('http://{}:{}/api/schedule/version/'.format(
+            response = requests.put('http://{}:{}/api/schedule/version/'.format(
                     config['PriceWatchWeb']['host'], config['PriceWatchWeb']['port']),
                 json={'project': project,
                     'version': version,
                     'status': settings.SCHEDULES_VERSION_STATUS_DELETED,
+                    'deleted_at': str(datetime.now()),
                 })
             if not response.ok:
                 logger.error("{} HTTP Error: Failed to update a deleted version - {} - {}".format(response.status_code, response.reason, response.text))
@@ -305,10 +307,11 @@ class Schedular:
         else:
             logger.info("successfully deleted project '{}'".format(project))
             # update deleted project
-            response = requests.post('http://{}:{}/api/schedule/version/'.format(
+            response = requests.put('http://{}:{}/api/schedule/version/'.format(
                     config['PriceWatchWeb']['host'], config['PriceWatchWeb']['port']),
                 json={'project': project,
                     'status': settings.SCHEDULES_VERSION_STATUS_DELETED,
+                    'deleted_at': str(datetime.now()),
                 })
             if not response.ok:
                 logger.error("{} HTTP Error: Failed to update deleted project - {} - {}".format(response.status_code, response.reason, response.text))

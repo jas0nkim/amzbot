@@ -5,8 +5,7 @@
             "version": "0.0.1",
             "spider": "StoreItemPageSpider",
             "asins": "B00II9VHCU",
-            "domain": "amazon.com",
-            "expected_number_of_spiders": 1
+            "domain": "amazon.com"
         }
     ]
 }

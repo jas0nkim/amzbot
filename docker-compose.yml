@@ -16,7 +16,7 @@
 #     1) create database
 #         docker-compose run postgres createdb -h postgres -U pricewatchuser pricewatch
 #     2) django migration
-#         docker-compose run web python manage.py migrate
+#         docker-compose run web python manage.py [migrate][makemigrations][sqlmigrate]
 #
 # note: django (web) container hangs a while on 'docker-compose up': Watching for file changes with StatReloader, because of the setting DEBUG=True.
 #       Edit DEBUG=False and save, and then edit back DEBUG=True and save would help.
