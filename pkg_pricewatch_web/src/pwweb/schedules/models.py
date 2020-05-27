@@ -26,7 +26,7 @@ class Version(models.Model):
     project = models.CharField(max_length=32, db_index=True)
     version = models.CharField(max_length=32, db_index=True)
     status = models.SmallIntegerField(default=1)
-    added_at = models.DateTimeField()
+    added_at = models.DateTimeField(blank=True, null=True)
     deleted_at = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
