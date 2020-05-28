@@ -1,13 +1,15 @@
-## May 26 2020
-- debug python with ptvsd
-- fixing pwbot_schedular.tests test cases
-    - 400 HTTP Error: Failed to update a deleted version - Bad Request - {"added_at":["This field is required."]}
-    - AssertionError: 2 != 1 (test_1_addversion)
+## May 27 2020
 - convert raw_data.data to more readable data, and insert into different tables
     - amazon
     - walmart
     - ebay
     - shopify
+
+## May 26 2020
+- debug python with ptvsd
+- fixing pwbot_schedular.tests test cases
+    - 400 HTTP Error: Failed to update a deleted version - Bad Request - {"added_at":["This field is required."]}
+    - AssertionError: 2 != 1 (test_1_addversion)
 
 ## May 23 2020
 - checkout pandas
