@@ -90,7 +90,6 @@ services:
   bot:
     build:
       context: ./pkg_pricewatch_bot/
-      target: base
     container_name: bot
     volumes:
       # src directory
@@ -108,8 +107,8 @@ services:
       - type: bind
         source: ./.config/pricewatch.ini
         target: /usr/local/etc/pricewatch/pricewatch.ini
-    ports:
-      - 5677:5678
+    # ports:
+    #   - 5677:5678 ### DEBUGGER ###
     networks:
       - pricewatch
 
@@ -134,7 +133,6 @@ services:
   web:
     build:
       context: ./pkg_pricewatch_web/
-      target: debug
     container_name: web
     volumes:
       # src directory
@@ -151,7 +149,7 @@ services:
         target: /usr/local/etc/pricewatch/pricewatch.ini
     ports:
       - 8000:8000
-      - 5678:5678
+      # - 5678:5678 ### DEBUGGER ###
     depends_on:
       - postgres
     networks:
