@@ -16,8 +16,8 @@ dist/
 **/.coverage
 **/htmlcov/
 
-# postgres
-.pg_data/
+# docker data (mounted volumes)
+.docker_data/
 
 # prod files
 .config/pricewatch.prod.ini

@@ -12,7 +12,13 @@
 #
 # 1. docker-compose up --build -d
 #
-# 2. if no 'pricewatch' database installed
+# 2. .docker_data directories ownership change - permission issues:
+#     - elasticsearch
+#       sudo chown -R 1000:1000 .docker_data/elasticsearch
+#     - graylog
+#       sudo chown -R 1100:1100 .docker_data/graylog
+#
+# 3. if no 'pricewatch' database installed
 #     1) create database
 #         docker-compose run postgres createdb -h postgres -U pricewatchuser pricewatch
 #     2) django migration
@@ -63,11 +69,7 @@ services:
     container_name: scrapyd
     volumes:
       # scrapyd data directory (items, eggs, logs, and so on)
-      - type: volume
-        source: scrapyd_data
-        target: /var/lib/scrapyd/
-        volume:
-          nocopy: true
+      - ./.docker_data/scrapyd/:/var/lib/scrapyd/
       # scrapyd config file
       - type: bind
         source: ./scrapyd/scrapyd.conf
@@ -120,7 +122,7 @@ services:
       POSTGRES_PASSWORD: qwer1234
       PGDATA: /data/postgres
     volumes:
-      - ./.pg_data:/data/postgres
+      - ./.docker_data/postgres/:/data/postgres/
     ports:
       - 5433:5432
     networks:
@@ -159,11 +161,7 @@ services:
   mongo:
     image: mongo:3
     volumes:
-      - type: volume
-        source: log_mongodb_data
-        target: /data/db
-        volume:
-          nocopy: true
+      - ./.docker_data/mongo/db/:/data/db/
     networks:
       - pricewatch
 
@@ -171,11 +169,7 @@ services:
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.8.5
     volumes:
-      - type: volume
-        source: log_elasticsearch_data
-        target: /usr/share/elasticsearch/data
-        volume:
-          nocopy: true
+      - ./.docker_data/elasticsearch/data/:/usr/share/elasticsearch/data/
     environment:
       - http.host=0.0.0.0
       - transport.host=localhost
@@ -194,19 +188,15 @@ services:
 
   # Graylog: https://hub.docker.com/r/graylog/graylog/
   graylog:
-    image: graylog/graylog:3.2
+    image: graylog/graylog:3.3
     volumes:
-      - type: volume
-        source: log_graylog_journal
-        target: /usr/share/graylog/data/journal
-        volume:
-          nocopy: true
+      - ./.docker_data/graylog/data/journal/:/usr/share/graylog/data/journal/
     environment:
       # CHANGE ME (must be at least 16 characters)!
       - GRAYLOG_PASSWORD_SECRET=somepasswordpepper
       # Password: admin
       - GRAYLOG_ROOT_PASSWORD_SHA2=8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918
-      - GRAYLOG_HTTP_EXTERNAL_URI=http://127.0.0.1:9000/
+      - GRAYLOG_HTTP_EXTERNAL_URI=http://localhost:9000/
     networks:
       - pricewatch
     depends_on:
@@ -223,12 +213,6 @@ services:
       - 12201:12201
       # GELF UDP
       - 12201:12201/udp
-
-volumes:
-  scrapyd_data:
-  log_mongodb_data:
-  log_elasticsearch_data:
-  log_graylog_journal:
 
 networks:
   pricewatch:
