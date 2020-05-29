@@ -4,13 +4,21 @@
 
 FROM python:3.7-slim
 
-COPY ./requirements.txt /opt/requirements.txt
-RUN pip install -r /opt/requirements.txt
+ENV SCRAPY_SETTINGS_MODULE=pwbot.settings
+ENV USER mydk
 
-RUN mkdir /app/
-WORKDIR /app/
+RUN useradd -m -d /home/${USER} ${USER} \
+    && chown -R ${USER} /home/${USER}
+USER ${USER}
+WORKDIR /home/${USER}/
 
-COPY ./src/ /app/
+COPY --chown=${USER}:${USER} ./requirements.txt requirements.txt
+RUN pip install -r requirements.txt
+
+RUN mkdir /home/${USER}/app/
+WORKDIR /home/${USER}/app/
+
+COPY --chown=${USER}:${USER} ./src/ /home/${USER}/app/
+
 ### DEBUGGER ###
 # RUN pip install ptvsd
-ENV SCRAPY_SETTINGS_MODULE=pwbot.settings

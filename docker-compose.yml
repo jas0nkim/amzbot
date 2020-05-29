@@ -12,6 +12,7 @@
 #
 # 1. docker-compose up --build -d
 #
+# ** deprecated
 # 2. .docker_data directories ownership change - permission issues:
 #     - elasticsearch
 #       sudo chown -R 1000:1000 .docker_data/elasticsearch
@@ -20,9 +21,9 @@
 #
 # 3. if no 'pricewatch' database installed
 #     1) create database
-#         docker-compose run postgres createdb -h postgres -U pricewatchuser pricewatch
+#         docker-compose exec postgres createdb -h postgres -U pricewatchuser pricewatch
 #     2) django migration
-#         docker-compose run web python manage.py [migrate][makemigrations][sqlmigrate]
+#         docker-compose exec web python manage.py [migrate][makemigrations][sqlmigrate]
 #
 # note: django (web) container hangs a while on 'docker-compose up': Watching for file changes with StatReloader, because of the setting DEBUG=True.
 #       Edit DEBUG=False and save, and then edit back DEBUG=True and save would help.
@@ -30,12 +31,12 @@
 #
 # * how to run postgres db terminal
 #
-#   docker-compose run postgres psql -h postgres -U pricewatchuser
+#   docker-compose exec postgres psql -h postgres -U pricewatchuser
 #
 #
 # * attach to a running container
 #
-#   docker attach --sig-proxy=false CONTAINER_ID
+#   docker attach --sig-proxy=false CONTAINER_ID_OR_NAME
 #
 #
 # * how to schedule bot:
@@ -69,15 +70,15 @@ services:
     container_name: scrapyd
     volumes:
       # scrapyd data directory (items, eggs, logs, and so on)
-      - ./.docker_data/scrapyd/:/var/lib/scrapyd/
+      - scrapyd_data:/var/lib/scrapyd/
       # scrapyd config file
       - type: bind
         source: ./scrapyd/scrapyd.conf
         target: /etc/scrapyd/scrapyd.conf
       # app config file
       - type: bind
-        source: ./.config/pricewatch.ini
-        target: /usr/local/etc/pricewatch/pricewatch.ini
+        source: ./.config/
+        target: /usr/local/etc/pricewatch/
     networks:
       - pricewatch
     ports:
@@ -96,17 +97,10 @@ services:
       - type: bind
         source: ./pkg_pricewatch_bot/src/
         target: /app/
-      # common file
-      - type: bind
-        source: ./.common/_common_settings.py
-        target: /app/pwbot/_common_settings.py
-      - type: bind
-        source: ./.common/_common_settings.py
-        target: /app/pwbot_schedular/_common_settings.py
       # app config file
       - type: bind
-        source: ./.config/pricewatch.ini
-        target: /usr/local/etc/pricewatch/pricewatch.ini
+        source: ./.config/
+        target: /usr/local/etc/pricewatch/
     # ports:
     #   - 5677:5678 ### DEBUGGER ###
     networks:
@@ -121,7 +115,7 @@ services:
       POSTGRES_PASSWORD: qwer1234
       PGDATA: /data/postgres
     volumes:
-      - ./.docker_data/postgres/:/data/postgres/
+      - postgres_db:/data/postgres/
     ports:
       - 5433:5432
     networks:
@@ -139,14 +133,10 @@ services:
       - type: bind
         source: ./pkg_pricewatch_web/src/
         target: /app/
-      # common file
-      - type: bind
-        source: ./.common/_common_settings.py
-        target: /app/pwweb/_common_settings.py
       # app config file
       - type: bind
-        source: ./.config/pricewatch.ini
-        target: /usr/local/etc/pricewatch/pricewatch.ini
+        source: ./.config/
+        target: /usr/local/etc/pricewatch/
     ports:
       - 8000:8000
       # - 5678:5678 ### DEBUGGER ###
@@ -159,7 +149,7 @@ services:
   mongo:
     image: mongo:3
     volumes:
-      - ./.docker_data/mongo/db/:/data/db/
+      - mongo_db:/data/db/
     networks:
       - pricewatch
 
@@ -167,7 +157,7 @@ services:
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.8.5
     volumes:
-      - ./.docker_data/elasticsearch/data/:/usr/share/elasticsearch/data/
+      - elasticsearch_data:/usr/share/elasticsearch/data/
     environment:
       - http.host=0.0.0.0
       - transport.host=localhost
@@ -188,7 +178,7 @@ services:
   graylog:
     image: graylog/graylog:3.3
     volumes:
-      - ./.docker_data/graylog/data/journal/:/usr/share/graylog/data/journal/
+      - graylog_journal:/usr/share/graylog/data/journal/
     environment:
       # CHANGE ME (must be at least 16 characters)!
       - GRAYLOG_PASSWORD_SECRET=somepasswordpepper
@@ -215,3 +205,15 @@ services:
 networks:
   pricewatch:
     driver: bridge
+
+volumes:
+  postgres_db:
+    driver: local
+  scrapyd_data:
+    driver: local
+  mongo_db:
+    driver: local
+  elasticsearch_data:
+    driver: local
+  graylog_journal:
+    driver: local
