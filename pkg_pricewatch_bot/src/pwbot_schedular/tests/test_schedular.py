@@ -20,10 +20,14 @@ class TestSchedular(unittest.TestCase):
     def test_2_schedule(self):
         """ testing add new job
         """
+        jobid_rex = r'^[0-9a-f]{8}\-[0-9a-f]{4}\-4[0-9a-f]{3}\-[89ab][0-9a-f]{3}\-[0-9a-f]{12}$'
         for t in self.testlist:
             # unittest.TestCase.subTest(msg: Any = ...)
             with self.subTest(skus=t['skus']):
-                self.assertRegex(self.schedular.schedule(project=t['project'], spider=t['spider'], _version=t['version'], skus=t['skus'], domain=t['domain']), r'^[0-9a-f]{8}\-[0-9a-f]{4}\-4[0-9a-f]{3}\-[89ab][0-9a-f]{3}\-[0-9a-f]{12}$')
+                if t['skus'] and t['domain']:
+                    self.assertRegex(self.schedular.schedule(project=t['project'], spider=t['spider'], _version=t['version'], skus=t['skus'], domain=t['domain']), jobid_rex)
+                elif t['urls']:
+                    self.assertRegex(self.schedular.schedule(project=t['project'], spider=t['spider'], _version=t['version'], urls=t['urls']), jobid_rex)
 
     def test_3_listjobs(self):
         """ testing get jobs

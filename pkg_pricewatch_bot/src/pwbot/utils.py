@@ -2,6 +2,7 @@
 """
 import re
 import urllib
+import logging
 import io
 import tldextract
 from PIL import Image
@@ -110,4 +111,12 @@ def class_fullname(o):
         return module + '.' + o.__class__.__name__
 
 def extract_domain_from_url(url):
+    # remove tldextract's annoying 'computed TLD diff' log...
+    change_single_log_level("tldextract", logging.ERROR)
     return tldextract.extract(url).registered_domain
+
+def change_single_log_level(log_name, level):
+    logger = logging.getLogger(log_name)
+    logger.setLevel(level)
+    for handler in logger.handlers:
+        handler.setLevel(level)

@@ -5,7 +5,16 @@
             "version": "0.0.1",
             "spider": "StoreItemPageSpider",
             "skus": "B00II9VHCU",
-            "domain": "amazon.com"
+            "domain": "amazon.com",
+            "urls": null
+        },
+        {
+            "project": "pricewatch_bot",
+            "version": "0.0.1",
+            "spider": "StoreItemPageSpider",
+            "skus": null,
+            "domain": null,
+            "urls": "https://www.amazon.com/Gildan-Mens-T-Shirt-Assortment-Small/dp/B077ZKF9ZN/?_encoding=UTF8&refRID=NSX2F9SWW59TZN9SDX7K&th=1"
         }
     ]
 }
