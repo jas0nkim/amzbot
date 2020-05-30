@@ -25,6 +25,9 @@
 #     2) django migration
 #         docker-compose exec web python manage.py [migrate][makemigrations][sqlmigrate]
 #
+# 4. create django superuser
+#     docker-compose exec web python manage.py createsuperuser
+#
 # note: django (web) container hangs a while on 'docker-compose up': Watching for file changes with StatReloader, because of the setting DEBUG=True.
 #       Edit DEBUG=False and save, and then edit back DEBUG=True and save would help.
 #
