@@ -4,8 +4,10 @@
 
 FROM python:3.7-slim
 
-ENV DJANGO_SETTINGS_MODULE=pwweb.settings
 ENV USER mydk
+ENV PATH="/home/${USER}/.local/bin:${PATH}"
+ENV PYTHONPATH="/app/"
+ENV DJANGO_SETTINGS_MODULE=pwweb.settings
 
 RUN mkdir -p /usr/local/etc/pricewatch/ \
     && mkdir /app/ \

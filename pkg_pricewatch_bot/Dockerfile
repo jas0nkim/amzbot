@@ -4,8 +4,10 @@
 
 FROM python:3.7-slim
 
-ENV SCRAPY_SETTINGS_MODULE=pwbot.settings
 ENV USER mydk
+ENV PATH="/home/${USER}/.local/bin:${PATH}"
+ENV PYTHONPATH="/app/"
+ENV SCRAPY_SETTINGS_MODULE=pwbot.settings
 
 RUN mkdir -p /usr/local/etc/pricewatch/ \
     && mkdir /app/ \
