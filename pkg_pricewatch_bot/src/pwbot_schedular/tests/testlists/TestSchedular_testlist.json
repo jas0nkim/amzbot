@@ -4,7 +4,7 @@
             "project": "pricewatch_bot",
             "version": "0.0.1",
             "spider": "StoreItemPageSpider",
-            "asins": "B00II9VHCU",
+            "skus": "B00II9VHCU",
             "domain": "amazon.com"
         }
     ]

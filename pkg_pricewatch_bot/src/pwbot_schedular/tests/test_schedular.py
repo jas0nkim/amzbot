@@ -13,7 +13,7 @@ class TestSchedular(unittest.TestCase):
         """
         for t in self.testlist:
             # unittest.TestCase.subTest(msg: Any = ...)
-            with self.subTest(asins=t['asins']):
+            with self.subTest(skus=t['skus']):
                 build_bot(project=t['project'], version=t['version'])
                 self.assertTrue(self.schedular.addversion(project=t['project'], version=t['version']) > 0)
 
@@ -22,29 +22,29 @@ class TestSchedular(unittest.TestCase):
         """
         for t in self.testlist:
             # unittest.TestCase.subTest(msg: Any = ...)
-            with self.subTest(asins=t['asins']):
-                self.assertRegex(self.schedular.schedule(project=t['project'], spider=t['spider'], _version=t['version'], asins=t['asins'], domain=t['domain']), r'^[0-9a-f]{8}\-[0-9a-f]{4}\-4[0-9a-f]{3}\-[89ab][0-9a-f]{3}\-[0-9a-f]{12}$')
+            with self.subTest(skus=t['skus']):
+                self.assertRegex(self.schedular.schedule(project=t['project'], spider=t['spider'], _version=t['version'], skus=t['skus'], domain=t['domain']), r'^[0-9a-f]{8}\-[0-9a-f]{4}\-4[0-9a-f]{3}\-[89ab][0-9a-f]{3}\-[0-9a-f]{12}$')
 
     def test_3_listjobs(self):
         """ testing get jobs
         """
         for t in self.testlist:
             # unittest.TestCase.subTest(msg: Any = ...)
-            with self.subTest(asins=t['asins']):
+            with self.subTest(skus=t['skus']):
                 self.assertTrue(type(self.schedular.listjobs(project=t['project'])) is dict)
 
-    def test_4_delversion(self):
-        """ testing delete version
-        """
-        for t in self.testlist:
-            # unittest.TestCase.subTest(msg: Any = ...)
-            with self.subTest(asins=t['asins']):
-                self.assertTrue(self.schedular.delversion(project=t['project'], version=t['version']))
+    # def test_4_delversion(self):
+    #     """ testing delete version
+    #     """
+    #     for t in self.testlist:
+    #         # unittest.TestCase.subTest(msg: Any = ...)
+    #         with self.subTest(skus=t['skus']):
+    #             self.assertTrue(self.schedular.delversion(project=t['project'], version=t['version']))
 
     # def test_5_delproject(self):
     #     for t in self.testlist:
     #         # unittest.TestCase.subTest(msg: Any = ...)
-    #         with self.subTest(asins=t['asins']):
+    #         with self.subTest(skus=t['skus']):
     #             self.assertTrue(self.schedular.delproject(project=t['project']))
 
     def tearDown(self):
