@@ -18,7 +18,7 @@ RUN pip install scrapyd \
     && pip install -r /opt/requirements.txt
 
 COPY ./scrapyd.conf /etc/scrapyd/
-VOLUME /etc/scrapyd/ /var/lib/scrapyd/
+VOLUME [ "/etc/scrapyd/", "/var/lib/scrapyd/" ]
 EXPOSE 6800
 
 CMD ["scrapyd", "--pidfile="]
