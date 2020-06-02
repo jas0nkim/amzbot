@@ -19,23 +19,23 @@ class StoreItemPageSpider(BasePwbotCrawlSpider):
 
     name = 'StoreItemPageSpider'
 
-    allowed_domains = ['amazon.com', 'amazon.ca', 'walmart.com', 'walmart.ca', 'www.walmart.ca', ]
+    allowed_domains = ['amazon.com', 'amazon.ca', 'walmart.com', 'walmart.ca', 'canadiantire.ca']
 
     _domain = None
     _skus = []
     _urls = []
     _crawl_variations = True
+    _lat = None
+    _lng = None
 
     def __init__(self, *a, **kw):
         super().__init__(*a, **kw)
-        if 'domain' in kw:
-            self._domain = kw['domain'] if kw['domain'] in self.allowed_domains else self._domain
-        if 'skus' in kw:
-            self._skus = kw['skus'].split(',')
-        if 'urls' in kw:
-            self._urls = kw['urls'].split(',')
-        if 'crawl_variations' in kw:
-            self._crawl_variations = utils.true_or_false(kw['crawl_variations'])
+        self._domain = kw['domain'] if 'domain' in kw and kw['domain'] in self.allowed_domains else None
+        self._skus = kw['skus'].split(',') if 'skus' in kw else []
+        self._urls = kw['urls'].split(',') if 'urls' in kw else []
+        self._crawl_variations = utils.true_or_false(kw['crawl_variations']) if 'crawl_variations' in kw else None
+        self._lat = kw['lat'] if 'lat' in kw else None
+        self._lng = kw['lng'] if 'lng' in kw else None
 
     def start_requests(self):
         if len(self._skus) > 0:
@@ -49,6 +49,9 @@ class StoreItemPageSpider(BasePwbotCrawlSpider):
                 elif self._domain in ['walmart.ca',]:
                     url = settings.WALMART_CA_ITEM_LINK_FORMAT.format(self._domain, sku)
                     callback = parsers.parse_walmart_ca_item
+                elif self._domain in ['canadiantire.ca',]:
+                    url = settings.CANADIANTIRE_CA_ITEM_LINK_FORMAT.format(self._domain, sku)
+                    callback = parsers.parse_canadiantire_ca_item
                 else:
                     continue
                 yield Request(url,
@@ -58,6 +61,8 @@ class StoreItemPageSpider(BasePwbotCrawlSpider):
                                 'domain': self._domain,
                                 'job_id': self._job_id,
                                 'crawl_variations': self._crawl_variations,
+                                'lat': self._lat,
+                                'lng': self._lng,
                             })
         if len(self._urls) > 0:
             for url in self._urls:
@@ -68,6 +73,8 @@ class StoreItemPageSpider(BasePwbotCrawlSpider):
                     callback = parsers.parse_walmart_com_item
                 elif domain in ['walmart.ca',]:
                     callback = parsers.parse_walmart_ca_item
+                elif domain in ['canadiantire.ca',]:
+                    callback = parsers.parse_canadiantire_ca_item
                 else:
                     continue
                 yield Request(url,
@@ -77,6 +84,8 @@ class StoreItemPageSpider(BasePwbotCrawlSpider):
                                 'crawl_variations': self._crawl_variations,
                                 'domain': domain,
                                 'job_id': self._job_id,
+                                'lat': self._lat,
+                                'lng': self._lng,
                             })
 
     @classmethod
@@ -154,6 +163,8 @@ class StoreItemPageSpider(BasePwbotCrawlSpider):
 #                                 'parse_pictures': self.__parse_pictures,
 #                                 'crawl_variations': self._crawl_variations,
 #                                 'domain': self._domain,
+#                                 'lat': self._lat,
+#                                 'lng': self._lng,
 #                             })
 #         if len(self._urls) > 0:
 #             for url in self._urls:
@@ -164,6 +175,8 @@ class StoreItemPageSpider(BasePwbotCrawlSpider):
 #                                 'parse_pictures': self.__parse_pictures,
 #                                 'crawl_variations': self._crawl_variations,
 #                                 'domain': utils.extract_domain_from_url(url),
+#                                 'lat': self._lat,
+#                                 'lng': self._lng,
 #                             })
 
 #     def __filter_asins(self, asins):

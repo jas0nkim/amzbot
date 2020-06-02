@@ -16,7 +16,7 @@ class RawData(models.Model):
 
     @property
     def item_title(self):
-        if self.data:
+        if isinstance(self.data, dict):
             return self.data.get('title', None)
         else:
             return None

@@ -26,7 +26,7 @@ class WalmartComItemParser(object):
             raise IgnoreRequest
         return json.loads(_data)
 
-    def parse_item(self, response, domain, job_id, crawl_variations=False):
+    def parse_item(self, response, domain, job_id, crawl_variations=False, lat=None, lng=None):
         self._domain = domain
         self._job_id = job_id
         self._parent_sku = utils.extract_sku_from_url(response.url, self._domain)
@@ -70,7 +70,7 @@ class WalmartCaItemParser(object):
             raise IgnoreRequest
         return json.loads(_data)
 
-    def parse_item(self, response, domain, job_id, crawl_variations=False):
+    def parse_item(self, response, domain, job_id, crawl_variations=False, lat=None, lng=None):
         self._domain = domain
         self._job_id = job_id
         self._parent_sku = utils.extract_sku_from_url(response.url, self._domain)

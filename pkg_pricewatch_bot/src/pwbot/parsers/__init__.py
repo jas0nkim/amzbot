@@ -7,29 +7,38 @@ from scrapy.spidermiddlewares.httperror import HttpError
 from scrapy.exceptions import IgnoreRequest
 from pwbot.parsers.amazon_item_parser import AmazonItemParser
 from pwbot.parsers.walmart_item_parser import WalmartComItemParser, WalmartCaItemParser
+from pwbot.parsers.canadiantire_item_parser import CanadiantireCaItemParser
 
-def parse_amazon_item(response, domain, job_id, crawl_variations):
+def parse_amazon_item(response, domain, job_id, crawl_variations, lat, lng):
     """ response: scrapy.http.response.html.HtmlResponse
     """
     parser = AmazonItemParser()
     try:
-        return parser.parse_item(response, domain, job_id, crawl_variations)
+        return parser.parse_item(response, domain, job_id, crawl_variations, lat, lng)
     except IgnoreRequest:
         return None
 
-def parse_walmart_com_item(response, domain, job_id, crawl_variations):
+def parse_walmart_com_item(response, domain, job_id, crawl_variations, lat, lng):
     parser = WalmartComItemParser()
     try:
-        return parser.parse_item(response, domain, job_id, crawl_variations)
+        return parser.parse_item(response, domain, job_id, crawl_variations, lat, lng)
     except IgnoreRequest:
         return None
 
-def parse_walmart_ca_item(response, domain, job_id, crawl_variations):
+def parse_walmart_ca_item(response, domain, job_id, crawl_variations, lat, lng):
     parser = WalmartCaItemParser()
     try:
-        return parser.parse_item(response, domain, job_id, crawl_variations)
+        return parser.parse_item(response, domain, job_id, crawl_variations, lat, lng)
     except IgnoreRequest:
         return None
+
+def parse_canadiantire_ca_item(response, domain, job_id, crawl_variations, lat, lng):
+    parser = CanadiantireCaItemParser()
+    try:
+        return parser.parse_item(response, domain, job_id, crawl_variations, lat, lng)
+    except IgnoreRequest:
+        return None
+
 
 def resp_error_handler(failure):
     # log all failures

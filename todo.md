@@ -1,4 +1,12 @@
-## May 27 2020
+## May 31 2020
+- 'Buy Now Price Match Later'
+    - user enter products they bought
+        - app watching price drop
+    - user enter products from other stores compair prices
+        - app watching price drop
+- web scraping + AI
+- crawl canadiantire.ca
+    - SkuSelectors, StockStatus
 - convert raw_data.data to more readable data, and insert into different tables
     - amazon
     - walmart

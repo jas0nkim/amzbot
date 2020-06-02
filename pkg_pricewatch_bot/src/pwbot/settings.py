@@ -166,3 +166,11 @@ WALMART_COM_ITEM_VARIATION_LINK_POSTFIX = '?selected=true'
 WALMART_CA_ITEM_LINK_PATTERN = r'^(https?://www.walmart.ca)?/(en|fr)/([^/]+/[^/]+|ip)/([A-Z0-9]{8,15})(/.*$)?'
 WALMART_CA_ITEM_LINK_FORMAT = 'https://www.{}/en/ip/{}'
 WALMART_CA_API_ITEM_PRICE_LINK = 'https://www.walmart.ca/api/product-page/price-offer'
+
+## canadiantire.ca related
+CANADIANTIRE_CA_ITEM_LINK_PATTERN = r'^(https?://www.canadiantire.ca)?/(en|fr)/([^/]+/[^/]+|pdp)/([\w-]*)([0-9]{7,12})p*.html[.*$]?'
+CANADIANTIRE_CA_ITEM_LINK_FORMAT = 'https://www.{}/en/pdp/{}.html'
+CANADIANTIRE_CA_API_STORES_LINK_FORMAT = 'https://api-triangle.canadiantire.ca/dss/services/v4/stores?lang=en&radius=1000&maxCount=12&storeType=store&lat={lat}&lng={lng}'
+# i.e. https://api-triangle.canadiantire.ca/dss/services/v4/stores?lang=en&radius=1000&maxCount=12&storeType=store&lat=43.769037&lng=-79.371951
+CANADIANTIRE_CA_API_ITEM_PRICE_LINK_FORMAT = 'https://www.canadiantire.ca/ESB/PriceAvailability?SKU={sku}&Store={store}&Banner=CTR&Language=E'
+# i.e. https://www.canadiantire.ca/ESB/PriceAvailability?SKU=0782763&Store=0192%2C0126%2C0459%2C0485%2C0030%2C0019%2C0087%2C0264%2C0321%2C0150%2C0273%2C0214&Banner=CTR&Language=E

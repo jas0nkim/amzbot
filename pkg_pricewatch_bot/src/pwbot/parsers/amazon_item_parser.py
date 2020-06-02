@@ -21,7 +21,7 @@ class AmazonItemParser(object):
 
     """ response scrapy.http.response.html.HtmlResponse
     """
-    def parse_item(self, response, domain, job_id, crawl_variations):
+    def parse_item(self, response, domain, job_id, crawl_variations, lat=None, lng=None):
         self._domain = domain
         self._job_id = job_id
         self._asin = utils.extract_asin_from_url(response.url, self._domain)
