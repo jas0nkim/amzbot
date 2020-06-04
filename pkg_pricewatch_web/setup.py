@@ -10,8 +10,9 @@ setup(
     install_requires=[
         'psycopg2==2.8.5',
         'gunicorn==20.0.4',
-        'Django==3.0.5',
+        'Django==3.0.7',
         'djangorestframework==3.11.0',
+        'graypy==2.1.0',
     ],
     scripts=['src/manage.py'],
     # entry_points = {'scrapy': ['settings = pwbot.settings']},
