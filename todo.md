@@ -1,3 +1,35 @@
+## Jun 3 2020
+- convert raw_data.data to more readable data, and insert into different tables
+    - amazon
+    - walmart
+    - canadiantire
+    - homedepot *
+    - ebay *
+    - on scrapy.signals.spider_closed
+- database table (resrc_items)
+    - id
+    - domain
+    - sku
+    - title
+    - brand_name
+    - picture_url (one picture)
+- database table (resrc_item_prices)
+    - id
+    - domain
+    - sku
+    - price
+    - original_price
+    - quantity
+    - store_location (nullable)
+- frontend
+    - register
+        - email
+        - password
+        - address (location tracking) : lat, lng
+    - login
+    - add product
+    - notification once price dropped
+
 ## May 31 2020
 - 'Buy Now Price Match Later'
     - user enter products they bought
@@ -7,11 +39,6 @@
 - web scraping + AI
 - crawl canadiantire.ca
     - SkuSelectors, StockStatus
-- convert raw_data.data to more readable data, and insert into different tables
-    - amazon
-    - walmart
-    - ebay
-    - shopify
 
 ## May 26 2020
 - debug python with ptvsd
