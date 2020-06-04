@@ -65,15 +65,24 @@ class StoreItemPageSpider(BasePwbotCrawlSpider):
                                 'lng': self._lng,
                             })
         if len(self._urls) > 0:
-            for url in self._urls:
-                domain = utils.extract_domain_from_url(url)
+            for _u in self._urls:
+                domain = utils.extract_domain_from_url(_u)
                 if domain in ['amazon.com', 'amazon.ca',]:
+                    url = settings.AMAZON_ITEM_LINK_FORMAT.format(domain,
+                                                            utils.extract_sku_from_url(url=_u, domain=domain),
+                                                            settings.AMAZON_ITEM_VARIATION_LINK_POSTFIX)
                     callback = parsers.parse_amazon_item
                 elif domain in ['walmart.com',]:
+                    url = settings.WALMART_COM_ITEM_LINK_FORMAT.format(domain,
+                                                            utils.extract_sku_from_url(url=_u, domain=domain))
                     callback = parsers.parse_walmart_com_item
                 elif domain in ['walmart.ca',]:
+                    url = settings.WALMART_CA_ITEM_LINK_FORMAT.format(domain,
+                                                            utils.extract_sku_from_url(url=_u, domain=domain))
                     callback = parsers.parse_walmart_ca_item
                 elif domain in ['canadiantire.ca',]:
+                    url = settings.CANADIANTIRE_CA_ITEM_LINK_FORMAT.format(domain,
+                                                            utils.extract_sku_from_url(url=_u, domain=domain))
                     callback = parsers.parse_canadiantire_ca_item
                 else:
                     continue

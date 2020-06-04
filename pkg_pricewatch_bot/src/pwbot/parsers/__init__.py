@@ -9,7 +9,7 @@ from pwbot.parsers.amazon_item_parser import AmazonItemParser
 from pwbot.parsers.walmart_item_parser import WalmartComItemParser, WalmartCaItemParser
 from pwbot.parsers.canadiantire_item_parser import CanadiantireCaItemParser
 
-def parse_amazon_item(response, domain, job_id, crawl_variations, lat, lng):
+def parse_amazon_item(response, domain, job_id, crawl_variations, lat=None, lng=None):
     """ response: scrapy.http.response.html.HtmlResponse
     """
     parser = AmazonItemParser()

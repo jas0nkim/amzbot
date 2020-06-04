@@ -78,6 +78,8 @@ class AmazonItemParser(object):
                                         'domain': self._domain,
                                         'job_id': self._job_id,
                                         'crawl_variations': False,
+                                        'lat': lat,
+                                        'lng': lng,
                                     })
                     # self.logger.info("[ASIN:{}] Request Ignored - initial asin ignored".format(self._asin))
                     # raise IgnoreRequest
