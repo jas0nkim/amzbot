@@ -3,7 +3,7 @@ from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.fields import JSONField
 from django.template.defaultfilters import truncatechars
 from django.utils.safestring import mark_safe
-from pwweb import settings
+from pwweb import settings, utils
 
 class RawData(models.Model):
     url = models.TextField(db_index=True)
@@ -94,6 +94,34 @@ class RawData(models.Model):
 
     class Meta:
         db_table = 'resrc_raw_data'
+
+
+class Item(models.Model):
+    domain = models.CharField(max_length=32, db_index=True)
+    sku = models.CharField(max_length=32, db_index=True)
+    title = models.TextField()
+    brand_name = models.CharField(max_length=100, blank=True, null=True)
+    picture_url = models.CharField(max_length=255, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'resrc_items'
+
+
+class ItemPrice(models.Model):
+    domain = models.CharField(max_length=32, db_index=True)
+    sku = models.CharField(max_length=32, db_index=True)
+    price = models.DecimalField(max_digits=15, decimal_places=2)
+    original_price = models.DecimalField(max_digits=15, decimal_places=2)
+    quantity = models.SmallIntegerField(blank=True, null=True, default=0)
+    store_location = models.CharField(max_length=255, blank=True, null=True)
+    job_id = models.CharField(max_length=64, db_index=True, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'resrc_item_prices'
+
 
 
 # class AmazonParentListing(models.Model):
