@@ -55,6 +55,9 @@
 #
 #   docker-compose run bot python -m unittest discover -v
 #
+# * how to test web (django)
+#
+#   docker-compose exec web python manage.py test [pwweb.resources.tests]
 #
 # * restart single service within docker-compose.yml
 #

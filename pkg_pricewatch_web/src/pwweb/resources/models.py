@@ -123,6 +123,86 @@ class ItemPrice(models.Model):
         db_table = 'resrc_item_prices'
 
 
+class BuildItemPrice:
+    """ build resrc_item_prices data from resrc_raw_data
+    """
+
+    _raw_data = None
+    _domain = None
+    _url = None
+    _data = None
+
+    _item = None
+    _item_price = None
+
+    def __init__(self, raw_data=None):
+        if not isinstance(raw_data, RawData):
+            raise Exception('Invalid raw_data value passed. Not a RawData type')
+        self._job_id = raw_data.job_id
+        self._domain = raw_data.domain
+        self._url = raw_data.url
+        self._data = raw_data.data
+
+        if self._domain in ['amazon.com', 'amazon.ca',]:
+            self._build_amazon_item_price()
+        elif self._domain in ['walmart.com',]:
+            self._build_walmart_com_item_price()
+        elif self._domain in ['walmart.ca',]:
+            self._build_walmart_ca_item_price()
+        elif self._domain in ['canadiantire.ca',]:
+            self._build_canadiantire_ca_item_price()
+
+    def get_item(self):
+        """ get model.Item object
+        """
+        return self._item
+
+    def get_item_price(self):
+        """ get model.ItemPrice object
+        """
+        return self._item_price
+
+    def _build_amazon_item_price(self):
+        """ 1. validate url
+            2. check item already exist in resrc_items table
+            3. extract and store values
+                - sku
+                - price
+                - original price
+                - quantity
+        """
+        sku = utils.extract_sku_from_url(url=self._url, domain=self._domain)
+        if sku is None:
+            raise Exception('SKU cannot be extracted from url - {}'.format(self._url))
+        try:
+            self._item = Item.objects.get(domain=self._domain, sku=sku)
+        except Item.DoesNotExist:
+            # create new item
+            self._item = Item(domain=self._domain,
+                        sku=sku,
+                        title=self._data['title'],
+                        brand_name=self._data.get('brand_name', None),
+                        picture_url=self._data.get('picture_urls', [])[0] if len(self._data.get('picture_urls', [])) > 0 else None,
+                    )
+            self._item.save()
+        self._item_price = ItemPrice(domain=self._domain,
+                    sku=sku,
+                    price=self._data['price'],
+                    original_price=self._data['original_price'],
+                    quantity=self._data['quantity'],
+                    store_location=None,
+                    job_id=self._job_id,
+                )
+        self._item_price.save()
+
+    def _build_walmart_com_item_price(self):
+        pass
+
+    def _build_walmart_ca_item_price(self):
+        pass
+
+    def _build_canadiantire_ca_item_price(self):
+        pass
 
 # class AmazonParentListing(models.Model):
 #     parent_asin = models.CharField(max_length=32, db_index=True)
