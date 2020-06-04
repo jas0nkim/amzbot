@@ -186,6 +186,46 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{asctime} [{name}] {levelname} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+        'graypy': {
+            'level': 'ERROR',
+            'class': 'graypy.GELFUDPHandler',
+            'formatter': 'verbose',
+            'host': config['Graylog']['host'],
+            'port': int(config['Graylog']['port']),
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['graypy'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    },
+}
+
 # django rest framework settings
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
@@ -199,3 +239,14 @@ REST_FRAMEWORK = {
     #     'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     # ],
 }
+
+## amazon.com related
+AMAZON_COM_ITEM_LINK_PATTERN = r'^(https?://www.amazon.com)?/([^/]+/[^/]+|dp)/([A-Z0-9]{10})(/.*$)?'
+## amazon.ca related
+AMAZON_CA_ITEM_LINK_PATTERN = r'^(https?://www.amazon.ca)?/([^/]+/[^/]+|dp)/([A-Z0-9]{10})(/.*$)?'
+## walmart.com related
+WALMART_COM_ITEM_LINK_PATTERN = r'^(https?://www.walmart.com)?/([^/]+/[^/]+|ip)/([A-Z0-9]{8,15})(/.*$)?'
+## walmart.ca related
+WALMART_CA_ITEM_LINK_PATTERN = r'^(https?://www.walmart.ca)?/(en|fr)/([^/]+/[^/]+|ip)/([A-Z0-9]{8,15})(/.*$)?'
+## canadiantire.ca related
+CANADIANTIRE_CA_ITEM_LINK_PATTERN = r'^(https?://www.canadiantire.ca)?/(en|fr)/([^/]+/[^/]+|pdp)/([\w-]*)([0-9]{7,12})p*.html[.*$]?'
