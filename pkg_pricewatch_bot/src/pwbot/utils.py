@@ -15,13 +15,6 @@ def is_valid_amazon_item_url(url, domain='amazon.com'):
         link_pattern = settings.AMAZON_CA_ITEM_LINK_PATTERN
     return re.match(link_pattern, url)
 
-def extract_asin_from_url(url, domain='amazon.com'):
-    match = is_valid_amazon_item_url(url, domain)
-    if match:
-        return match.group(3)
-    else:
-        return None
-
 def is_valid_walmart_com_item_url(url):
     return re.match(settings.WALMART_COM_ITEM_LINK_PATTERN, url)
 
@@ -33,7 +26,11 @@ def is_valid_canadiantire_ca_item_url(url):
 
 def extract_sku_from_url(url, domain):
     if domain in ['amazon.com', 'amazon.ca',]:
-        return extract_asin_from_url(url, domain)
+        match = is_valid_amazon_item_url(url, domain)
+        if match:
+            return match.group(3)
+        else:
+            return None
     elif domain in ['walmart.com',]:
         match = is_valid_walmart_com_item_url(url)
         if match:

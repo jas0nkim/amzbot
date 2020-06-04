@@ -92,6 +92,7 @@ class StoreItemPageSpider(BasePwbotCrawlSpider):
     def from_crawler(cls, crawler, *args, **kwargs):
         spider = super().from_crawler(crawler, *args, **kwargs)
         crawler.signals.connect(spider.item_scraped, signal=signals.item_scraped)
+        crawler.signals.connect(spider.spider_closed, signal=signals.spider_closed)
         return spider
 
     def _serialize(self, item, **kwargs):
@@ -99,7 +100,8 @@ class StoreItemPageSpider(BasePwbotCrawlSpider):
         return e.export_item(item)
 
     def item_scraped(self, item, response, spider):
-        # Send the scraped item to the server
+        """ Send the scraped item to the server
+        """
         if type(item).__name__ not in ['ListingItem',]:
             raise DropItem("Invalid item type - {}".format(type(item).__name__))
 
@@ -120,6 +122,10 @@ class StoreItemPageSpider(BasePwbotCrawlSpider):
         # deferred (d) is fired
         return d
 
+    def spider_closed(self, spider):
+        """ This signal supports returning deferreds from their handlers.
+        """
+        pass
 
 # class AmazonItemPageSpider(StoreItemPageSpider):
 
@@ -145,7 +151,7 @@ class StoreItemPageSpider(BasePwbotCrawlSpider):
 #             self.__asins = self.__filter_asins(kw['asins'])
 #         if 'urls' in kw:
 #             self._urls = kw['urls'].split(',')
-#             # _set_asins_from_urls = ( utils.extract_asin_from_url(u, self._domain) for u in kw['urls'].split(',') )
+#             # _set_asins_from_urls = ( utils.extract_sku_from_url(u, self._domain) for u in kw['urls'].split(',') )
 #             # if _set_asins_from_urls is not None:
 #             #     self.__asins = self.__asins + list(_set_asins_from_urls - set(self.__asins))
 #         if 'parse_pictures' in kw:

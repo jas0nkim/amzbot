@@ -24,7 +24,7 @@ class AmazonItemParser(object):
     def parse_item(self, response, domain, job_id, crawl_variations, lat=None, lng=None):
         self._domain = domain
         self._job_id = job_id
-        self._asin = utils.extract_asin_from_url(response.url, self._domain)
+        self._asin = utils.extract_sku_from_url(response.url, self._domain)
         if not self._asin:
             self.logger.exception("[ASIN:null] Request Ignored - No ASIN")
             raise IgnoreRequest
@@ -680,7 +680,7 @@ class AmazonItemParser(object):
             if len(redirect_urls) > 0:
                 index = 0
                 for r_url in redirect_urls:
-                    r_asin = utils.extract_asin_from_url(r_url, self._domain)
+                    r_asin = utils.extract_sku_from_url(r_url, self._domain)
                     if r_asin == self._asin:
                         continue
                     redirected_asins[index] = r_asin
