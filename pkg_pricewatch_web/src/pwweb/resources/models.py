@@ -31,6 +31,21 @@ class RawData(models.Model):
                 if 'asin' in self.data:
                     return self.data['asin']
             elif self.domain in ['walmart.com',]:
+                if len(self.data.get('item', {}).get('product', {}).get('buyBox', {}).get('products', [])) > 0:
+                    return self.data['item']['product']['buyBox']['products'][0]['usItemId']
+            elif self.domain in ['walmart.ca',]:
+                if 'product' in self.data and 'item' in self.data['product'] and 'skus' in self.data['product']['item']:
+                    return truncatechars(','.join(self.data['product']['item']['skus']), 50)
+        else:
+            return None
+
+    @property
+    def parent_sku(self):
+        if self.data:
+            if self.domain in ['amazon.com', 'amazon.ca',]:
+                if 'parent_asin' in self.data:
+                    return self.data['parent_asin']
+            elif self.domain in ['walmart.com',]:
                 if 'item' in self.data and 'product' in self.data['item'] and 'buyBox' in self.data['item']['product'] and 'primaryUsItemId' in self.data['item']['product']['buyBox']:
                     return self.data['item']['product']['buyBox']['primaryUsItemId']
             elif self.domain in ['walmart.ca',]:
@@ -102,6 +117,7 @@ class RawData(models.Model):
 class Item(models.Model):
     domain = models.CharField(max_length=32, db_index=True)
     sku = models.CharField(max_length=32, db_index=True)
+    parent_sku = models.CharField(max_length=32, blank=True, null=True)
     upc = models.CharField(max_length=20, blank=True, null=True)
     title = models.TextField()
     brand_name = models.CharField(max_length=100, blank=True, null=True)
@@ -286,6 +302,27 @@ class BuildItemPrice:
                     )
 
     def _build_walmart_ca_item_price(self):
+        """ sku: data['item']['product']['buyBox']['primaryUsItemId']
+            upc: data['item']['product']['buyBox']['products'][0]['upc']
+            title: data['item']['product']['buyBox']['products'][0]['productName']
+            brand: data['item']['product']['buyBox']['products'][0]['brandName']
+            picture_url: data['item']['product']['buyBox']['products'][0]['images'][0]['url']
+
+            price: data['item']['product']['buyBox']['products'][0]['priceMap']['price']
+            original_price: data['item']['product']['buyBox']['products'][0]['priceMap']['wasPrice']
+            quantity:
+                    if self.data['item']['product']['buyBox']['products'][0]['availabilityStatus'] == 'OUT_OF_STACK':
+                        return 'out of stock'
+                    elif self.data['item']['product']['buyBox']['products'][0]['availabilityStatus'] == 'IN_STOCK':
+                        if self.data['item']['product']['buyBox']['products'][0]['urgentQuantity']:
+                            return self.data['item']['product']['buyBox']['products'][0]['urgentQuantity']
+                        else:
+                            return 'in stock'
+                    else:
+                        return 'N/A'
+
+            store_location: data['item']['product']['buyBox']['products'][0]['pickupOptions']
+        """
         pass
 
     def _build_canadiantire_ca_item_price(self):

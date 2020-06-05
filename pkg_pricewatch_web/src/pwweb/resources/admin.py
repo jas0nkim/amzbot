@@ -55,7 +55,7 @@ class RawDataAdmin(admin.ModelAdmin):
     date_hierarchy = 'created_at'
     ordering = ['-created_at',]
     empty_value_display = '???'
-    list_display = ('sku', 'url_short', 'item_title_short', 'price', 'quantity', 'http_status', 'domain', 'created_at', )
+    list_display = ('sku', 'parent_sku', 'url_short', 'item_title_short', 'price', 'quantity', 'http_status', 'domain', )
     list_filter = ('domain', 'http_status',)
     search_fields = ['url', 'domain', 'http_status',]
     # radio_fields = {"http_status": admin.VERTICAL}

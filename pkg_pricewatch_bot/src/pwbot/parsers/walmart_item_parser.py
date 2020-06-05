@@ -4,7 +4,7 @@
 import re
 import json
 import logging
-from scrapy.http import JsonRequest
+from scrapy.http import JsonRequest, Request
 from scrapy.exceptions import IgnoreRequest
 from pwbot import settings, utils, parsers
 from pwbot.items import ListingItem
@@ -13,7 +13,7 @@ from pwbot.items import ListingItem
 class WalmartComItemParser(object):
     _domain = None
     _job_id = None
-    _parent_sku = None
+    _sku = None
 
     def __init__(self):
         self.logger = logging.getLogger(utils.class_fullname(self))
@@ -22,15 +22,15 @@ class WalmartComItemParser(object):
         try:
             _data = response.xpath('//script[@id="item"]/text()').extract()[0]
         except IndexError as e:
-            self.logger.exception("{}: [{}][{}] unable to find preloaded data - {}".format(utils.class_fullname(e), self._domain, self._parent_sku, str(e)))
+            self.logger.exception("{}: [{}][{}] unable to find preloaded data - {}".format(utils.class_fullname(e), self._domain, self._sku, str(e)))
             raise IgnoreRequest
         return json.loads(_data)
 
     def parse_item(self, response, domain, job_id, crawl_variations=False, lat=None, lng=None):
         self._domain = domain
         self._job_id = job_id
-        self._parent_sku = utils.extract_sku_from_url(response.url, self._domain)
-        if not self._parent_sku:
+        self._sku = utils.extract_sku_from_url(response.url, self._domain)
+        if not self._sku:
             self.logger.exception("[{}][null] Request ignored - no parent SKU".format(self._domain))
             raise IgnoreRequest
         if response.status != 200:
@@ -38,6 +38,21 @@ class WalmartComItemParser(object):
             yield self.build_listing_item(response)
         else:
             _data = self.__get_preloaded_data(response)
+            if crawl_variations:
+                for p in _data.get('item', {}).get('product', {}).get('buyBox', {}).get('products', []):
+                    if 'usItemId' in p:
+                        yield Request(settings.WALMART_COM_ITEM_LINK_FORMAT.format(self._domain,
+                                                                                p['usItemId'],
+                                                                                settings.WALMART_COM_ITEM_VARIATION_LINK_POSTFIX),
+                                    callback=parsers.parse_walmart_com_item,
+                                    errback=parsers.resp_error_handler,
+                                    cb_kwargs={
+                                        'domain': self._domain,
+                                        'job_id': self._job_id,
+                                        'crawl_variations': False,
+                                        'lat': lat,
+                                        'lng': lng,
+                                    })
             yield self.build_listing_item(response, data=_data)
 
     def build_listing_item(self, response, data=None):

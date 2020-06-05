@@ -44,7 +44,7 @@ class StoreItemPageSpider(BasePwbotCrawlSpider):
                     url = settings.AMAZON_ITEM_LINK_FORMAT.format(self._domain, sku, settings.AMAZON_ITEM_VARIATION_LINK_POSTFIX)
                     callback = parsers.parse_amazon_item
                 elif self._domain in ['walmart.com',]:
-                    url = settings.WALMART_COM_ITEM_LINK_FORMAT.format(self._domain, sku)
+                    url = settings.WALMART_COM_ITEM_LINK_FORMAT.format(self._domain, sku, settings.WALMART_COM_ITEM_VARIATION_LINK_POSTFIX)
                     callback = parsers.parse_walmart_com_item
                 elif self._domain in ['walmart.ca',]:
                     url = settings.WALMART_CA_ITEM_LINK_FORMAT.format(self._domain, sku)
@@ -74,7 +74,8 @@ class StoreItemPageSpider(BasePwbotCrawlSpider):
                     callback = parsers.parse_amazon_item
                 elif domain in ['walmart.com',]:
                     url = settings.WALMART_COM_ITEM_LINK_FORMAT.format(domain,
-                                                            utils.extract_sku_from_url(url=_u, domain=domain))
+                                                            utils.extract_sku_from_url(url=_u, domain=domain),
+                                                            settings.WALMART_COM_ITEM_VARIATION_LINK_POSTFIX)
                     callback = parsers.parse_walmart_com_item
                 elif domain in ['walmart.ca',]:
                     url = settings.WALMART_CA_ITEM_LINK_FORMAT.format(domain,
