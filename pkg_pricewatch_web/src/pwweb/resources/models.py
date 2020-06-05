@@ -16,8 +16,11 @@ class RawData(models.Model):
 
     @property
     def item_title(self):
-        if isinstance(self.data, dict):
+        if self.domain in ['amazon.com', 'amazon.ca',]:
             return self.data.get('title', None)
+        elif self.domain in ['walmart.com',]:
+            if 'item' in self.data and 'product' in self.data['item'] and 'buyBox' in self.data['item']['product'] and 'products' in self.data['item']['product']['buyBox'] and len(self.data['item']['product']['buyBox']['products']) > 0 and 'productName' in self.data['item']['product']['buyBox']['products'][0]:
+                return self.data['item']['product']['buyBox']['products'][0]['productName']
         else:
             return None
 
@@ -99,6 +102,7 @@ class RawData(models.Model):
 class Item(models.Model):
     domain = models.CharField(max_length=32, db_index=True)
     sku = models.CharField(max_length=32, db_index=True)
+    upc = models.CharField(max_length=20, blank=True, null=True)
     title = models.TextField()
     brand_name = models.CharField(max_length=100, blank=True, null=True)
     picture_url = models.CharField(max_length=255, blank=True, null=True)
@@ -180,6 +184,7 @@ class BuildItemPrice:
             # create new item
             self._item = Item(domain=self._domain,
                         sku=sku,
+                        upc=None,
                         title=self._data['title'],
                         brand_name=self._data.get('brand_name', None),
                         picture_url=self._data.get('picture_urls', [])[0] if len(self._data.get('picture_urls', [])) > 0 else None,
@@ -196,6 +201,10 @@ class BuildItemPrice:
         self._item_price.save()
 
     def _build_walmart_com_item_price(self):
+        """ title: data['item']['product']['buyBox']['products'][0]['productName']
+            brand: data['item']['product']['buyBox']['products'][0]['brandName']
+            upc: data['item']['product']['buyBox']['products'][0]['upc']
+        """
         pass
 
     def _build_walmart_ca_item_price(self):
