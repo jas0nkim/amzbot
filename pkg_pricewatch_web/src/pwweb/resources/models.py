@@ -115,13 +115,35 @@ class Item(models.Model):
 
 class ItemPrice(models.Model):
     domain = models.CharField(max_length=32, db_index=True)
+    job_id = models.CharField(max_length=64, db_index=True, blank=True, null=True)
     sku = models.CharField(max_length=32, db_index=True)
     price = models.DecimalField(max_digits=15, decimal_places=2)
     original_price = models.DecimalField(max_digits=15, decimal_places=2)
-    quantity = models.SmallIntegerField(blank=True, null=True, default=0)
-    store_location = models.CharField(max_length=255, blank=True, null=True)
-    job_id = models.CharField(max_length=64, db_index=True, blank=True, null=True)
+    online_availability = models.SmallIntegerField(default=1)
+    online_urgent_quantity = models.SmallIntegerField(blank=True, null=True)
+    store_availabilities = JSONField(blank=True, null=True)
+    """ store_availabilities json format:
+        [
+            {
+                'store_id': '5027',
+                'store_name': 'Lancaster Supercenter',
+                'store_address': '4975 Transit Rd'
+                'store_city': 'Lancaster'
+                'store_state_or_province': 'NY'
+                'store_postal_code': '14221'
+                'store_phone': '716-206-3050',
+                'store_availability': 1 [1 (available) | 0 (unavailable)]
+                'store_urgent_quantity': 5 (nullable)
+            },
+            {
+                ...
+            },
+        ]
+    """
     created_at = models.DateTimeField(auto_now_add=True)
+
+    ITEM_PRICE_AVAILABILITY_OUT_OF_STOCK = 0
+    ITEM_PRICE_AVAILABILITY_IN_STOCK = 1
 
     class Meta:
         db_table = 'resrc_item_prices'
@@ -182,30 +204,86 @@ class BuildItemPrice:
             self._item = Item.objects.get(domain=self._domain, sku=sku)
         except Item.DoesNotExist:
             # create new item
-            self._item = Item(domain=self._domain,
+            self._item = Item.objects.create(domain=self._domain,
                         sku=sku,
                         upc=None,
                         title=self._data['title'],
                         brand_name=self._data.get('brand_name', None),
                         picture_url=self._data.get('picture_urls', [])[0] if len(self._data.get('picture_urls', [])) > 0 else None,
                     )
-            self._item.save()
-        self._item_price = ItemPrice(domain=self._domain,
-                    sku=sku,
-                    price=self._data['price'],
-                    original_price=self._data['original_price'],
-                    quantity=self._data['quantity'],
-                    store_location=None,
-                    job_id=self._job_id,
-                )
-        self._item_price.save()
+        self._item_price = ItemPrice.objects.create(domain=self._domain,
+                        job_id=self._job_id,
+                        sku=sku,
+                        price=self._data['price'],
+                        original_price=self._data['original_price'],
+                        online_availability=ItemPrice.ITEM_PRICE_AVAILABILITY_IN_STOCK if self._data['quantity'] > 0 else ItemPrice.ITEM_PRICE_AVAILABILITY_OUT_OF_STOCK,
+                        online_urgent_quantity=self._data['quantity'] if self._data['quantity'] > 0 and self._data['quantity'] < 100 else None,
+                        store_availabilities=None,
+                    )
 
     def _build_walmart_com_item_price(self):
-        """ title: data['item']['product']['buyBox']['products'][0]['productName']
-            brand: data['item']['product']['buyBox']['products'][0]['brandName']
+        """ sku: data['item']['product']['buyBox']['primaryUsItemId']
             upc: data['item']['product']['buyBox']['products'][0]['upc']
+            title: data['item']['product']['buyBox']['products'][0]['productName']
+            brand: data['item']['product']['buyBox']['products'][0]['brandName']
+            picture_url: data['item']['product']['buyBox']['products'][0]['images'][0]['url']
+
+            price: data['item']['product']['buyBox']['products'][0]['priceMap']['price']
+            original_price: data['item']['product']['buyBox']['products'][0]['priceMap']['wasPrice']
+            quantity:
+                    if self.data['item']['product']['buyBox']['products'][0]['availabilityStatus'] == 'OUT_OF_STACK':
+                        return 'out of stock'
+                    elif self.data['item']['product']['buyBox']['products'][0]['availabilityStatus'] == 'IN_STOCK':
+                        if self.data['item']['product']['buyBox']['products'][0]['urgentQuantity']:
+                            return self.data['item']['product']['buyBox']['products'][0]['urgentQuantity']
+                        else:
+                            return 'in stock'
+                    else:
+                        return 'N/A'
+
+            store_location: data['item']['product']['buyBox']['products'][0]['pickupOptions']
         """
-        pass
+        sku = utils.extract_sku_from_url(url=self._url, domain=self._domain)
+        if sku is None:
+            raise Exception('SKU cannot be extracted from url - {}'.format(self._url))
+        # todo: need to have better exception handling if this key missing in data (i.e. email me...)
+        _product_info = self._data['item']['product']['buyBox']['products'][0]
+        try:
+            self._item = Item.objects.get(domain=self._domain, sku=sku)
+        except Item.DoesNotExist:
+            # create new item
+            self._item = Item.objects.create(domain=self._domain,
+                        sku=sku,
+                        upc=_product_info['upc'],
+                        title=_product_info['productName'],
+                        brand_name=_product_info['brandName'],
+                        picture_url=_product_info['images'][0]['url'] if len(_product_info['images']) > 0 and 'url' in _product_info['images'][0] else None,
+                    )
+        # generate store_availabilities json
+        store_availabilities = None
+        if 'pickupOptions' in _product_info and len(_product_info['pickupOptions']) > 0:
+            store_availabilities = []
+            for s in _product_info['pickupOptions']:
+                store_availabilities.append({
+                    'store_id': str(s['storeId']),
+                    'store_name': s['storeName'],
+                    'store_address': s['storeAddress'],
+                    'store_city': s['storeCity'],
+                    'store_state_or_province': s['storeStateOrProvinceCode'],
+                    'store_postal_code': s['storePostalCode'],
+                    'store_phone': s['storePhone'],
+                    'store_availability': ItemPrice.ITEM_PRICE_AVAILABILITY_IN_STOCK if s['availability'] == 'AVAILABLE' else ItemPrice.ITEM_PRICE_AVAILABILITY_OUT_OF_STOCK,
+                    'store_urgent_quantity': s['urgentQuantity'] if 'urgentQuantity' in s and s['urgentQuantity'] else None,
+                })
+        self._item_price = ItemPrice.objects.create(domain=self._domain,
+                        job_id=self._job_id,
+                        sku=sku,
+                        price=_product_info['priceMap']['price'],
+                        original_price=_product_info['priceMap']['wasPrice'],
+                        online_availability=ItemPrice.ITEM_PRICE_AVAILABILITY_IN_STOCK if _product_info['availabilityStatus'] == 'IN_STOCK' else ItemPrice.ITEM_PRICE_AVAILABILITY_OUT_OF_STOCK,
+                        online_urgent_quantity=_product_info['urgentQuantity'] if 'urgentQuantity' in _product_info else None,
+                        store_availabilities=store_availabilities,
+                    )
 
     def _build_walmart_ca_item_price(self):
         pass
