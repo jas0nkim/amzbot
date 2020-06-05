@@ -49,8 +49,8 @@ class RawData(models.Model):
                 if 'item' in self.data and 'product' in self.data['item'] and 'buyBox' in self.data['item']['product'] and 'primaryUsItemId' in self.data['item']['product']['buyBox']:
                     return self.data['item']['product']['buyBox']['primaryUsItemId']
             elif self.domain in ['walmart.ca',]:
-                if 'product' in self.data and 'item' in self.data['product'] and 'skus' in self.data['product']['item']:
-                    return truncatechars(','.join(self.data['product']['item']['skus']), 50)
+                if 'product' in self.data and 'item' in self.data['product'] and 'id' in self.data['product']['item']:
+                    return self.data['product']['item']['id']
         else:
             return None
 
@@ -222,6 +222,7 @@ class BuildItemPrice:
             # create new item
             self._item = Item.objects.create(domain=self._domain,
                         sku=sku,
+                        parent_sku=self._data['parent_asin'],
                         upc=None,
                         title=self._data['title'],
                         brand_name=self._data.get('brand_name', None),
@@ -270,6 +271,7 @@ class BuildItemPrice:
             # create new item
             self._item = Item.objects.create(domain=self._domain,
                         sku=sku,
+                        parent_sku=self._data['item']['product']['buyBox']['primaryUsItemId'],
                         upc=_product_info['upc'],
                         title=_product_info['productName'],
                         brand_name=_product_info['brandName'],

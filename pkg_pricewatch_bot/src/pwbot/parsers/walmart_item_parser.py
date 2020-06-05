@@ -98,7 +98,7 @@ class WalmartCaItemParser(object):
         else:
             _data = self.__get_preloaded_data(response)
             yield self.build_listing_item(response, data=_data)
-            yield JsonRequest(settings.WALMART_CA_API_ITEM_PRICE_LINK,
+            yield JsonRequest(settings.WALMART_CA_API_ITEM_PRICE_LINK_FORMAT.format(self._parent_sku),
                         callback=self.parse_price_offer,
                         errback=parsers.resp_error_handler,
                         meta={
