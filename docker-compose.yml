@@ -46,7 +46,7 @@
 #
 #   i.e.
 #
-#   docker-compose run bot python run.py discover -a urls="https://www.amazon.com/Gildan-Mens-T-Shirt-Assortment-Small/dp/B077ZKF9ZN/?_encoding=UTF8&refRID=NSX2F9SWW59TZN9SDX7K&th=1" -d
+#   docker-compose run bot python run.py discover -a urls="https://www.amazon.com/Gildan-Mens-T-Shirt-Assortment-Small/dp/B077ZKF9ZN/?_encoding=UTF8&refRID=NSX2F9SWW59TZN9SDX7K&th=1" -a lat="43.7292" -a lng="-79.393" -d
 #
 #   docker-compose run bot python run.py discover -a skus="B087K45RSF" -a domain="amazon.com"
 #

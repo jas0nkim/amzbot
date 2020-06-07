@@ -99,7 +99,7 @@ class WalmartCaItemParser(object):
             _data = self.__get_preloaded_data(response)
             yield self.build_listing_item(response, data=_data)
             yield JsonRequest(settings.WALMART_CA_API_ITEM_PRICE_LINK_FORMAT.format(self._parent_sku),
-                        callback=self.parse_price_offer,
+                        callback=self.parse_json_response,
                         errback=parsers.resp_error_handler,
                         meta={
                             # crawlera proxy interrupt ajax calls
@@ -107,7 +107,7 @@ class WalmartCaItemParser(object):
                         },
                         data={
                             "availabilityStoreId": _data['catchment']['storeId'],
-                            "fsa": "L5R",
+                            "fsa": "L5R", # based on user
                             "experience": _data['common']['experience'],
                             "products": [
                                 {
@@ -117,6 +117,18 @@ class WalmartCaItemParser(object):
                             ],
                             "lang": _data['locale']['lang'],
                         })
+            # curl -d '{"availabilityStoreId":"1061","fsa":"M2N","experience":"whiteGM","products":[{"productId":"1455223333562","skuIds":["10271820","10271833","10271990","10272011","10272074","10272294","10272452","10272673","10272930","10273052","6000196162683","6000196162686","6000196162689","6000196162692","6000196162695","6000198676038","6000198676606","6000198676624","6000198676966","6000198677013"]}],"lang":"en"}' -H "Content-Type: application/json" -X POST https://www.walmart.ca/api/product-page/price-offer
+
+            for _, sku_data in _data['entities']['skus'].items():
+                if len(sku_data.get('upc', [])) > 0:
+                    yield JsonRequest(settings.WALMART_CA_API_ITEM_FIND_IN_STORE_LINK_FORMAT.format(lat=lat, lng=lng, upc=sku_data['upc'][0]),
+                            callback=self.parse_json_response,
+                            errback=parsers.resp_error_handler,
+                            meta={
+                                # crawlera proxy interrupt ajax calls
+                                'dont_proxy': True,
+                            })
+
 
             # r = requests.post('https://www.walmart.ca/api/product-page/price-offer',
             #                     # crawlera proxy interrupt ajax calls
@@ -208,7 +220,7 @@ class WalmartCaItemParser(object):
             #                 'crawl_variations': crawl_variations,
             #             })
 
-    def parse_price_offer(self, response):
+    def parse_json_response(self, response):
         try:
             json_data = json.loads(response.text)
         except TypeError as e:

@@ -1,4 +1,5 @@
-## Jun 3 2020
+## Jun 5 2020
+- implement lat, lng walmart.com/.ca on crawling
 - convert raw_data.data to more readable data, and insert into different tables
     - amazon
     - walmart
@@ -21,7 +22,7 @@
     - original_price
     - quantity
     - store_location (nullable)
-- frontend
+- frontend (react + typescript)
     - register
         - email
         - password

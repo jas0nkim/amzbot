@@ -1,3 +1,4 @@
+import logging
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.fields import JSONField
@@ -164,12 +165,186 @@ class ItemPrice(models.Model):
     class Meta:
         db_table = 'resrc_item_prices'
 
+class BuildWalmartCaItemPrice:
+    """ walmart.ca specific version of BuildItemPrice
+    """
+
+
+    _job_id = None
+    _domain = None
+    _url = None
+
+    _data = None
+    _price_data = None
+    _stores_raw_data = None
+
+    _items = []
+    _item_prices = []
+
+    def __init__(self, raw_data=None, price_raw_data=None, stores_raw_data=None):
+        """ price_raw_data:
+                RawData.objects.get(domain=self._domain,
+                                    url=settings.WALMART_CA_API_ITEM_PRICE_LINK_FORMAT.format(_parent_sku),
+                                    job_id=self._job_id,)
+
+            stores_raw_data:
+            ret = {}
+            for s in RawData.objects.filter(domain=self._domain,
+                                                url__startwith=settings.WALMART_CA_API_ITEM_FIND_IN_STORE_LINK,
+                                                job_id=self._job_id,):
+                ret[extract_upc_from_url(s.url)] = s
+            return ret
+
+            self.logger.error('[{}] walmart.ca: no find in store data scraped - [parent sku:{}] [sku:{}]'.format(self._job_id, _parent_sku, sku))
+
+            i.e.
+            {
+                upc_1: RawData_1,
+                upc_2: RawData_2,
+                upc_3: RawData_3,
+                ...
+            }
+        """
+
+        self.logger = logging.getLogger('pwweb.resources.models.BuildWalmartCaItemPrice')
+
+        if not isinstance(raw_data, RawData):
+            raise Exception('Invalid raw_data value passed. Not a RawData type')
+        if not isinstance(price_raw_data, RawData):
+            raise Exception('Invalid price_raw_data value passed. Not a RawData type')
+        self._job_id = raw_data.job_id
+        self._domain = raw_data.domain
+        self._url = raw_data.url
+
+        self._data = raw_data.data
+        self._price_data = price_raw_data.data
+        self._stores_raw_data = stores_raw_data
+
+        if self._domain in ['walmart.ca',]:
+            self._build_walmart_ca_item_price()
+        else:
+            raise Exception('[{}] domain supposed to be walmart.ca. wrong domain passed instead: {}'.format(self._job_id, self._domain))
+
+    def get_items(self):
+        """ get list of walmart.ca model.Item object
+        """
+        return self._items
+
+    def get_item_prices(self):
+        """ get list of walmart.ca model.ItemPrice object
+        """
+        return self._item_prices
+
+    def _build_walmart_ca_item_price(self):
+        """ sku: data['product']['item']['skus'] or data['entities']['skus'][SKU] (multiple)
+            parent_sku: data['product']['item']['id']
+            upc: data['entities']['skus'][SKU]['upc'][0] (multiple)
+            title: data['entities']['skus'][SKU]['name'] (multiple)
+            brand_name: data['entities']['skus'][SKU]['brand']['name'] (multiple)
+            picture_url: data['entities']['skus'][SKU]['images'][0]['large']['url']
+
+            * from https://www.walmart.ca/api/product-page/price-offer
+            price:
+                if 'skus' in self.data and 'offers' in self.data:
+                    prices = {}
+                    for sku, offerid in self.data['skus'].items():
+                        if len(offerid) < 1:
+                            continue
+                        prices[sku] = self.data['offers'][offerid[0]]['currentPrice']
+                    return str(prices)
+            original_price:
+                if 'skus' in self.data and 'offers' in self.data:
+                    prices = {}
+                    for sku, offerid in self.data['skus'].items():
+                        if len(offerid) < 1:
+                            continue
+                        prices[sku] = self.data['offers'][offerid[0]]['regularPrice']
+                    return str(prices)
+            online_availability:
+                if 'skus' in self.data and 'offers' in self.data:
+                    prices = {}
+                    for sku, offerid in self.data['skus'].items():
+                        if len(offerid) < 1:
+                            continue
+                        prices[sku] = self.data['offers'][offerid[0]]['gmAvailability'] [ Available or not]
+                    return str(prices)
+            online_urgent_quantity:
+                if 'skus' in self.data and 'offers' in self.data:
+                    prices = {}
+                    for sku, offerid in self.data['skus'].items():
+                        if len(offerid) < 1:
+                            continue
+                        prices[sku] = self.data['offers'][offerid[0]]['availableQuantity']
+                    return str(prices)
+
+            * from https://www.walmart.ca/api/product-page/find-in-store
+            store_availabilities:
+                'store_id': data['info'][]['id'],
+                'store_name': data['info'][]['displayName'],
+                'store_address': data['info'][]['intersection'],
+                'store_city': None,
+                'store_state_or_province': None,
+                'store_postal_code': None,
+                'store_phone': None,
+                'store_availability': 1 [1 (data['info'][]['availabilityStatus'] == 'LIMITED' | 'AVAILABLE' ) | 0 (unavailable)],
+                'store_urgent_quantity': 5 (data['info'][]['availableToSellQty'] | None)
+        """
+        _parent_sku = utils.extract_sku_from_url(url=self._url, domain=self._domain)
+        if _parent_sku is None:
+            raise Exception('[{}] SKU cannot be extracted from url - {}'.format(self._job_id, self._url))
+        for sku, _product_info in self._data['entities']['skus'].items():
+            _upc = _product_info['upc'][0] if len(_product_info.get('upc', [])) > 0 else None
+            _item = None
+            try:
+                _item = Item.objects.get(domain=self._domain, sku=sku)
+            except Item.DoesNotExist:
+                # create new item
+                _item = Item.objects.create(domain=self._domain,
+                            sku=sku,
+                            parent_sku=_parent_sku,
+                            upc=_upc,
+                            title=_product_info.get('name'),
+                            brand_name=_product_info.get('brand', {}).get('name'),
+                            picture_url=_product_info['images'][0].get('large', {}).get('url') if len(_product_info.get('images', [])) > 0 else None,
+                        )
+            self._items.append(_item)
+
+            # generate store_availabilities json
+            store_availabilities = None
+            if _upc in self._stores_raw_data:
+                store_availabilities = []
+                for s in self._stores_raw_data[_upc].data['info']:
+                    store_availabilities.append({
+                        'store_id': str(s.get('id')),
+                        'store_name': s.get('displayName'),
+                        'store_address': s.get('intersection'),
+                        'store_city': None,
+                        'store_state_or_province': None,
+                        'store_postal_code': None,
+                        'store_phone': None,
+                        'store_availability': ItemPrice.ITEM_PRICE_AVAILABILITY_IN_STOCK if (s.get('availabilityStatus') in ['LIMITED', 'AVAILABLE',]) else ItemPrice.ITEM_PRICE_AVAILABILITY_OUT_OF_STOCK,
+                        'store_urgent_quantity': s.get('availableToSellQty')
+                    })
+            _offer_id = self._price_data['skus'][sku][0] if len(self._price_data.get('skus', {}).get(sku, [])) > 0 else None
+            if _offer_id:
+                _price = self._price_data.get('offers', {}).get(_offer_id, {}).get('currentPrice')
+                _item_price = ItemPrice.objects.create(domain=self._domain,
+                                job_id=self._job_id,
+                                sku=sku,
+                                price=_price,
+                                original_price=self._price_data.get('offers', {}).get(_offer_id, {}).get('regularPrice', _price),
+                                online_availability=ItemPrice.ITEM_PRICE_AVAILABILITY_IN_STOCK if self._price_data.get('offers', {}).get(_offer_id, {}).get('gmAvailability') == 'Available' else ItemPrice.ITEM_PRICE_AVAILABILITY_OUT_OF_STOCK,
+                                online_urgent_quantity=self._price_data.get('offers', {}).get(_offer_id, {}).get('availableQuantity'),
+                                store_availabilities=store_availabilities,
+                            )
+                self._item_prices.append(_item_price)
+
 
 class BuildItemPrice:
     """ build resrc_item_prices data from resrc_raw_data
     """
 
-    _raw_data = None
+    _job_id = None
     _domain = None
     _url = None
     _data = None
@@ -178,6 +353,8 @@ class BuildItemPrice:
     _item_price = None
 
     def __init__(self, raw_data=None):
+        self.logger = logging.getLogger('pwweb.resources.models.BuildItemPrice')
+
         if not isinstance(raw_data, RawData):
             raise Exception('Invalid raw_data value passed. Not a RawData type')
         self._job_id = raw_data.job_id
@@ -189,8 +366,6 @@ class BuildItemPrice:
             self._build_amazon_item_price()
         elif self._domain in ['walmart.com',]:
             self._build_walmart_com_item_price()
-        elif self._domain in ['walmart.ca',]:
-            self._build_walmart_ca_item_price()
         elif self._domain in ['canadiantire.ca',]:
             self._build_canadiantire_ca_item_price()
 
@@ -215,7 +390,7 @@ class BuildItemPrice:
         """
         sku = utils.extract_sku_from_url(url=self._url, domain=self._domain)
         if sku is None:
-            raise Exception('SKU cannot be extracted from url - {}'.format(self._url))
+            raise Exception('[{}] SKU cannot be extracted from url - {}'.format(self._job_id, self._url))
         try:
             self._item = Item.objects.get(domain=self._domain, sku=sku)
         except Item.DoesNotExist:
@@ -232,7 +407,7 @@ class BuildItemPrice:
                         job_id=self._job_id,
                         sku=sku,
                         price=self._data['price'],
-                        original_price=self._data['original_price'],
+                        original_price=self._data.get('original_price', self._data['price']),
                         online_availability=ItemPrice.ITEM_PRICE_AVAILABILITY_IN_STOCK if self._data['quantity'] > 0 else ItemPrice.ITEM_PRICE_AVAILABILITY_OUT_OF_STOCK,
                         online_urgent_quantity=self._data['quantity'] if self._data['quantity'] > 0 and self._data['quantity'] < 100 else None,
                         store_availabilities=None,
@@ -245,24 +420,36 @@ class BuildItemPrice:
             brand: data['item']['product']['buyBox']['products'][0]['brandName']
             picture_url: data['item']['product']['buyBox']['products'][0]['images'][0]['url']
 
-            price: data['item']['product']['buyBox']['products'][0]['priceMap']['price']
-            original_price: data['item']['product']['buyBox']['products'][0]['priceMap']['wasPrice']
-            quantity:
-                    if self.data['item']['product']['buyBox']['products'][0]['availabilityStatus'] == 'OUT_OF_STACK':
-                        return 'out of stock'
-                    elif self.data['item']['product']['buyBox']['products'][0]['availabilityStatus'] == 'IN_STOCK':
-                        if self.data['item']['product']['buyBox']['products'][0]['urgentQuantity']:
-                            return self.data['item']['product']['buyBox']['products'][0]['urgentQuantity']
-                        else:
-                            return 'in stock'
-                    else:
-                        return 'N/A'
-
-            store_location: data['item']['product']['buyBox']['products'][0]['pickupOptions']
+            price:
+                if 'skus' in self.data and 'offers' in self.data:
+                    prices = {}
+                    for sku, offerid in self.data['skus'].items():
+                        if len(offerid) < 1:
+                            continue
+                        prices[sku] = self.data['offers'][offerid[0]]['currentPrice']
+                    return truncatechars(str(prices), 50)
+            original_price: same as price
+            online_availability:
+                if 'skus' in self.data and 'offers' in self.data:
+                    prices = {}
+                    for sku, offerid in self.data['skus'].items():
+                        if len(offerid) < 1:
+                            continue
+                        prices[sku] = self.data['offers'][offerid[0]]['gmAvailability'] [ Available or not]
+                    return truncatechars(str(prices), 50)
+            online_urgent_quantity:
+                if 'skus' in self.data and 'offers' in self.data:
+                    prices = {}
+                    for sku, offerid in self.data['skus'].items():
+                        if len(offerid) < 1:
+                            continue
+                        prices[sku] = self.data['offers'][offerid[0]]['availableQuantity']
+                    return truncatechars(str(prices), 50)
+            store_availabilities: data['item']['product']['buyBox']['products'][0]['pickupOptions']
         """
         sku = utils.extract_sku_from_url(url=self._url, domain=self._domain)
         if sku is None:
-            raise Exception('SKU cannot be extracted from url - {}'.format(self._url))
+            raise Exception('[{}] SKU cannot be extracted from url - {}'.format(self._job_id, self._url))
         # todo: need to have better exception handling if this key missing in data (i.e. email me...)
         _product_info = self._data['item']['product']['buyBox']['products'][0]
         try:
@@ -283,49 +470,27 @@ class BuildItemPrice:
             store_availabilities = []
             for s in _product_info['pickupOptions']:
                 store_availabilities.append({
-                    'store_id': str(s['storeId']),
-                    'store_name': s['storeName'],
-                    'store_address': s['storeAddress'],
-                    'store_city': s['storeCity'],
-                    'store_state_or_province': s['storeStateOrProvinceCode'],
-                    'store_postal_code': s['storePostalCode'],
-                    'store_phone': s['storePhone'],
-                    'store_availability': ItemPrice.ITEM_PRICE_AVAILABILITY_IN_STOCK if s['availability'] == 'AVAILABLE' else ItemPrice.ITEM_PRICE_AVAILABILITY_OUT_OF_STOCK,
-                    'store_urgent_quantity': s['urgentQuantity'] if 'urgentQuantity' in s and s['urgentQuantity'] else None,
+                    'store_id': str(s.get('storeId')),
+                    'store_name': s.get('storeName'),
+                    'store_address': s.get('storeAddress'),
+                    'store_city': s.get('storeCity'),
+                    'store_state_or_province': s.get('storeStateOrProvinceCode'),
+                    'store_postal_code': s.get('storePostalCode'),
+                    'store_phone': s.get('storePhone'),
+                    'store_availability': ItemPrice.ITEM_PRICE_AVAILABILITY_IN_STOCK if s.get('availability') == 'AVAILABLE' else ItemPrice.ITEM_PRICE_AVAILABILITY_OUT_OF_STOCK,
+                    'store_urgent_quantity': s.get('urgentQuantity'),
                 })
+        _price = _product_info.get('priceMap', {}).get('price')
         self._item_price = ItemPrice.objects.create(domain=self._domain,
                         job_id=self._job_id,
                         sku=sku,
-                        price=_product_info['priceMap']['price'],
-                        original_price=_product_info['priceMap']['wasPrice'],
+                        price=_price,
+                        original_price=_product_info.get('priceMap', {}).get('wasPrice', _price),
                         online_availability=ItemPrice.ITEM_PRICE_AVAILABILITY_IN_STOCK if _product_info['availabilityStatus'] == 'IN_STOCK' else ItemPrice.ITEM_PRICE_AVAILABILITY_OUT_OF_STOCK,
-                        online_urgent_quantity=_product_info['urgentQuantity'] if 'urgentQuantity' in _product_info else None,
+                        online_urgent_quantity=_product_info.get('urgentQuantity'),
                         store_availabilities=store_availabilities,
                     )
 
-    def _build_walmart_ca_item_price(self):
-        """ sku: data['item']['product']['buyBox']['primaryUsItemId']
-            upc: data['item']['product']['buyBox']['products'][0]['upc']
-            title: data['item']['product']['buyBox']['products'][0]['productName']
-            brand: data['item']['product']['buyBox']['products'][0]['brandName']
-            picture_url: data['item']['product']['buyBox']['products'][0]['images'][0]['url']
-
-            price: data['item']['product']['buyBox']['products'][0]['priceMap']['price']
-            original_price: data['item']['product']['buyBox']['products'][0]['priceMap']['wasPrice']
-            quantity:
-                    if self.data['item']['product']['buyBox']['products'][0]['availabilityStatus'] == 'OUT_OF_STACK':
-                        return 'out of stock'
-                    elif self.data['item']['product']['buyBox']['products'][0]['availabilityStatus'] == 'IN_STOCK':
-                        if self.data['item']['product']['buyBox']['products'][0]['urgentQuantity']:
-                            return self.data['item']['product']['buyBox']['products'][0]['urgentQuantity']
-                        else:
-                            return 'in stock'
-                    else:
-                        return 'N/A'
-
-            store_location: data['item']['product']['buyBox']['products'][0]['pickupOptions']
-        """
-        pass
 
     def _build_canadiantire_ca_item_price(self):
         pass

@@ -248,5 +248,9 @@ AMAZON_CA_ITEM_LINK_PATTERN = r'^(https?://www.amazon.ca)?/([^/]+/[^/]+|dp)/([A-
 WALMART_COM_ITEM_LINK_PATTERN = r'^(https?://www.walmart.com)?/([^/]+/[^/]+|ip)/([A-Z0-9]{8,15})(/.*$)?'
 ## walmart.ca related
 WALMART_CA_ITEM_LINK_PATTERN = r'^(https?://www.walmart.ca)?/(en|fr)/([^/]+/[^/]+|ip)/([A-Z0-9]{8,15})(/.*$)?'
+WALMART_CA_API_ITEM_PRICE_LINK_FORMAT = 'https://www.walmart.ca/api/product-page/price-offer?pid={}'
+WALMART_CA_API_ITEM_FIND_IN_STORE_LINK_FORMAT = 'https://www.walmart.ca/api/product-page/find-in-store?latitude={lat}&longitude={lng}&lang=en&upc={upc}'
+WALMART_CA_API_ITEM_FIND_IN_STORE_LINK = 'https://www.walmart.ca/api/product-page/find-in-store'
+
 ## canadiantire.ca related
 CANADIANTIRE_CA_ITEM_LINK_PATTERN = r'^(https?://www.canadiantire.ca)?/(en|fr)/([^/]+/[^/]+|pdp)/([\w-]*)([0-9]{7,12})p*.html[.*$]?'
