@@ -1,3 +1,15 @@
+## Jun 9 2020
+- convert canadiantire.ca data into resrc_items and resrc_item_prices
+- hook with scrapy spider_closed signal
+- frontend (react + typescript)
+    - register
+        - email
+        - password
+        - address (location tracking) : lat, lng
+    - login
+    - add product
+    - notification once price dropped
+
 ## Jun 5 2020
 - implement lat, lng walmart.com/.ca on crawling
 - convert raw_data.data to more readable data, and insert into different tables
@@ -22,14 +34,6 @@
     - original_price
     - quantity
     - store_location (nullable)
-- frontend (react + typescript)
-    - register
-        - email
-        - password
-        - address (location tracking) : lat, lng
-    - login
-    - add product
-    - notification once price dropped
 
 ## May 31 2020
 - 'Buy Now Price Match Later'
