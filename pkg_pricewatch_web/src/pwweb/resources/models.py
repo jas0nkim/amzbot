@@ -168,8 +168,6 @@ class ItemPrice(models.Model):
 class BuildWalmartCaItemPrice:
     """ walmart.ca specific version of BuildItemPrice
     """
-
-
     _job_id = None
     _domain = None
     _url = None
@@ -207,7 +205,6 @@ class BuildWalmartCaItemPrice:
         """
 
         self.logger = logging.getLogger('pwweb.resources.models.BuildWalmartCaItemPrice')
-
         if not isinstance(raw_data, RawData):
             raise Exception('Invalid raw_data value passed. Not a RawData type')
         if not isinstance(price_raw_data, RawData):
@@ -215,7 +212,6 @@ class BuildWalmartCaItemPrice:
         self._job_id = raw_data.job_id
         self._domain = raw_data.domain
         self._url = raw_data.url
-
         self._data = raw_data.data
         self._price_data = price_raw_data.data
         self._stores_raw_data = stores_raw_data
@@ -310,9 +306,8 @@ class BuildWalmartCaItemPrice:
             self._items.append(_item)
 
             # generate store_availabilities json
-            store_availabilities = None
+            store_availabilities = []
             if _upc in self._stores_raw_data:
-                store_availabilities = []
                 for s in self._stores_raw_data[_upc].data['info']:
                     store_availabilities.append({
                         'store_id': str(s.get('id')),
@@ -323,7 +318,7 @@ class BuildWalmartCaItemPrice:
                         'store_postal_code': None,
                         'store_phone': None,
                         'store_availability': ItemPrice.ITEM_PRICE_AVAILABILITY_IN_STOCK if (s.get('availabilityStatus') in ['LIMITED', 'AVAILABLE',]) else ItemPrice.ITEM_PRICE_AVAILABILITY_OUT_OF_STOCK,
-                        'store_urgent_quantity': s.get('availableToSellQty')
+                        'store_urgent_quantity': s.get('availableToSellQty', 0) if s.get('availableToSellQty', 0) > 0 else None
                     })
             _offer_id = self._price_data['skus'][sku][0] if len(self._price_data.get('skus', {}).get(sku, [])) > 0 else None
             if _offer_id:
@@ -335,9 +330,219 @@ class BuildWalmartCaItemPrice:
                                 original_price=self._price_data.get('offers', {}).get(_offer_id, {}).get('regularPrice', _price),
                                 online_availability=ItemPrice.ITEM_PRICE_AVAILABILITY_IN_STOCK if self._price_data.get('offers', {}).get(_offer_id, {}).get('gmAvailability') == 'Available' else ItemPrice.ITEM_PRICE_AVAILABILITY_OUT_OF_STOCK,
                                 online_urgent_quantity=self._price_data.get('offers', {}).get(_offer_id, {}).get('availableQuantity'),
-                                store_availabilities=store_availabilities,
+                                store_availabilities=store_availabilities if len(store_availabilities) > 0 else None,
                             )
                 self._item_prices.append(_item_price)
+
+
+class BuildCanadiantireCaItemPrice:
+    """ canadiantire.ca specific version of BuildItemPrice
+    """
+    _job_id = None
+    _domain = None
+    _url = None
+
+    _data = None
+    _store_data = None
+    _price_data = None
+
+    _items = []
+    _item_prices = []
+
+    def __init__(self, raw_data=None, store_raw_data=None, price_raw_data=None):
+        """ store_raw_data:
+                RawData.objects.get(domain=self._domain,
+                                    url__startwith=settings.CANADIANTIRE_CA_API_STORES_LINK,
+                                    job_id=self._job_id,)
+
+            price_raw_data:
+                RawData.objects.get(domain=self._domain,
+                                    url__startwith=settings.CANADIANTIRE_CA_API_ITEM_PRICE_LINK,
+                                    job_id=self._job_id,)
+        """
+
+        self.logger = logging.getLogger('pwweb.resources.models.BuildCanadiantireCaItemPrice')
+        if not isinstance(raw_data, RawData):
+            raise Exception('Invalid raw_data value passed. Not a RawData type')
+        if not isinstance(store_raw_data, RawData):
+            raise Exception('Invalid store_raw_data value passed. Not a RawData type')
+        if not isinstance(price_raw_data, RawData):
+            raise Exception('Invalid price_raw_data value passed. Not a RawData type')
+        self._job_id = raw_data.job_id
+        self._domain = raw_data.domain
+        self._url = raw_data.url
+        self._data = raw_data.data
+        self._store_data = self._build_store_data(store_raw_data.data)
+        self._price_data = self._build_price_data(price_raw_data.data)
+
+        if self._domain in ['canadiantire.ca',]:
+            self._build_canadiantire_ca_item_price()
+        else:
+            raise Exception('[{}] domain supposed to be canadiantire.ca. wrong domain passed instead: {}'.format(self._job_id, self._domain))
+
+    def get_items(self):
+        """ get list of canadiantire.ca model.Item object
+        """
+        return self._items
+
+    def get_item_prices(self):
+        """ get list of canadiantire.ca model.ItemPrice object
+        """
+        return self._item_prices
+
+    def _build_store_data(self, data):
+        """ convert to:
+            {
+                "0459": {
+                    "timeZone":"(GMT -5) Eastern Time (US, Canada) [US/Eastern]",
+                    "storeName":"Eglinton & Laird, ON",
+                    "storeType":"CTR",
+                    "storeNumber":"0459",
+                    ...
+                },
+                ...
+            }
+        """
+        ret = {}
+        for _d in data:
+            if _d.get('storeNumber') not in ret:
+                ret[_d.get('storeNumber')] = _d
+        return ret
+
+    def _build_price_data(self, data):
+        """ convert to:
+            {
+                '1871455': [
+                    {
+                        'SKU': '1871455',
+                        'Price': ...,
+                        'Store': '0011',
+                        'Banner': ...,
+                        ...
+                    },
+                    {
+                        'SKU': '1871455',
+                        'Price': ...,
+                        'Store': '0045',
+                        'Banner': ...,
+                        ...
+                    },
+                ],
+                '1871456': [
+                    {
+                        'SKU': '1871456',
+                        'Price': ...,
+                        'Store': '0011',
+                        'Banner': ...,
+                        ...
+                    },
+                    {
+                        'SKU': '1871456',
+                        'Price': ...,
+                        'Store': '0045',
+                        'Banner': ...,
+                        ...
+                    },
+                    ...
+                ]
+                ...
+            }
+        """
+        ret = {}
+        for _d in data:
+            if _d.get('SKU') not in ret:
+                ret[_d.get('SKU')] = []
+            ret[_d.get('SKU')].append(_d)
+        return ret
+
+    def _build_canadiantire_ca_item_price(self):
+        """ sku: data['SkuSelectors']['skuListProperties'] (multiple)
+            parent_sku: data['SkuSelectors']['pCode']
+            upc: None
+            title: data['ProductStickyToc']['productName']
+            brand_name: data['SkuSelectors']['BrandLogoLink']['brandName']
+            picture_url: data['ProductStickyToc']['imageUrl']
+
+            * from https://www.canadiantire.ca/ESB/PriceAvailability
+            price:
+                price = data[0].get('Price')
+                for _p in data:
+                    if _p.get('SKU') == ... and _p.get('Promo', {}).get('Price'):
+                        price = _p.get('Promo', {}).get('Price')
+                        break
+            original_price:
+                data[0].get('Price')
+            online_availability: if data[0].get('Corporate', {}).get('Quantity', 0) > 0 [ available or not ]
+            online_urgent_quantity: data[0].get('Corporate', {}).get('Quantity', 0)
+            * from https://api-triangle.canadiantire.ca/dss/services/v4/stores & https://www.canadiantire.ca/ESB/PriceAvailability
+            store_availabilities:
+                for _p in price_data:
+                    for _s in store_data:
+                        if _p.get('SKU') == ... and _p.get('Store') == _s.get('storeNumber'):
+                            'store_id': _s['storeNumber'],
+                            'store_name': _s['storeName'],
+                            'store_address': ' '.join(_s['storeAddress1'], _s['storeAddress2']),
+                            'store_city': _s['storeCityName'],
+                            'store_state_or_province': _s['storeProvince'],
+                            'store_postal_code': _s['storePostalCode'],
+                            'store_phone': _s['storeTelephone'],
+                            'store_availability': if _p.get('Quantity', 0) > 0 [ available or not ],
+                            'store_urgent_quantity': _p.get('Quantity', None)
+        """
+        _sk = utils.extract_sku_from_url(url=self._url, domain=self._domain)
+        if _sk is None:
+            raise Exception('[{}] SKU cannot be extracted from url - {}'.format(self._job_id, self._url))
+        for sku in self._data.get('SkuSelectors', {}).get('skuListProperties', {}.keys()):
+            _item = None
+            try:
+                _item = Item.objects.get(domain=self._domain, sku=sku)
+            except Item.DoesNotExist:
+                # create new item
+                _item = Item.objects.create(domain=self._domain,
+                            sku=sku,
+                            parent_sku=self._data.get('SkuSelectors', {}).get('pCode'),
+                            upc=None,
+                            title=self._data.get('ProductStickyToc', {}).get('productName'),
+                            brand_name=self._data.get('BrandLogoLink', {}).get('brandName'),
+                            picture_url=self._data.get('ProductStickyToc', {}).get('imageUrl'),
+                        )
+            self._items.append(_item)
+
+            # generate store_availabilities json
+            price = None
+            original_price = None
+            online_availability = ItemPrice.ITEM_PRICE_AVAILABILITY_OUT_OF_STOCK
+            online_urgent_quantity = None
+            store_availabilities = []
+            price_data = self._price_data.get(sku)
+            for _p in price_data:
+                price = _p.get('Promo', {}).get('Price') if price is None else price
+                original_price = _p.get('Price') if original_price is None else original_price
+                online_availability = ItemPrice.ITEM_PRICE_AVAILABILITY_IN_STOCK if online_availability or _p.get('Corporate', {}).get('Quantity', 0) > 0 else online_availability
+                online_urgent_quantity = _p.get('Corporate', {}).get('Quantity') if online_urgent_quantity is None else online_urgent_quantity
+                _p_store_id = _p.get('Store')
+                if _p_store_id:
+                    store_availabilities.append({
+                        'store_id': str(_p_store_id),
+                        'store_name': self._store_data.get(_p_store_id, {}).get('storeName'),
+                        'store_address': ' '.join([self._store_data.get(_p_store_id, {}).get('storeAddress1', ''), self._store_data.get(_p_store_id, {}).get('storeAddress2', ''),]),
+                        'store_city': self._store_data.get(_p_store_id, {}).get('storeCityName'),
+                        'store_state_or_province': self._store_data.get(_p_store_id, {}).get('storeProvince'),
+                        'store_postal_code': self._store_data.get(_p_store_id, {}).get('storePostalCode'),
+                        'store_phone': self._store_data.get(_p_store_id, {}).get('storeTelephone'),
+                        'store_availability': ItemPrice.ITEM_PRICE_AVAILABILITY_IN_STOCK if _p.get('Quantity') > 0 else ItemPrice.ITEM_PRICE_AVAILABILITY_OUT_OF_STOCK,
+                        'store_urgent_quantity': _p.get('Quantity', 0) if _p.get('Quantity', 0) > 0 else None,
+                    })
+            _item_price = ItemPrice.objects.create(domain=self._domain,
+                            job_id=self._job_id,
+                            sku=sku,
+                            price=price if price else original_price,
+                            original_price=original_price,
+                            online_availability=online_availability,
+                            online_urgent_quantity=online_urgent_quantity if online_urgent_quantity > 0 else None,
+                            store_availabilities=store_availabilities if len(store_availabilities) > 0 else None,
+                        )
+            self._item_prices.append(_item_price)
 
 
 class BuildItemPrice:
@@ -465,9 +670,8 @@ class BuildItemPrice:
                         picture_url=_product_info['images'][0]['url'] if len(_product_info['images']) > 0 and 'url' in _product_info['images'][0] else None,
                     )
         # generate store_availabilities json
-        store_availabilities = None
+        store_availabilities = []
         if 'pickupOptions' in _product_info and len(_product_info['pickupOptions']) > 0:
-            store_availabilities = []
             for s in _product_info['pickupOptions']:
                 store_availabilities.append({
                     'store_id': str(s.get('storeId')),
@@ -478,7 +682,7 @@ class BuildItemPrice:
                     'store_postal_code': s.get('storePostalCode'),
                     'store_phone': s.get('storePhone'),
                     'store_availability': ItemPrice.ITEM_PRICE_AVAILABILITY_IN_STOCK if s.get('availability') == 'AVAILABLE' else ItemPrice.ITEM_PRICE_AVAILABILITY_OUT_OF_STOCK,
-                    'store_urgent_quantity': s.get('urgentQuantity'),
+                    'store_urgent_quantity': s.get('urgentQuantity', 0) if s.get('urgentQuantity', 0) > 0 else None,
                 })
         _price = _product_info.get('priceMap', {}).get('price')
         self._item_price = ItemPrice.objects.create(domain=self._domain,
@@ -488,7 +692,7 @@ class BuildItemPrice:
                         original_price=_product_info.get('priceMap', {}).get('wasPrice', _price),
                         online_availability=ItemPrice.ITEM_PRICE_AVAILABILITY_IN_STOCK if _product_info['availabilityStatus'] == 'IN_STOCK' else ItemPrice.ITEM_PRICE_AVAILABILITY_OUT_OF_STOCK,
                         online_urgent_quantity=_product_info.get('urgentQuantity'),
-                        store_availabilities=store_availabilities,
+                        store_availabilities=store_availabilities if len(store_availabilities) > 0 else None,
                     )
 
 
