@@ -71,6 +71,7 @@ class WalmartCaItemParser(object):
     _domain = None
     _job_id = None
     _parent_sku = None
+    _referer_for_jsonrequest = None
 
     def __init__(self):
         self.logger = logging.getLogger(utils.class_fullname(self))
@@ -105,6 +106,9 @@ class WalmartCaItemParser(object):
                             # crawlera proxy interrupt ajax calls
                             'dont_proxy': True,
                         },
+                        headers={
+                            'Referer': self._referer_for_jsonrequest,
+                        },
                         data={
                             "availabilityStoreId": _data['catchment']['storeId'],
                             "fsa": "L5R", # based on user
@@ -127,6 +131,9 @@ class WalmartCaItemParser(object):
                             meta={
                                 # crawlera proxy interrupt ajax calls
                                 'dont_proxy': True,
+                            },
+                            headers={
+                                'Referer': self._referer_for_jsonrequest,
                             })
 
 
