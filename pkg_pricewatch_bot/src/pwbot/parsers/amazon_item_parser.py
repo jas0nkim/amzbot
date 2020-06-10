@@ -382,26 +382,17 @@ class AmazonItemParser(object):
         # 2. check sale price block second
         # 3. if no deal/sale price block exists, check our price block
         try:
-            #####################################################
-            # UNABLE TO MATCH DEAL PRICE AT THIS MOMENT
-            #####################################################
-            #
-            # price_element = response.css('#priceblock_dealprice::text')
-            # if len(price_element) < 1:
-            #     price_element = response.css('#priceblock_saleprice::text')
-            #     if len(price_element) < 1:
-            #         price_element = response.css('#priceblock_ourprice::text')
-            #         if len(price_element) < 1: # for dvd
-            #             price_element = response.css('#buyNewSection span.a-color-price.offer-price::text')
-            #
-            #####################################################
-
-            price_element = response.css('#priceblock_saleprice::text')
-            if len(price_element) < 1:
+            price_element = None
+            if len(response.css('#priceblock_dealprice::text')) > 0:
+                price_element = response.css('#priceblock_dealprice::text')
+            elif len(response.css('#priceblock_saleprice::text')) > 0:
+                price_element = response.css('#priceblock_saleprice::text')
+            elif len(response.css('#priceblock_ourprice::text')) > 0:
                 price_element = response.css('#priceblock_ourprice::text')
-                if len(price_element) < 1: # for dvd
-                    price_element = response.css('#buyNewSection span.a-color-price.offer-price::text')
-            if len(price_element) < 1:
+            elif len(response.css('#buyNewSection span.a-color-price.offer-price::text')) > 0:
+                price_element = response.css('#buyNewSection span.a-color-price.offer-price::text')
+
+            if not price_element:
                 self.logger.info("[ASIN:{}] No price element found".format(self._asin))
                 return None
             else:

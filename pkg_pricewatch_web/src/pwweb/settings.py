@@ -242,10 +242,14 @@ REST_FRAMEWORK = {
 
 ## amazon.com related
 AMAZON_COM_ITEM_LINK_PATTERN = r'^(https?://www.amazon.com)?/([^/]+/[^/]+|dp)/([A-Z0-9]{10})(/.*$)?'
+AMAZON_ITEM_LINK_FORMAT = 'https://www.{}/dp/{}{}'
+AMAZON_ITEM_VARIATION_LINK_POSTFIX = '/?th=1&psc=1'
 ## amazon.ca related
 AMAZON_CA_ITEM_LINK_PATTERN = r'^(https?://www.amazon.ca)?/([^/]+/[^/]+|dp)/([A-Z0-9]{10})(/.*$)?'
 ## walmart.com related
 WALMART_COM_ITEM_LINK_PATTERN = r'^(https?://www.walmart.com)?/([^/]+/[^/]+|ip)/([A-Z0-9]{8,15})(/.*$)?'
+WALMART_COM_ITEM_LINK_FORMAT = 'https://www.{}/ip/{}{}'
+WALMART_COM_ITEM_VARIATION_LINK_POSTFIX = '?selected=true'
 ## walmart.ca related
 WALMART_CA_ITEM_LINK_PATTERN = r'^(https?://www.walmart.ca)?/(en|fr)/([^/]+/[^/]+|ip)/([A-Z0-9]{8,15})(/.*$)?'
 WALMART_CA_API_ITEM_PRICE_LINK_FORMAT = 'https://www.walmart.ca/api/product-page/price-offer?pid={}'

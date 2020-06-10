@@ -1,8 +1,11 @@
 from django.http import Http404
-from rest_framework import viewsets, generics
+from rest_framework import viewsets, generics, status
+from rest_framework.views import APIView
+from rest_framework.response import Response
 from rest_framework.mixins import CreateModelMixin, UpdateModelMixin
 from pwweb.mixins import MultipleFieldLookupMixin
 from pwweb.resources.serializers import *
+from pwweb.resources.models import RawData, Item, ItemPrice, BuildItemPrice, BuildWalmartCaItemPrice, BuildCanadiantireCaItemPrice
 
 
 class RawDataListCreate(generics.ListCreateAPIView):
@@ -14,6 +17,29 @@ class RawDataListCreate(generics.ListCreateAPIView):
     #     """ handle create on post method
     #     """
     #     return self.update(request, *args, **kwargs)
+
+
+class ItemPricesBuild(APIView):
+    # permission_classes = [IsAdminUser]
+
+    def post(self, request, format=None):
+        """ build item prices
+        """
+        job_id = request.data.get('job_id')
+        response_code = status.HTTP_201_CREATED
+        response_data = {'status': 'ok'}
+        error_message = ''
+        if job_id:
+            for _d in RawData.objects.filter(job_id=job_id):
+                if _d.domain in ['amazon.com', 'amazon.ca', 'walmart.com',]:
+                    try:
+                        BuildItemPrice(_d)
+                    except Exception as e:
+                        response_code = status.HTTP_400_BAD_REQUEST
+                        error_message += '[{}] {}'.format(_d.url, str(e))
+        if response_code != status.HTTP_201_CREATED:
+            response_data = {'error_message': '[{}] error on building item price - {}'.format(job_id, error_message)}
+        return Response(response_data, status=response_code)
 
 
 # class AmazonParentListingList(CreateModelMixin, UpdateModelMixin, generics.ListAPIView):

@@ -47,7 +47,7 @@ admin screen
 
 from django.contrib import admin
 from django.db.models import Q
-from pwweb.resources.models import RawData
+from pwweb.resources.models import RawData, Item, ItemPrice
 
 
 @admin.register(RawData)
@@ -70,3 +70,11 @@ class RawDataAdmin(admin.ModelAdmin):
         else:
             _queryset, use_distinct = super().get_search_results(request, queryset, search_term)
         return _queryset, use_distinct
+
+@admin.register(Item)
+class ItemAdmin(admin.ModelAdmin):
+    list_display = ('sku', 'parent_sku', 'upc', 'title', 'brand_name', 'domain', )
+
+@admin.register(ItemPrice)
+class ItemPriceAdmin(admin.ModelAdmin):
+    list_display = ('sku', 'url_short', 'price', 'original_price', 'online_availability', 'online_urgent_quantity', 'domain', 'job_id',)

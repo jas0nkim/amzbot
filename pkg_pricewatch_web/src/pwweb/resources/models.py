@@ -162,6 +162,15 @@ class ItemPrice(models.Model):
     ITEM_PRICE_AVAILABILITY_OUT_OF_STOCK = 0
     ITEM_PRICE_AVAILABILITY_IN_STOCK = 1
 
+    def url_short(self):
+        url = ''
+        if self.domain in ['amazon.com', 'amazon.ca',]:
+            url = settings.AMAZON_ITEM_LINK_FORMAT.format(self.domain, self.sku, settings.AMAZON_ITEM_VARIATION_LINK_POSTFIX)
+        elif self.domain in ['walmart.com',]:
+            url = settings.WALMART_COM_ITEM_LINK_FORMAT.format(self.domain, self.sku, settings.WALMART_COM_ITEM_VARIATION_LINK_POSTFIX)
+        return mark_safe('<a href="{}" target="_blank">{}</a>'.format(url, truncatechars(url, 50)))
+    url_short.short_description = 'url'
+
     class Meta:
         db_table = 'resrc_item_prices'
 

@@ -120,7 +120,7 @@ class StoreItemPageSpider(BasePwbotCrawlSpider):
         def _cb(resp):
             text = yield resp.text(encoding='UTF-8')
             if resp.code >= 400:
-                _logger.error("{}: HTTP Error: Failed to create/update item - {}".format(resp.code, text))
+                _logger.error("{}: HTTP Error: failed to create/update item - {}".format(resp.code, text))
 
         d = treq.post('http://{}:{}/api/resource/raw_data/'.format(
                     config['PriceWatchWeb']['host'], config['PriceWatchWeb']['port']),
@@ -135,7 +135,24 @@ class StoreItemPageSpider(BasePwbotCrawlSpider):
     def spider_closed(self, spider):
         """ This signal supports returning deferreds from their handlers.
         """
-        pass
+        _logger = self.logger
+        @inlineCallbacks
+        def _cb(resp):
+            text = yield resp.text(encoding='UTF-8')
+            if resp.code >= 400:
+                _logger.error("{}: HTTP Error: failed to build item prices - {}".format(resp.code, text))
+
+        d = treq.post('http://{}:{}/api/resource/build_item_prices/'.format(
+                    config['PriceWatchWeb']['host'], config['PriceWatchWeb']['port']),
+            json.dumps({
+                'job_id': self._job_id
+            }).encode('ascii'),
+            headers={b'Content-Type': [b'application/json']}
+        )
+        d.addCallback(_cb)
+        # The next item will be scraped only after
+        # deferred (d) is fired
+        return d
 
 # class AmazonItemPageSpider(StoreItemPageSpider):
 
