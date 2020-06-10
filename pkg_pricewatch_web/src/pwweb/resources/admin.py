@@ -73,8 +73,18 @@ class RawDataAdmin(admin.ModelAdmin):
 
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
+    date_hierarchy = 'created_at'
+    ordering = ['-created_at',]
     list_display = ('sku', 'parent_sku', 'upc', 'title', 'brand_name', 'domain', )
+    list_filter = ('domain',)
+    search_fields = ['sku', 'parent_sku', 'job_id',]
+    show_full_result_count = False
 
 @admin.register(ItemPrice)
 class ItemPriceAdmin(admin.ModelAdmin):
+    date_hierarchy = 'created_at'
+    ordering = ['-created_at',]
     list_display = ('sku', 'url_short', 'price', 'original_price', 'online_availability', 'online_urgent_quantity', 'domain', 'job_id',)
+    list_filter = ('domain',)
+    search_fields = ['sku', 'job_id',]
+    show_full_result_count = False
