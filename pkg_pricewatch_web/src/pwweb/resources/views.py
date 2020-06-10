@@ -76,12 +76,20 @@ class ItemPricesBuild(APIView):
     def _build_canadiantire_ca_item_price(self, job_id):
         success = True
         error_messages = []
-        # for _d in RawData.objects.filter(job_id=job_id, domain__in=['amazon.com', 'amazon.ca', 'walmart.com',], http_status__lt=400):
-        #     try:
-        #         BuildItemPrice(_d)
-        #     except Exception as e:
-        #         success = False
-        #         error_message += '[{}] {}'.format(_d.url, str(e))
+        _q = RawData.objects.filter(job_id=job_id, domain='canadiantire.ca', http_status__lt=400)
+        # get base raw
+        for _base_raw in _q.filter(url__regex=settings.CANADIANTIRE_CA_ITEM_LINK_PATTERN):
+            _sku = utils.extract_sku_from_url(url=_base_raw.url, domain='canadiantire.ca')
+            _parent_sku = _base_raw.data.get('SkuSelectors', {}).get('pCode', '{}P'.format(_sku))
+            # get store_raw
+            _store_raw = _q.get(url__startswith=settings.CANADIANTIRE_CA_API_STORES_LINK, url__iendswith='#{}'.format(_parent_sku))
+            # get price_raw
+            _price_raw = _q.get(url__startswith=settings.CANADIANTIRE_CA_API_ITEM_PRICE_LINK, url__iendswith='#{}'.format(_parent_sku))
+            try:
+                BuildCanadiantireCaItemPrice(raw_data=_base_raw, store_raw_data=_store_raw, price_raw_data=_price_raw)
+            except Exception as e:
+                success = False
+                error_messages.append('[{}] {}'.format(_base_raw.url, str(e)))
         return (success, error_messages)
 
 

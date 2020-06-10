@@ -57,7 +57,7 @@ class RawDataAdmin(admin.ModelAdmin):
     empty_value_display = '???'
     list_display = ('sku', 'parent_sku', 'url_short', 'item_title_short', 'price', 'quantity', 'http_status', 'domain', )
     list_filter = ('domain', 'http_status',)
-    search_fields = ['url', 'domain', 'http_status',]
+    search_fields = ['url', 'domain', 'http_status', 'job_id',]
     # radio_fields = {"http_status": admin.VERTICAL}
     show_full_result_count = False
 

@@ -259,6 +259,7 @@ WALMART_CA_API_ITEM_FIND_IN_STORE_LINK = 'https://www.walmart.ca/api/product-pag
 
 ## canadiantire.ca related
 CANADIANTIRE_CA_ITEM_LINK_PATTERN = r'^(https?://www.canadiantire.ca)?/(en|fr)/([^/]+/[^/]+|pdp)/([\w-]*)([0-9]{7,12})p*.html[.*$]?'
+CANADIANTIRE_CA_ITEM_LINK_FORMAT = 'https://www.{}/en/pdp/{}.html'
 CANADIANTIRE_CA_API_STORES_LINK_FORMAT = 'https://api-triangle.canadiantire.ca/dss/services/v4/stores?lang=en&radius=1000&maxCount=12&storeType=store&lat={lat}&lng={lng}#{pid}'
 CANADIANTIRE_CA_API_STORES_LINK = 'https://api-triangle.canadiantire.ca/dss/services/v4/stores'
 CANADIANTIRE_CA_API_ITEM_PRICE_LINK_FORMAT = 'https://www.canadiantire.ca/ESB/PriceAvailability?SKU={sku}&Store={store}&Banner=CTR&Language=E#{pid}'

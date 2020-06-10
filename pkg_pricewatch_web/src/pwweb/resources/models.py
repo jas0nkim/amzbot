@@ -170,6 +170,8 @@ class ItemPrice(models.Model):
             url = settings.WALMART_COM_ITEM_LINK_FORMAT.format(self.domain, self.sku, settings.WALMART_COM_ITEM_VARIATION_LINK_POSTFIX)
         elif self.domain in ['walmart.ca',]:
             url = settings.WALMART_CA_ITEM_LINK_FORMAT.format(self.domain, self.sku)
+        elif self.domain in ['canadiantire.ca',]:
+            url = settings.CANADIANTIRE_CA_ITEM_LINK_FORMAT.format(self.domain, self.sku)
         return mark_safe('<a href="{}" target="_blank">{}</a>'.format(url, truncatechars(url, 50)))
     url_short.short_description = 'url'
 
