@@ -3,6 +3,7 @@ from rest_framework import viewsets, generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.mixins import CreateModelMixin, UpdateModelMixin
+from pwweb import settings, utils
 from pwweb.mixins import MultipleFieldLookupMixin
 from pwweb.resources.serializers import *
 from pwweb.resources.models import RawData, Item, ItemPrice, BuildItemPrice, BuildWalmartCaItemPrice, BuildCanadiantireCaItemPrice
@@ -26,20 +27,62 @@ class ItemPricesBuild(APIView):
         """ build item prices
         """
         job_id = request.data.get('job_id')
-        response_code = status.HTTP_201_CREATED
+        response_code = status.HTTP_400_BAD_REQUEST
         response_data = {'status': 'ok'}
         error_message = ''
         if job_id:
-            for _d in RawData.objects.filter(job_id=job_id):
-                if _d.domain in ['amazon.com', 'amazon.ca', 'walmart.com',]:
-                    try:
-                        BuildItemPrice(_d)
-                    except Exception as e:
-                        response_code = status.HTTP_400_BAD_REQUEST
-                        error_message += '[{}] {}'.format(_d.url, str(e))
+            _bip_success, _bip_error_messages = self._build_item_price(job_id)
+            _wcabip_success, _wcabip_error_messages = self._build_walmart_ca_item_price(job_id)
+            _ccabip_success, _ccabip_error_messages = self._build_canadiantire_ca_item_price(job_id)
+            response_code = status.HTTP_201_CREATED if _bip_success and _wcabip_success and _ccabip_success else response_code
+            error_message = '\n'.join(_bip_error_messages + _wcabip_error_messages + _ccabip_error_messages)
         if response_code != status.HTTP_201_CREATED:
             response_data = {'error_message': '[{}] error on building item price - {}'.format(job_id, error_message)}
         return Response(response_data, status=response_code)
+
+    def _build_item_price(self, job_id):
+        success = True
+        error_messages = []
+        for _raw in RawData.objects.filter(job_id=job_id, domain__in=['amazon.com', 'amazon.ca', 'walmart.com',], http_status__lt=400):
+            try:
+                BuildItemPrice(_raw)
+            except Exception as e:
+                success = False
+                error_messages.append('[{}] {}'.format(_raw.url, str(e)))
+        return (success, error_messages)
+
+    def _build_walmart_ca_item_price(self, job_id):
+        success = True
+        error_messages = []
+        _q = RawData.objects.filter(job_id=job_id, domain='walmart.ca', http_status__lt=400)
+        # get base raw
+        for _base_raw in _q.filter(url__regex=settings.WALMART_CA_ITEM_LINK_PATTERN):
+            _parent_sku = utils.extract_sku_from_url(url=_base_raw.url, domain='walmart.ca')
+            # get price_raw
+            _price_raw = _q.get(url=settings.WALMART_CA_API_ITEM_PRICE_LINK_FORMAT.format(_parent_sku))
+            # get stores_raw
+            _stores_raw = {}
+            for _s_raw in _q.filter(url__startswith=settings.WALMART_CA_API_ITEM_FIND_IN_STORE_LINK,
+                                        url__endswith='#{}'.format(_parent_sku)):
+                _upc = utils.extract_upc_from_walmart_ca_url(_s_raw.url)
+                _stores_raw[_upc] = _s_raw
+            try:
+                BuildWalmartCaItemPrice(raw_data=_base_raw, price_raw_data=_price_raw, stores_raw_data=_stores_raw)
+            except Exception as e:
+                success = False
+                error_messages.append('[{}] {}'.format(_base_raw.url, str(e)))
+        return (success, error_messages)
+
+    def _build_canadiantire_ca_item_price(self, job_id):
+        success = True
+        error_messages = []
+        # for _d in RawData.objects.filter(job_id=job_id, domain__in=['amazon.com', 'amazon.ca', 'walmart.com',], http_status__lt=400):
+        #     try:
+        #         BuildItemPrice(_d)
+        #     except Exception as e:
+        #         success = False
+        #         error_message += '[{}] {}'.format(_d.url, str(e))
+        return (success, error_messages)
 
 
 # class AmazonParentListingList(CreateModelMixin, UpdateModelMixin, generics.ListAPIView):

@@ -252,13 +252,14 @@ WALMART_COM_ITEM_LINK_FORMAT = 'https://www.{}/ip/{}{}'
 WALMART_COM_ITEM_VARIATION_LINK_POSTFIX = '?selected=true'
 ## walmart.ca related
 WALMART_CA_ITEM_LINK_PATTERN = r'^(https?://www.walmart.ca)?/(en|fr)/([^/]+/[^/]+|ip)/([A-Z0-9]{8,15})(/.*$)?'
-WALMART_CA_API_ITEM_PRICE_LINK_FORMAT = 'https://www.walmart.ca/api/product-page/price-offer?pid={}'
-WALMART_CA_API_ITEM_FIND_IN_STORE_LINK_FORMAT = 'https://www.walmart.ca/api/product-page/find-in-store?latitude={lat}&longitude={lng}&lang=en&upc={upc}'
+WALMART_CA_ITEM_LINK_FORMAT = 'https://www.{}/en/ip/{}'
+WALMART_CA_API_ITEM_PRICE_LINK_FORMAT = 'https://www.walmart.ca/api/product-page/price-offer#{}'
+WALMART_CA_API_ITEM_FIND_IN_STORE_LINK_FORMAT = 'https://www.walmart.ca/api/product-page/find-in-store?latitude={lat}&longitude={lng}&lang=en&upc={upc}#{pid}'
 WALMART_CA_API_ITEM_FIND_IN_STORE_LINK = 'https://www.walmart.ca/api/product-page/find-in-store'
 
 ## canadiantire.ca related
 CANADIANTIRE_CA_ITEM_LINK_PATTERN = r'^(https?://www.canadiantire.ca)?/(en|fr)/([^/]+/[^/]+|pdp)/([\w-]*)([0-9]{7,12})p*.html[.*$]?'
-CANADIANTIRE_CA_API_STORES_LINK_FORMAT = 'https://api-triangle.canadiantire.ca/dss/services/v4/stores?lang=en&radius=1000&maxCount=12&storeType=store&lat={lat}&lng={lng}&pid={pid}'
+CANADIANTIRE_CA_API_STORES_LINK_FORMAT = 'https://api-triangle.canadiantire.ca/dss/services/v4/stores?lang=en&radius=1000&maxCount=12&storeType=store&lat={lat}&lng={lng}#{pid}'
 CANADIANTIRE_CA_API_STORES_LINK = 'https://api-triangle.canadiantire.ca/dss/services/v4/stores'
-CANADIANTIRE_CA_API_ITEM_PRICE_LINK_FORMAT = 'https://www.canadiantire.ca/ESB/PriceAvailability?SKU={sku}&Store={store}&Banner=CTR&Language=E&pid={pid}'
+CANADIANTIRE_CA_API_ITEM_PRICE_LINK_FORMAT = 'https://www.canadiantire.ca/ESB/PriceAvailability?SKU={sku}&Store={store}&Banner=CTR&Language=E#{pid}'
 CANADIANTIRE_CA_API_ITEM_PRICE_LINK = 'https://www.canadiantire.ca/ESB/PriceAvailability'

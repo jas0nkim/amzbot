@@ -1,7 +1,9 @@
 """ utils.py
 """
 import re
+import urllib.parse
 from pwweb import settings
+
 
 def is_valid_amazon_item_url(url, domain='amazon.com'):
     link_pattern = settings.AMAZON_COM_ITEM_LINK_PATTERN
@@ -45,3 +47,7 @@ def extract_sku_from_url(url, domain):
             return None
     else:
         return None
+
+def extract_upc_from_walmart_ca_url(url):
+    upc_list = urllib.parse.parse_qs(urllib.parse.urlparse(url).query).get('upc', [])
+    return upc_list[0] if len(upc_list) > 0 else None

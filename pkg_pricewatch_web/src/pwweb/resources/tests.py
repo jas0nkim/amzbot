@@ -177,7 +177,7 @@ class BuildWalmartCaItemPriceTestCase(TestCase):
 
     def _build_price_raw_data(self):
         return RawData(
-            url="https://www.walmart.ca/api/product-page/price-offer?pid=6000199112683",
+            url="https://www.walmart.ca/api/product-page/price-offer#6000199112683",
             domain="walmart.ca",
             http_status=200,
             job_id="fb54168c-2c86-4c93-9b36-7f2185038f1f",
@@ -188,7 +188,7 @@ class BuildWalmartCaItemPriceTestCase(TestCase):
     def _build_stores_raw_data(self):
         return {
             '5818510180': RawData(
-                url="https://www.walmart.ca/api/product-page/find-in-store?latitude=43.7292&longitude=-79.393&lang=en&upc=5818510180",
+                url="https://www.walmart.ca/api/product-page/find-in-store?latitude=43.7292&longitude=-79.393&lang=en&upc=5818510180#6000199112683",
                 domain="walmart.ca",
                 http_status=200,
                 job_id="fb54168c-2c86-4c93-9b36-7f2185038f1f",
@@ -196,7 +196,7 @@ class BuildWalmartCaItemPriceTestCase(TestCase):
                 data=json.loads("""{\"info\":[{\"id\":3105,\"distance\":6.8558054,\"sellPrice\":15,\"displayName\":\"North York Store\",\"intersection\":\"Lawrence Ave & Keele St\",\"availabilityStatus\":\"OUT_OF_STOCK\",\"availableToSellQty\":1},{\"id\":3159,\"distance\":7.934066,\"sellPrice\":15,\"displayName\":\"Scarborough West Supercentre\",\"intersection\":\"Eglinton Ave & Pharmacy Ave\",\"availabilityStatus\":\"LIMITED\",\"availableToSellQty\":7},{\"id\":1150,\"distance\":8.04672,\"sellPrice\":15,\"displayName\":\"Gerrard Square (Toronto) Store\",\"intersection\":\"Gerrard St E & Jones Ave\",\"availabilityStatus\":\"NOT_SOLD\",\"availableToSellQty\":0}]}"""),
             ),
             '5818510178': RawData(
-                url="https://www.walmart.ca/api/product-page/find-in-store?latitude=43.7292&longitude=-79.393&lang=en&upc=5818510178",
+                url="https://www.walmart.ca/api/product-page/find-in-store?latitude=43.7292&longitude=-79.393&lang=en&upc=5818510178#6000199112683",
                 domain="walmart.ca",
                 http_status=200,
                 job_id="fb54168c-2c86-4c93-9b36-7f2185038f1f",
@@ -204,7 +204,7 @@ class BuildWalmartCaItemPriceTestCase(TestCase):
                 data=json.loads("""{\"info\":[{\"id\":3105,\"distance\":6.8558054,\"sellPrice\":15,\"displayName\":\"North York Store\",\"intersection\":\"Lawrence Ave & Keele St\",\"availabilityStatus\":\"OUT_OF_STOCK\",\"availableToSellQty\":3},{\"id\":3159,\"distance\":7.934066,\"sellPrice\":15,\"displayName\":\"Scarborough West Supercentre\",\"intersection\":\"Eglinton Ave & Pharmacy Ave\",\"availabilityStatus\":\"LIMITED\",\"availableToSellQty\":5},{\"id\":1150,\"distance\":8.04672,\"sellPrice\":15,\"displayName\":\"Gerrard Square (Toronto) Store\",\"intersection\":\"Gerrard St E & Jones Ave\",\"availabilityStatus\":\"NOT_SOLD\",\"availableToSellQty\":0}]}"""),
             ),
             '5818510179': RawData(
-                url="https://www.walmart.ca/api/product-page/find-in-store?latitude=43.7292&longitude=-79.393&lang=en&upc=5818510179",
+                url="https://www.walmart.ca/api/product-page/find-in-store?latitude=43.7292&longitude=-79.393&lang=en&upc=5818510179#6000199112683",
                 domain="walmart.ca",
                 http_status=200,
                 job_id="fb54168c-2c86-4c93-9b36-7f2185038f1f",
@@ -212,7 +212,7 @@ class BuildWalmartCaItemPriceTestCase(TestCase):
                 data=json.loads("""{\"info\":[{\"id\":3105,\"distance\":6.8558054,\"sellPrice\":15,\"displayName\":\"North York Store\",\"intersection\":\"Lawrence Ave & Keele St\",\"availabilityStatus\":\"LIMITED\",\"availableToSellQty\":8},{\"id\":3159,\"distance\":7.934066,\"sellPrice\":15,\"displayName\":\"Scarborough West Supercentre\",\"intersection\":\"Eglinton Ave & Pharmacy Ave\",\"availabilityStatus\":\"LIMITED\",\"availableToSellQty\":4},{\"id\":1150,\"distance\":8.04672,\"sellPrice\":15,\"displayName\":\"Gerrard Square (Toronto) Store\",\"intersection\":\"Gerrard St E & Jones Ave\",\"availabilityStatus\":\"NOT_SOLD\",\"availableToSellQty\":0}]}"""),
             ),
             '5818510186': RawData(
-                url="https://www.walmart.ca/api/product-page/find-in-store?latitude=43.7292&longitude=-79.393&lang=en&upc=5818510186",
+                url="https://www.walmart.ca/api/product-page/find-in-store?latitude=43.7292&longitude=-79.393&lang=en&upc=5818510186#6000199112683",
                 domain="walmart.ca",
                 http_status=200,
                 job_id="fb54168c-2c86-4c93-9b36-7f2185038f1f",
@@ -220,7 +220,7 @@ class BuildWalmartCaItemPriceTestCase(TestCase):
                 data=json.loads("""{\"info\":[{\"id\":3105,\"distance\":6.8558054,\"sellPrice\":15,\"displayName\":\"North York Store\",\"intersection\":\"Lawrence Ave & Keele St\",\"availabilityStatus\":\"OUT_OF_STOCK\",\"availableToSellQty\":3},{\"id\":3159,\"distance\":7.934066,\"sellPrice\":15,\"displayName\":\"Scarborough West Supercentre\",\"intersection\":\"Eglinton Ave & Pharmacy Ave\",\"availabilityStatus\":\"LIMITED\",\"availableToSellQty\":4},{\"id\":1150,\"distance\":8.04672,\"sellPrice\":15,\"displayName\":\"Gerrard Square (Toronto) Store\",\"intersection\":\"Gerrard St E & Jones Ave\",\"availabilityStatus\":\"NOT_SOLD\",\"availableToSellQty\":0}]}"""),
             ),
             '5818510181': RawData(
-                url="https://www.walmart.ca/api/product-page/find-in-store?latitude=43.7292&longitude=-79.393&lang=en&upc=5818510181",
+                url="https://www.walmart.ca/api/product-page/find-in-store?latitude=43.7292&longitude=-79.393&lang=en&upc=5818510181#6000199112683",
                 domain="walmart.ca",
                 http_status=200,
                 job_id="fb54168c-2c86-4c93-9b36-7f2185038f1f",
@@ -228,7 +228,7 @@ class BuildWalmartCaItemPriceTestCase(TestCase):
                 data=json.loads("""{\"info\":[{\"id\":3105,\"distance\":6.8558054,\"sellPrice\":15,\"displayName\":\"North York Store\",\"intersection\":\"Lawrence Ave & Keele St\",\"availabilityStatus\":\"OUT_OF_STOCK\",\"availableToSellQty\":0},{\"id\":3159,\"distance\":7.934066,\"sellPrice\":15,\"displayName\":\"Scarborough West Supercentre\",\"intersection\":\"Eglinton Ave & Pharmacy Ave\",\"availabilityStatus\":\"LIMITED\",\"availableToSellQty\":6},{\"id\":1150,\"distance\":8.04672,\"sellPrice\":15,\"displayName\":\"Gerrard Square (Toronto) Store\",\"intersection\":\"Gerrard St E & Jones Ave\",\"availabilityStatus\":\"NOT_SOLD\",\"availableToSellQty\":0}]}"""),
             ),
             '5818510183': RawData(
-                url="https://www.walmart.ca/api/product-page/find-in-store?latitude=43.7292&longitude=-79.393&lang=en&upc=5818510183",
+                url="https://www.walmart.ca/api/product-page/find-in-store?latitude=43.7292&longitude=-79.393&lang=en&upc=5818510183#6000199112683",
                 domain="walmart.ca",
                 http_status=200,
                 job_id="fb54168c-2c86-4c93-9b36-7f2185038f1f",
@@ -236,7 +236,7 @@ class BuildWalmartCaItemPriceTestCase(TestCase):
                 data=json.loads("""{\"info\":[{\"id\":3105,\"distance\":6.8558054,\"sellPrice\":15,\"displayName\":\"North York Store\",\"intersection\":\"Lawrence Ave & Keele St\",\"availabilityStatus\":\"OUT_OF_STOCK\",\"availableToSellQty\":1},{\"id\":3159,\"distance\":7.934066,\"sellPrice\":15,\"displayName\":\"Scarborough West Supercentre\",\"intersection\":\"Eglinton Ave & Pharmacy Ave\",\"availabilityStatus\":\"OUT_OF_STOCK\",\"availableToSellQty\":0},{\"id\":1150,\"distance\":8.04672,\"sellPrice\":15,\"displayName\":\"Gerrard Square (Toronto) Store\",\"intersection\":\"Gerrard St E & Jones Ave\",\"availabilityStatus\":\"NOT_SOLD\",\"availableToSellQty\":0}]}"""),
             ),
             '5818510184': RawData(
-                url="https://www.walmart.ca/api/product-page/find-in-store?latitude=43.7292&longitude=-79.393&lang=en&upc=5818510184",
+                url="https://www.walmart.ca/api/product-page/find-in-store?latitude=43.7292&longitude=-79.393&lang=en&upc=5818510184#6000199112683",
                 domain="walmart.ca",
                 http_status=200,
                 job_id="fb54168c-2c86-4c93-9b36-7f2185038f1f",
@@ -244,7 +244,7 @@ class BuildWalmartCaItemPriceTestCase(TestCase):
                 data=json.loads("""{\"info\":[{\"id\":3105,\"distance\":6.8558054,\"sellPrice\":15,\"displayName\":\"North York Store\",\"intersection\":\"Lawrence Ave & Keele St\",\"availabilityStatus\":\"LIMITED\",\"availableToSellQty\":6},{\"id\":3159,\"distance\":7.934066,\"sellPrice\":15,\"displayName\":\"Scarborough West Supercentre\",\"intersection\":\"Eglinton Ave & Pharmacy Ave\",\"availabilityStatus\":\"LIMITED\",\"availableToSellQty\":7},{\"id\":1150,\"distance\":8.04672,\"sellPrice\":15,\"displayName\":\"Gerrard Square (Toronto) Store\",\"intersection\":\"Gerrard St E & Jones Ave\",\"availabilityStatus\":\"NOT_SOLD\",\"availableToSellQty\":0}]}"""),
             ),
             '5818510185': RawData(
-                url="https://www.walmart.ca/api/product-page/find-in-store?latitude=43.7292&longitude=-79.393&lang=en&upc=5818510185",
+                url="https://www.walmart.ca/api/product-page/find-in-store?latitude=43.7292&longitude=-79.393&lang=en&upc=5818510185#6000199112683",
                 domain="walmart.ca",
                 http_status=200,
                 job_id="fb54168c-2c86-4c93-9b36-7f2185038f1f",
@@ -252,7 +252,7 @@ class BuildWalmartCaItemPriceTestCase(TestCase):
                 data=json.loads("""{\"info\":[{\"id\":3105,\"distance\":6.8558054,\"sellPrice\":15,\"displayName\":\"North York Store\",\"intersection\":\"Lawrence Ave & Keele St\",\"availabilityStatus\":\"OUT_OF_STOCK\",\"availableToSellQty\":3},{\"id\":3159,\"distance\":7.934066,\"sellPrice\":15,\"displayName\":\"Scarborough West Supercentre\",\"intersection\":\"Eglinton Ave & Pharmacy Ave\",\"availabilityStatus\":\"LIMITED\",\"availableToSellQty\":11},{\"id\":1150,\"distance\":8.04672,\"sellPrice\":15,\"displayName\":\"Gerrard Square (Toronto) Store\",\"intersection\":\"Gerrard St E & Jones Ave\",\"availabilityStatus\":\"NOT_SOLD\",\"availableToSellQty\":0}]}"""),
             ),
             '5818510182': RawData(
-                url="https://www.walmart.ca/api/product-page/find-in-store?latitude=43.7292&longitude=-79.393&lang=en&upc=5818510182",
+                url="https://www.walmart.ca/api/product-page/find-in-store?latitude=43.7292&longitude=-79.393&lang=en&upc=5818510182#6000199112683",
                 domain="walmart.ca",
                 http_status=200,
                 job_id="fb54168c-2c86-4c93-9b36-7f2185038f1f",
@@ -260,7 +260,7 @@ class BuildWalmartCaItemPriceTestCase(TestCase):
                 data=json.loads("""{\"info\":[{\"id\":3105,\"distance\":6.8558054,\"sellPrice\":15,\"displayName\":\"North York Store\",\"intersection\":\"Lawrence Ave & Keele St\",\"availabilityStatus\":\"OUT_OF_STOCK\",\"availableToSellQty\":3},{\"id\":3159,\"distance\":7.934066,\"sellPrice\":15,\"displayName\":\"Scarborough West Supercentre\",\"intersection\":\"Eglinton Ave & Pharmacy Ave\",\"availabilityStatus\":\"LIMITED\",\"availableToSellQty\":10},{\"id\":1150,\"distance\":8.04672,\"sellPrice\":15,\"displayName\":\"Gerrard Square (Toronto) Store\",\"intersection\":\"Gerrard St E & Jones Ave\",\"availabilityStatus\":\"NOT_SOLD\",\"availableToSellQty\":0}]}"""),
             ),
             '5818510177': RawData(
-                url="https://www.walmart.ca/api/product-page/find-in-store?latitude=43.7292&longitude=-79.393&lang=en&upc=5818510177",
+                url="https://www.walmart.ca/api/product-page/find-in-store?latitude=43.7292&longitude=-79.393&lang=en&upc=5818510177#6000199112683",
                 domain="walmart.ca",
                 http_status=200,
                 job_id="fb54168c-2c86-4c93-9b36-7f2185038f1f",
@@ -332,7 +332,7 @@ class BuildCanadiantireCaItemPriceTestCase(TestCase):
 
     def _build_store_raw_data(self):
         return RawData(
-            url="https://api-triangle.canadiantire.ca/dss/services/v4/stores?lang=en&radius=1000&maxCount=12&storeType=store&lat=43.7292&lng=-79.393&pid=1871455P",
+            url="https://api-triangle.canadiantire.ca/dss/services/v4/stores?lang=en&radius=1000&maxCount=12&storeType=store&lat=43.7292&lng=-79.393#1871455P",
             domain="canadiantire.ca",
             http_status=200,
             job_id="479c54b5-c070-4583-9704-5941568a3d16",
@@ -342,7 +342,7 @@ class BuildCanadiantireCaItemPriceTestCase(TestCase):
 
     def _build_price_raw_data(self):
         return RawData(
-            url="https://www.canadiantire.ca/ESB/PriceAvailability?SKU=1871455%2C1871456%2C1871457%2C1871458%2C1871668&Store=0459%2C0019%2C0192%2C0150%2C0214%2C0485%2C0126%2C0030%2C0600%2C0273%2C0182%2C0654&Banner=CTR&Language=E&pid=1871455P",
+            url="https://www.canadiantire.ca/ESB/PriceAvailability?SKU=1871455%2C1871456%2C1871457%2C1871458%2C1871668&Store=0459%2C0019%2C0192%2C0150%2C0214%2C0485%2C0126%2C0030%2C0600%2C0273%2C0182%2C0654&Banner=CTR&Language=E#1871455P",
             domain="canadiantire.ca",
             http_status=200,
             job_id="479c54b5-c070-4583-9704-5941568a3d16",

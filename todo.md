@@ -1,6 +1,5 @@
-## Jun 9 2020
-- convert canadiantire.ca data into resrc_items and resrc_item_prices
-- hook with scrapy spider_closed signal
+## Jun 10 2020
+- view ItemPricesBuild for walmart.ca, canadiantire.ca
 - frontend (react + typescript)
     - register
         - email
@@ -9,6 +8,10 @@
     - login
     - add product
     - notification once price dropped
+
+## Jun 9 2020
+- convert canadiantire.ca data into resrc_items and resrc_item_prices
+- hook with scrapy spider_closed signal
 
 ## Jun 5 2020
 - implement lat, lng walmart.com/.ca on crawling
