@@ -61,3 +61,5 @@ def resp_error_handler(failure):
     elif failure.check(TimeoutError, TCPTimedOutError):
         request = failure.request
         logger.error('TimeoutError on {} - {}'.format(request.url, failure.getErrorMessage()))
+    else:
+        logger.error('Error on {} - {}'.format(request.url, failure.getErrorMessage()))

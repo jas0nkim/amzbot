@@ -115,7 +115,7 @@ class CanadiantireCaItemParser(object):
             data: json
         """
         listing_item = ListingItem()
-        listing_item['url'] = response.url
+        listing_item['url'] = response.request.url
         listing_item['domain'] = self._domain
         listing_item['http_status'] = response.status
         listing_item['data'] = data

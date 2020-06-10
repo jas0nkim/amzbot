@@ -60,7 +60,7 @@ class WalmartComItemParser(object):
             data: json
         """
         listing_item = ListingItem()
-        listing_item['url'] = response.url
+        listing_item['url'] = response.request.url
         listing_item['domain'] = self._domain
         listing_item['http_status'] = response.status
         listing_item['data'] = data
@@ -125,7 +125,10 @@ class WalmartCaItemParser(object):
 
             for _, sku_data in _data['entities']['skus'].items():
                 if len(sku_data.get('upc', [])) > 0:
-                    yield JsonRequest(settings.WALMART_CA_API_ITEM_FIND_IN_STORE_LINK_FORMAT.format(lat=lat, lng=lng, upc=sku_data['upc'][0]),
+                    yield JsonRequest(settings.WALMART_CA_API_ITEM_FIND_IN_STORE_LINK_FORMAT.format(lat=lat,
+                                                                                                    lng=lng,
+                                                                                                    upc=sku_data['upc'][0],
+                                                                                                    pid=self._parent_sku),
                             callback=self.parse_json_response,
                             errback=parsers.resp_error_handler,
                             meta={
@@ -252,7 +255,7 @@ class WalmartCaItemParser(object):
             data: json
         """
         listing_item = ListingItem()
-        listing_item['url'] = response.url
+        listing_item['url'] = response.request.url
         listing_item['domain'] = self._domain
         listing_item['http_status'] = response.status
         listing_item['data'] = data

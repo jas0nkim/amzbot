@@ -49,7 +49,7 @@ class AmazonItemParser(object):
         if response.status != 200:
             # broken link or inactive amazon item
             amazon_item = ListingItem()
-            amazon_item['url'] = response.url
+            amazon_item['url'] = response.request.url
             amazon_item['domain'] = self._domain
             amazon_item['http_status'] = response.status
             amazon_item['job_id'] = self._job_id
@@ -95,7 +95,7 @@ class AmazonItemParser(object):
 
     def __parse_amazon_item(self, response, variation_asins):
         amazon_item = ListingItem()
-        amazon_item['url'] = response.url
+        amazon_item['url'] = response.request.url
         amazon_item['domain'] = self._domain
         amazon_item['http_status'] = response.status
         amazon_item['job_id'] = self._job_id
