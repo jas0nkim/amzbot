@@ -4,7 +4,7 @@
 import json
 import logging
 import urllib.parse
-from scrapy.http import JsonRequest
+from scrapy.http import JsonRequest, Request
 from scrapy.exceptions import IgnoreRequest
 from pwbot import settings, utils, parsers
 from pwbot.items import ListingItem
@@ -29,7 +29,7 @@ class CanadiantireCaItemParser(object):
         return _data
 
     def parse_item(self, response, domain, job_id, crawl_variations, lat='43.769037', lng='-79.371951'):
-        self._referer_for_jsonrequest = response.url
+        self._referer_for_jsonrequest = response.request.url
         self._domain = domain
         self._job_id = job_id
         self._sku = utils.extract_sku_from_url(response.url, self._domain)
@@ -81,7 +81,7 @@ class CanadiantireCaItemParser(object):
         else:
             store_ids = [i.get('storeNumber', '0') for i in json_data]
             yield self.build_listing_item(response, data=json_data)
-            yield JsonRequest(settings.CANADIANTIRE_CA_API_ITEM_PRICE_LINK_FORMAT.format(sku=urllib.parse.quote(','.join(skus)),
+            yield Request(settings.CANADIANTIRE_CA_API_ITEM_PRICE_LINK_FORMAT.format(sku=urllib.parse.quote(','.join(skus)),
                                                                                         store=urllib.parse.quote(','.join(store_ids)),
                                                                                         pid=self._parent_sku),
                         callback=self.parse_api,
