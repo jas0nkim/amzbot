@@ -13,9 +13,6 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 import configparser
 
-HAHATEST = 'hahatestasdf'
-
-
 APP_DATA_DIRPATH = '/usr/local/etc/pricewatch/'
 APP_DIST_DIRPATH = APP_DATA_DIRPATH + 'dist/'
 APP_CONFIG_FILEPATH = APP_DATA_DIRPATH + 'pricewatch.ini'
@@ -87,6 +84,7 @@ INSTALLED_APPS = [
     'pwweb.resources.apps.ResourcesConfig',
     'pwweb.schedules.apps.SchedulesConfig',
     'pwweb.reports.apps.ReportsConfig',
+    'pwweb.frontend.apps.FrontendConfig',
 ]
 
 MIDDLEWARE = [
@@ -228,6 +226,11 @@ LOGGING = {
 
 # django rest framework settings
 REST_FRAMEWORK = {
+    # production only
+    # 'DEFAULT_RENDERER_CLASSES': (
+    #     'rest_framework.renderers.JSONRenderer',
+    # ),
+
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 10,
     # Use Django's standard `django.contrib.auth` permissions,

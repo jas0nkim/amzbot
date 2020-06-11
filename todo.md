@@ -1,5 +1,4 @@
-## Jun 10 2020
-- view ItemPricesBuild for walmart.ca, canadiantire.ca
+## Jun 11 2020
 - frontend (react + typescript)
     - register
         - email
@@ -8,6 +7,10 @@
     - login
     - add product
     - notification once price dropped
+- Tutorial: Django REST with React https://www.valentinog.com/blog/drf/
+
+## Jun 10 2020
+- view ItemPricesBuild for walmart.ca, canadiantire.ca
 
 ## Jun 9 2020
 - convert canadiantire.ca data into resrc_items and resrc_item_prices
