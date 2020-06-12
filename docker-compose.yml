@@ -64,6 +64,15 @@
 #   docker-compose restart elasticsearch
 #
 
+#####
+#
+# install node.js in web dockerfile?
+#
+# https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-20-04
+# (use Option 3 - nvm)
+#
+#####
+
 version: '3.4'
 
 services:

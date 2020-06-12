@@ -25,3 +25,6 @@ docker-compose.prod.yml
 
 # django admin templates (for reference only)
 **/templates/_admin/
+
+# node.js modules in /frontend/node_modules
+**/frontend/node_modules
