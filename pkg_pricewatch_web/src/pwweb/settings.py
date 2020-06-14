@@ -224,6 +224,8 @@ LOGGING = {
     },
 }
 
+LOGIN_REDIRECT_URL = 'home'
+
 # django rest framework settings
 REST_FRAMEWORK = {
     # production only

@@ -1,4 +1,8 @@
-## Jun 11 2020
+## Jun 13 2020
+- using django built-in auth for login/logout etc screens..
+    https://levelup.gitconnected.com/how-to-implement-login-logout-and-registration-with-djangos-user-model-59442164db73
+- implement React into pwweb.frontend
+- Tutorial: Django REST with React https://www.valentinog.com/blog/drf/
 - frontend (react + typescript)
     - register
         - email
@@ -7,7 +11,6 @@
     - login
     - add product
     - notification once price dropped
-- Tutorial: Django REST with React https://www.valentinog.com/blog/drf/
 
 ## Jun 10 2020
 - view ItemPricesBuild for walmart.ca, canadiantire.ca
