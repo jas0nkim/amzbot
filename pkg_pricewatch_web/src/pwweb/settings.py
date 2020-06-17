@@ -80,10 +80,14 @@ INSTALLED_APPS = [
     # django-rest-framework.org
     'rest_framework',
 
+    # https://github.com/django-crispy-forms/django-crispy-forms
+    'crispy_forms',
+
     # pwweb.* apps
     'pwweb.resources.apps.ResourcesConfig',
     'pwweb.schedules.apps.SchedulesConfig',
     'pwweb.reports.apps.ReportsConfig',
+    'pwweb.users.apps.UsersConfig',
     'pwweb.frontend.apps.FrontendConfig',
 ]
 
@@ -244,6 +248,9 @@ REST_FRAMEWORK = {
     #     'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     # ],
 }
+
+# crispy template pack
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 ## amazon.com related
 AMAZON_COM_ITEM_LINK_PATTERN = r'^(https?://www.amazon.com)?/([^/]+/[^/]+|dp)/([A-Z0-9]{10})(/.*$)?'

@@ -1,6 +1,7 @@
 ## Jun 13 2020
 - using django built-in auth for login/logout etc screens..
     https://levelup.gitconnected.com/how-to-implement-login-logout-and-registration-with-djangos-user-model-59442164db73
+    https://www.youtube.com/watch?v=q4jPR-M0TAQ&t=1861s
 - implement React into pwweb.frontend
 - Tutorial: Django REST with React https://www.valentinog.com/blog/drf/
 - frontend (react + typescript)
