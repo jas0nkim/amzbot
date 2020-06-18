@@ -1,4 +1,6 @@
-## Jun 13 2020
+## Jun 18 2020
+- django config email for development
+    https://docs.djangoproject.com/en/3.0/topics/email/#configuring-email-for-development
 - using django built-in auth for login/logout etc screens..
     https://levelup.gitconnected.com/how-to-implement-login-logout-and-registration-with-djangos-user-model-59442164db73
     https://www.youtube.com/watch?v=q4jPR-M0TAQ&t=1861s

@@ -231,6 +231,14 @@ LOGGING = {
 LOGIN_REDIRECT_URL = 'pw_home'
 LOGIN_URL = 'login'
 
+# email server for development only
+#   https://docs.djangoproject.com/en/3.0/topics/email/#configuring-email-for-development
+#
+#   python -m smtpd -n -c DebuggingServer localhost:1025
+#
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 1025
+
 # django rest framework settings
 REST_FRAMEWORK = {
     # production only
