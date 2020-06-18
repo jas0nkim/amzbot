@@ -1,12 +1,17 @@
 {% extends 'users/base.html' %}
 {% block main_container %}
 <div class="px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-  <h1 class="display-4">Home</h1>
+  <h1 class="display-4">Log Out</h1>
 </div>
 <div class="card-deck mb-3">
   <div class="card mb-12 shadow-sm">
     <div class="card-body">
-      <p class="lead">PriceWatch Home Page</p>
+      <p class="lead">You have been logged out.</p>
+      <div class="border-top pt-3">
+        <small class="text-muted">
+          <a href="{% url 'login' %}">Log In Again</a>
+        </small>
+      </div>
     </div>
   </div>
 </div>
