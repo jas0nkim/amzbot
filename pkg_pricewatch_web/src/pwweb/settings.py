@@ -228,7 +228,8 @@ LOGGING = {
     },
 }
 
-LOGIN_REDIRECT_URL = 'home'
+LOGIN_REDIRECT_URL = 'pw_home'
+LOGIN_URL = 'login'
 
 # django rest framework settings
 REST_FRAMEWORK = {
