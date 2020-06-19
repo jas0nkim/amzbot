@@ -1,9 +1,8 @@
-## Jun 18 2020
-- django config email for development
-    https://docs.djangoproject.com/en/3.0/topics/email/#configuring-email-for-development
-- using django built-in auth for login/logout etc screens..
-    https://levelup.gitconnected.com/how-to-implement-login-logout-and-registration-with-djangos-user-model-59442164db73
-    https://www.youtube.com/watch?v=q4jPR-M0TAQ&t=1861s
+## Jun 19 2020
+- additional user fields
+    - user location (lat, lng data)
+- daily web scraping job
+- email login (login with email or username)
 - implement React into pwweb.frontend
 - Tutorial: Django REST with React https://www.valentinog.com/blog/drf/
 - frontend (react + typescript)
@@ -14,6 +13,13 @@
     - login
     - add product
     - notification once price dropped
+
+## Jun 18 2020
+- django config email for development
+    https://docs.djangoproject.com/en/3.0/topics/email/#configuring-email-for-development
+- using django built-in auth for login/logout etc screens..
+    https://levelup.gitconnected.com/how-to-implement-login-logout-and-registration-with-djangos-user-model-59442164db73
+    https://www.youtube.com/watch?v=q4jPR-M0TAQ&t=1861s
 
 ## Jun 10 2020
 - view ItemPricesBuild for walmart.ca, canadiantire.ca
