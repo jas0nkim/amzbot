@@ -75,7 +75,7 @@ class RawDataAdmin(admin.ModelAdmin):
 class ItemAdmin(admin.ModelAdmin):
     date_hierarchy = 'created_at'
     ordering = ['-created_at',]
-    list_display = ('sku', 'parent_sku', 'upc', 'title', 'brand_name', 'domain', )
+    list_display = ('sku', 'url_short', 'parent_sku', 'upc', 'title', 'brand_name', 'domain', )
     list_filter = ('domain',)
     search_fields = ['sku', 'parent_sku', 'job_id',]
     show_full_result_count = False

@@ -2,6 +2,10 @@
 - additional user fields
     - user location (lat, lng data)
 - daily web scraping job
+    - added meta tag fields in resrc_items
+        - meta_title
+        - meta_description
+        - meta_image
 - email login (login with email or username)
 - implement React into pwweb.frontend
 - Tutorial: Django REST with React https://www.valentinog.com/blog/drf/

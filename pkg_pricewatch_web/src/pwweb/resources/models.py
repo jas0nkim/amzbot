@@ -11,6 +11,7 @@ class RawData(models.Model):
     domain = models.CharField(max_length=32, db_index=True)
     http_status = models.SmallIntegerField(blank=True, null=True)
     data = JSONField(blank=True, null=True)
+    meta_data = JSONField(blank=True, null=True)
     job_id = models.CharField(max_length=64, db_index=True, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     created_at.short_description = 'collected time'
@@ -115,6 +116,19 @@ class RawData(models.Model):
         db_table = 'resrc_raw_data'
 
 
+def item_url_short(domain, sku):
+    url = ''
+    if domain in ['amazon.com', 'amazon.ca',]:
+        url = settings.AMAZON_ITEM_LINK_FORMAT.format(domain, sku, settings.AMAZON_ITEM_VARIATION_LINK_POSTFIX)
+    elif domain in ['walmart.com',]:
+        url = settings.WALMART_COM_ITEM_LINK_FORMAT.format(domain, sku, settings.WALMART_COM_ITEM_VARIATION_LINK_POSTFIX)
+    elif domain in ['walmart.ca',]:
+        url = settings.WALMART_CA_ITEM_LINK_FORMAT.format(domain, sku)
+    elif domain in ['canadiantire.ca',]:
+        url = settings.CANADIANTIRE_CA_ITEM_LINK_FORMAT.format(domain, sku)
+    return '<a href="{}" target="_blank">{}</a>'.format(url, truncatechars(url, 50))
+
+
 class Item(models.Model):
     domain = models.CharField(max_length=32, db_index=True)
     sku = models.CharField(max_length=32, db_index=True)
@@ -123,8 +137,15 @@ class Item(models.Model):
     title = models.TextField()
     brand_name = models.CharField(max_length=100, blank=True, null=True)
     picture_url = models.CharField(max_length=255, blank=True, null=True)
+    meta_title = models.TextField(blank=True, null=True)
+    meta_description = models.TextField(blank=True, null=True)
+    meta_image = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def url_short(self):
+        return mark_safe(item_url_short(self.domain, self.sku))
+    url_short.short_description = 'url'
 
     class Meta:
         db_table = 'resrc_items'
@@ -163,16 +184,7 @@ class ItemPrice(models.Model):
     ITEM_PRICE_AVAILABILITY_IN_STOCK = 1
 
     def url_short(self):
-        url = ''
-        if self.domain in ['amazon.com', 'amazon.ca',]:
-            url = settings.AMAZON_ITEM_LINK_FORMAT.format(self.domain, self.sku, settings.AMAZON_ITEM_VARIATION_LINK_POSTFIX)
-        elif self.domain in ['walmart.com',]:
-            url = settings.WALMART_COM_ITEM_LINK_FORMAT.format(self.domain, self.sku, settings.WALMART_COM_ITEM_VARIATION_LINK_POSTFIX)
-        elif self.domain in ['walmart.ca',]:
-            url = settings.WALMART_CA_ITEM_LINK_FORMAT.format(self.domain, self.sku)
-        elif self.domain in ['canadiantire.ca',]:
-            url = settings.CANADIANTIRE_CA_ITEM_LINK_FORMAT.format(self.domain, self.sku)
-        return mark_safe('<a href="{}" target="_blank">{}</a>'.format(url, truncatechars(url, 50)))
+        return mark_safe(item_url_short(self.domain, self.sku))
     url_short.short_description = 'url'
 
     class Meta:
