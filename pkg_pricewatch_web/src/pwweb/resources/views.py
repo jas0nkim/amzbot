@@ -6,7 +6,8 @@ from rest_framework.mixins import CreateModelMixin, UpdateModelMixin
 from pwweb import settings, utils
 from pwweb.mixins import MultipleFieldLookupMixin
 from pwweb.resources.serializers import *
-from pwweb.resources.models import RawData, Item, ItemPrice, BuildItemPrice, BuildWalmartCaItemPrice, BuildCanadiantireCaItemPrice
+from pwweb.resources.models import RawData, Item, ItemPrice
+from pwweb.resources.modelBuilders import BuildItemPrice, BuildWalmartCaItemPrice, BuildCanadiantireCaItemPrice
 
 
 class RawDataListCreate(generics.ListCreateAPIView):

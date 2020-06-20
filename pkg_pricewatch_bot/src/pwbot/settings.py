@@ -117,6 +117,8 @@ ITEM_PIPELINES = {
 # LOG_FILE = '/var/log/python/pwbot-{}.log'.format(time.time())
 LOG_LEVEL = 'DEBUG'
 
+DOWNLOAD_TIMEOUT = 60
+
 ## crawlera related
 CRAWLERA_HOST = 'proxy.crawlera.com'
 CRAWLERA_PORT = '8010'

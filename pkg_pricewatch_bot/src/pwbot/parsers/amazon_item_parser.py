@@ -143,6 +143,7 @@ class AmazonItemParser(object):
                 amazon_item['data']['meta_title'] = self.__extract_meta_title(response)
                 amazon_item['data']['meta_description'] = self.__extract_meta_description(response)
                 amazon_item['data']['meta_keywords'] = self.__extract_meta_keywords(response)
+                amazon_item['meta_data'] = self.__extract_meta_data(response)
             except Exception as e:
                 self.logger.exception("{}: [ASIN:{}] Failed parsing page - {}".format(utils.class_fullname(e), self._asin, str(e)))
                 amazon_item['data']['status'] = settings.RESOURCES_LISTING_ITEM_STATUS_PARSING_FAILED_UNKNOWN_ERROR
@@ -558,6 +559,22 @@ class AmazonItemParser(object):
             if brand is not None and brand != '':
                 return brand
         return None
+
+    def __extract_meta_data(self, response):
+        meta_data = {}
+        for _m in response.xpath("//meta/@name"):  # has 'name' attributes?
+            _attr = _m.extract()
+            try:
+                meta_data[_attr] = response.xpath(f"//meta[@name='{_attr}']/@content")[0].extract()
+            except IndexError as e:
+                self.logger.exception(f"{utils.class_fullname(e)}: [ASIN:{self._asin}] index error on parsing meta {_attr} - {str(e)}")
+        for _m in response.xpath("//meta/@property"):  # has 'property' attributes?
+            _attr = _m.extract()
+            try:
+                meta_data[_attr] = response.xpath(f"//meta[@property='{_attr}']/@content")[0].extract()
+            except IndexError as e:
+                self.logger.exception(f"{utils.class_fullname(e)}: [ASIN:{self._asin}] index error on parsing meta {_attr} - {str(e)}")
+        return meta_data
 
     def __extract_meta_title(self, response):
         try:

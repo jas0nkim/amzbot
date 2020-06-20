@@ -40,6 +40,7 @@ class StoreItemPageSpider(BasePwbotCrawlSpider):
     def start_requests(self):
         if len(self._skus) > 0:
             for sku in self._skus:
+                _dont_obey_robotstxt = False
                 if self._domain in ['amazon.com', 'amazon.ca',]:
                     url = settings.AMAZON_ITEM_LINK_FORMAT.format(self._domain, sku, settings.AMAZON_ITEM_VARIATION_LINK_POSTFIX)
                     callback = parsers.parse_amazon_item
@@ -50,6 +51,7 @@ class StoreItemPageSpider(BasePwbotCrawlSpider):
                     url = settings.WALMART_CA_ITEM_LINK_FORMAT.format(self._domain, sku)
                     callback = parsers.parse_walmart_ca_item
                 elif self._domain in ['canadiantire.ca',]:
+                    _dont_obey_robotstxt = True # temp solution: avoid 504 Connection Time-out
                     url = settings.CANADIANTIRE_CA_ITEM_LINK_FORMAT.format(self._domain, sku)
                     callback = parsers.parse_canadiantire_ca_item
                 else:
@@ -57,6 +59,9 @@ class StoreItemPageSpider(BasePwbotCrawlSpider):
                 yield Request(url,
                             callback=callback,
                             errback=parsers.resp_error_handler,
+                            meta={
+                                'dont_obey_robotstxt': _dont_obey_robotstxt,
+                            },
                             cb_kwargs={
                                 'domain': self._domain,
                                 'job_id': self._job_id,
@@ -66,6 +71,7 @@ class StoreItemPageSpider(BasePwbotCrawlSpider):
                             })
         if len(self._urls) > 0:
             for _u in self._urls:
+                _dont_obey_robotstxt = False
                 domain = utils.extract_domain_from_url(_u)
                 if domain in ['amazon.com', 'amazon.ca',]:
                     url = settings.AMAZON_ITEM_LINK_FORMAT.format(domain,
@@ -82,6 +88,7 @@ class StoreItemPageSpider(BasePwbotCrawlSpider):
                                                             utils.extract_sku_from_url(url=_u, domain=domain))
                     callback = parsers.parse_walmart_ca_item
                 elif domain in ['canadiantire.ca',]:
+                    _dont_obey_robotstxt = True # temp solution: avoid 504 Connection Time-out
                     url = settings.CANADIANTIRE_CA_ITEM_LINK_FORMAT.format(domain,
                                                             utils.extract_sku_from_url(url=_u, domain=domain))
                     callback = parsers.parse_canadiantire_ca_item
@@ -90,6 +97,9 @@ class StoreItemPageSpider(BasePwbotCrawlSpider):
                 yield Request(url,
                             callback=callback,
                             errback=parsers.resp_error_handler,
+                            meta={
+                                'dont_obey_robotstxt': _dont_obey_robotstxt,
+                            },
                             cb_kwargs={
                                 'crawl_variations': self._crawl_variations,
                                 'domain': domain,

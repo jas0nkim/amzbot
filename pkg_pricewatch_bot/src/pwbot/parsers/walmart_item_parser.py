@@ -26,6 +26,22 @@ class WalmartComItemParser(object):
             raise IgnoreRequest
         return json.loads(_data)
 
+    def __extract_meta_data(self, response):
+        meta_data = {}
+        for _m in response.xpath("//meta/@name"):  # has 'name' attributes?
+            _attr = _m.extract()
+            try:
+                meta_data[_attr] = response.xpath(f"//meta[@name='{_attr}']/@content")[0].extract()
+            except IndexError as e:
+                self.logger.exception(f"{utils.class_fullname(e)}: [SKU:{self._sku}] index error on parsing meta {_attr} - {str(e)}")
+        for _m in response.xpath("//meta/@property"):  # has 'property' attributes?
+            _attr = _m.extract()
+            try:
+                meta_data[_attr] = response.xpath(f"//meta[@property='{_attr}']/@content")[0].extract()
+            except IndexError as e:
+                self.logger.exception(f"{utils.class_fullname(e)}: [SKU:{self._sku}] index error on parsing meta {_attr} - {str(e)}")
+        return meta_data
+
     def parse_item(self, response, domain, job_id, crawl_variations=False, lat=None, lng=None):
         self._domain = domain
         self._job_id = job_id
@@ -38,6 +54,7 @@ class WalmartComItemParser(object):
             yield self.build_listing_item(response)
         else:
             _data = self.__get_preloaded_data(response)
+            _meta_data = self.__extract_meta_data(response)
             if crawl_variations:
                 for p in _data.get('item', {}).get('product', {}).get('buyBox', {}).get('products', []):
                     if 'usItemId' in p:
@@ -53,9 +70,9 @@ class WalmartComItemParser(object):
                                         'lat': lat,
                                         'lng': lng,
                                     })
-            yield self.build_listing_item(response, data=_data)
+            yield self.build_listing_item(response, data=_data, meta_data=_meta_data)
 
-    def build_listing_item(self, response, data=None):
+    def build_listing_item(self, response, data=None, meta_data=None):
         """ response: scrapy.http.response.html.HtmlResponse
             data: json
         """
@@ -64,6 +81,7 @@ class WalmartComItemParser(object):
         listing_item['domain'] = self._domain
         listing_item['http_status'] = response.status
         listing_item['data'] = data
+        listing_item['meta_data'] = meta_data
         listing_item['job_id'] = self._job_id
         return listing_item
 
@@ -86,6 +104,22 @@ class WalmartCaItemParser(object):
             raise IgnoreRequest
         return json.loads(_data)
 
+    def __extract_meta_data(self, response):
+        meta_data = {}
+        for _m in response.xpath("//meta/@name"):  # has 'name' attributes?
+            _attr = _m.extract()
+            try:
+                meta_data[_attr] = response.xpath(f"//meta[@name='{_attr}']/@content")[0].extract()
+            except IndexError as e:
+                self.logger.exception(f"{utils.class_fullname(e)}: [SKU:{self._parent_sku}] index error on parsing meta {_attr} - {str(e)}")
+        for _m in response.xpath("//meta/@property"):  # has 'property' attributes?
+            _attr = _m.extract()
+            try:
+                meta_data[_attr] = response.xpath(f"//meta[@property='{_attr}']/@content")[0].extract()
+            except IndexError as e:
+                self.logger.exception(f"{utils.class_fullname(e)}: [SKU:{self._parent_sku}] index error on parsing meta {_attr} - {str(e)}")
+        return meta_data
+
     def parse_item(self, response, domain, job_id, crawl_variations=False, lat=None, lng=None):
         self._referer_for_jsonrequest = response.request.url
         self._domain = domain
@@ -99,7 +133,8 @@ class WalmartCaItemParser(object):
             yield self.build_listing_item(response)
         else:
             _data = self.__get_preloaded_data(response)
-            yield self.build_listing_item(response, data=_data)
+            _meta_data = self.__extract_meta_data(response)
+            yield self.build_listing_item(response, data=_data, meta_data=_meta_data)
             yield JsonRequest(settings.WALMART_CA_API_ITEM_PRICE_LINK_FORMAT.format(self._parent_sku),
                         callback=self.parse_json_response,
                         errback=parsers.resp_error_handler,
@@ -251,7 +286,7 @@ class WalmartCaItemParser(object):
         else:
             return self.build_listing_item(response, data=json_data)
 
-    def build_listing_item(self, response, data=None):
+    def build_listing_item(self, response, data=None, meta_data=None):
         """ response: scrapy.http.response.html.HtmlResponse
             data: json
         """
@@ -260,6 +295,7 @@ class WalmartCaItemParser(object):
         listing_item['domain'] = self._domain
         listing_item['http_status'] = response.status
         listing_item['data'] = data
+        listing_item['meta_data'] = meta_data
         listing_item['job_id'] = self._job_id
         return listing_item
 
