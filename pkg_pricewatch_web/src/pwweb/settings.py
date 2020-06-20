@@ -63,6 +63,7 @@ SECRET_KEY = config['PriceWatchWeb']['secret_key']
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = config['PriceWatchWeb']['debug']
 DEBUG = True
+ADMIN_ENABLED = True
 
 ALLOWED_HOSTS = config['PriceWatchWeb']['allowed_hosts'].split(" ")
 

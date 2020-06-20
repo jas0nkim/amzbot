@@ -1,14 +1,12 @@
-## Jun 19 2020
-- additional user fields
-    - user location (lat, lng data)
-- daily web scraping job
-    - added meta tag fields in resrc_items
-        - meta_title
-        - meta_description
-        - meta_image
-- email login (login with email or username)
+## Jun 20 2020
 - implement React into pwweb.frontend
-- Tutorial: Django REST with React https://www.valentinog.com/blog/drf/
+    - user product screen
+        - add product
+        - show price changes
+        - notify user once price dropped
+    - Tutorial: Django REST with React https://www.valentinog.com/blog/drf/
+- daily web scraping job
+- email login (login with email or username)
 - frontend (react + typescript)
     - register
         - email
@@ -17,6 +15,15 @@
     - login
     - add product
     - notification once price dropped
+
+## Jun 19 2020
+- additional user fields
+    - user location (lat, lng data)
+- daily web scraping job
+    - added meta tag fields in resrc_items
+        - meta_title
+        - meta_description
+        - meta_image
 
 ## Jun 18 2020
 - django config email for development

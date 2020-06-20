@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import include, path
 from pwweb.users import views as user_views
+from pwweb import settings
 
 
 urlpatterns = [
@@ -38,10 +39,14 @@ urlpatterns = [
     path('password_reset_complete/',
         auth_views.PasswordResetCompleteView.as_view(template_name='users/password_reset_complete.html'),
         name='password_reset_complete'),
-    # admin
-    path('admin/', admin.site.urls),
     # api
     path('api/resource/', include('pwweb.resources.urls')),
     path('api/schedule/', include('pwweb.schedules.urls')),
     # path('api-auth/', include('rest_framework.urls')),
 ]
+
+if settings.ADMIN_ENABLED:
+    urlpatterns += [
+        # admin
+        path('admin/', admin.site.urls),
+    ]
