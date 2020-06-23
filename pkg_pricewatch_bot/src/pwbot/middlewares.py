@@ -6,7 +6,7 @@
 # https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
 from scrapy import signals
-from pwbot import settings
+from pwbot import settings, utils
 
 
 class PwbotSpiderMiddleware(object):
@@ -61,6 +61,13 @@ class RequestHeaderCostomizerMiddleware(object):
     def process_request(self, request, spider):
         if settings.CRAWLERA_ENABLED:
             request.headers['X-Crawlera-Profile'] = 'desktop'
+            if utils.extract_domain_from_url(request.url) in ['canadiantire.ca',]:
+                # related crawlera ticket https://support.scrapinghub.com/support/tickets/20303
+                request.headers['X-Crawlera-Cookies'] = 'disable'
+                request.headers['Accept-Encoding'] = 'gzip, deflate, br'
+                request.headers['DNT'] = '1'
+                request.headers['Connection'] = 'keep-alive'
+                request.headers['Upgrade-Insecure-Requests'] = '1'
         return None
 
 
