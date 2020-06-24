@@ -1,9 +1,11 @@
-## Jun 20 2020
+## Jun 21 2020
+- login-less service
 - implement React into pwweb.frontend
-    - user product screen
-        - add product
-        - show price changes
+    - user product screens
+        - add/delete product
+        - products list (url, title, thumbnail, price, stock level)
         - notify user once price dropped
+        - product detail screen (price changing graph)
     - Tutorial: Django REST with React https://www.valentinog.com/blog/drf/
 - daily web scraping job
 - email login (login with email or username)

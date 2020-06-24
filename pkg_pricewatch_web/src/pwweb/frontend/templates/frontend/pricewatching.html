@@ -1,13 +1,9 @@
-{% extends 'users/base.html' %}
+{% extends 'frontend/base.html' %}
 {% block main_container %}
-<div class="px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-  <h1 class="display-4">Price Watching</h1>
-</div>
-<div class="card-deck mb-3">
-  <div class="card mb-12 shadow-sm">
-    <div class="card-body">
-      <p class="lead">Price Watching Home Page</p>
-    </div>
-  </div>
-</div>
+<div id="app-root"></div>
+{% endblock %}
+
+{% block js_container %}
+{% load static %}
+<script src="{% static 'frontend/main.js' %}"></script>
 {% endblock %}

@@ -28,3 +28,5 @@ docker-compose.prod.yml
 
 # node.js modules in /frontend/node_modules
 **/frontend/node_modules
+# webpack build file
+**/frontend/main.js
