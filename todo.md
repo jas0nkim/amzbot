@@ -1,4 +1,8 @@
-## Jun 21 2020
+## Jun 25 2020
+- javascript linter (ESlint)
+    - https://eslint.org/docs/user-guide/getting-started
+        npm install eslint --save-dev
+        npx eslint --init
 - login-less service
 - implement React into pwweb.frontend
     - user product screens
@@ -125,7 +129,7 @@
 - scrape target sites/platforms
     - amazon (.com, .ca)
     - walmart (.com, .ca)
-        https://www.walmart.ca/api/product-page/price-offer
+        https://www.walmart.ca/api/product-page/v2/price-offer
         https://www.walmart.ca/api/product-page/find-in-store
         walmart open api https://developer.walmartlabs.com/ (Registration is currently disabled....)
         - check available online
