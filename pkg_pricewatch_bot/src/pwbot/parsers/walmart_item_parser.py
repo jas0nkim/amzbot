@@ -146,7 +146,8 @@ class WalmartCaItemParser(object):
                             'Referer': self._referer_for_jsonrequest,
                         },
                         data={
-                            "availabilityStoreId": _data['catchment']['storeId'],
+                            "pricingStoreId": str(response.request.cookies.get('defaultNearestStoreId')),
+                            "fulfillmentStoreId": _data['catchment']['storeId'],
                             "fsa": "L5R", # based on user
                             "experience": _data['common']['experience'],
                             "products": [
@@ -157,7 +158,6 @@ class WalmartCaItemParser(object):
                             ],
                             "lang": _data['locale']['lang'],
                         })
-            # curl -d '{"availabilityStoreId":"1061","fsa":"M2N","experience":"whiteGM","products":[{"productId":"1455223333562","skuIds":["10271820","10271833","10271990","10272011","10272074","10272294","10272452","10272673","10272930","10273052","6000196162683","6000196162686","6000196162689","6000196162692","6000196162695","6000198676038","6000198676606","6000198676624","6000198676966","6000198677013"]}],"lang":"en"}' -H "Content-Type: application/json" -X POST https://www.walmart.ca/api/product-page/price-offer
 
             for _, sku_data in _data['entities']['skus'].items():
                 if len(sku_data.get('upc', [])) > 0:
@@ -174,97 +174,6 @@ class WalmartCaItemParser(object):
                             headers={
                                 'Referer': self._referer_for_jsonrequest,
                             })
-
-
-            # r = requests.post('https://www.walmart.ca/api/product-page/price-offer',
-            #                     # crawlera proxy interrupt ajax calls
-            #                     # proxies={
-            #                     #     "https": "https://{}:@{}:{}/".format(settings.CRAWLERA_APIKEY, settings.CRAWLERA_HOST, settings.CRAWLERA_PORT),
-            #                     #     "http": "http://{}:@{}:{}/".format(settings.CRAWLERA_APIKEY, settings.CRAWLERA_HOST, settings.CRAWLERA_PORT),
-            #                     # },
-            #                     # verify=False,
-            #                     headers={
-            #                         'content-type': 'application/json',
-            #                         'accept': '*/*',
-            #                         'origin': 'https://www.walmart.ca',
-            #                         'referer': 'https://www.walmart.ca/en/ip/scrubstar-womens-core-essentials-stretch-poplin-drawstring-scrub-pant-l/6000201271184?rrid=richrelevance',
-            #                         'sec-fetch-dest': 'empty',
-            #                         'sec-fetch-mode': 'cors',
-            #                         'sec-fetch-site': 'same-origin',
-            #                     },
-            #                     json={
-            #                         "availabilityStoreId":"1061",
-            #                         "fsa":"L5R",
-            #                         "experience":"whiteGM",
-            #                         "products":[{
-            #                             "productId":"6000201271184",
-            #                             "skuIds":[
-            #                                 "6000201271185",
-            #                                 "6000201271326",
-            #                                 "6000201272766",
-            #                                 "6000201272805"]
-            #                         }],
-            #                         "lang":"en"
-            #                     })
-            # self.logger.debug("""
-            #     Requesting [{}]
-            #     through proxy [{}]
-
-            #     Request Headers:
-            #     {}
-
-            #     Response Time: {}
-            #     Response Code: {}
-            #     Response Headers:
-            #     {}
-
-            #     """.format('https://www.walmart.ca/api/product-page/price-offer', 
-            #                 settings.CRAWLERA_HOST, 
-            #                 r.request.headers, 
-            #                 r.elapsed.total_seconds(), 
-            #                 r.status_code, 
-            #                 r.headers))
-            # if r.ok:
-            #     listing_item = ListingItem()
-            #     listing_item['url'] = response.url
-            #     listing_item['domain'] = self._domain
-            #     listing_item['http_status'] = response.status
-            #     listing_item['data'] = r.json()
-            #     yield listing_item
-
-            # yield Request('https://www.walmart.ca/api/product-page/price-offer',                        
-            #             callback=self.parse_price_offer,
-            #             errback=parsers.resp_error_handler,
-            #             method='POST',
-            #             headers={
-            #                 'accept': '*/*',
-            #                 'accept-encoding': 'gzip, deflate, br',
-            #                 'accept-language': 'en-US,en;q=0.9,ko;q=0.8',
-            #                 'cache-control': 'no-cache',
-            #                 'content-length': '211',
-            #                 'content-type': 'application/json',
-            #                 'origin': 'https://www.walmart.ca',
-            #                 'pragma': 'no-cache',
-            #                 'referer': 'https://www.walmart.ca/en/ip/scrubstar-womens-core-essentials-stretch-poplin-drawstring-scrub-pant-l/6000201271184?rrid=richrelevance',
-            #                 'sec-fetch-dest': 'empty',
-            #                 'sec-fetch-mode': 'cors',
-            #                 'sec-fetch-site': 'same-origin',
-            #                 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36',
-            #                 'wm_qos.correlation_id': '312aa3cf-022-172149119b1ff4,312aa3cf-022-172149119b1681,312aa3cf-022-172149119b1681',
-            #             },
-            #             data={
-            #                 'products': [
-            #                     {
-            #                         'productId': _data['product']['item']['id'],
-            #                         'skuIds': _data['product']['item']['skus'],
-            #                     },
-            #                 ],
-            #             },
-            #             cb_kwargs={
-            #                 'domain': self._domain,
-            #                 'job_id': self._job_id,
-            #                 'crawl_variations': crawl_variations,
-            #             })
 
     def parse_json_response(self, response):
         try:

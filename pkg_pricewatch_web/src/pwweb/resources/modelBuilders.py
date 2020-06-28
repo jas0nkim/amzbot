@@ -79,7 +79,7 @@ class BuildWalmartCaItemPrice:
             brand_name: data['entities']['skus'][SKU]['brand']['name'] (multiple)
             picture_url: data['entities']['skus'][SKU]['images'][0]['large']['url']
 
-            * from https://www.walmart.ca/api/product-page/price-offer
+            * from https://www.walmart.ca/api/product-page/v2/price-offer
             price:
                 if 'skus' in self.data and 'offers' in self.data:
                     prices = {}

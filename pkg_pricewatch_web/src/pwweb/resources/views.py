@@ -60,7 +60,13 @@ class ItemPricesBuild(APIView):
         for _base_raw in _q.filter(url__regex=settings.WALMART_CA_ITEM_LINK_PATTERN):
             _parent_sku = utils.extract_sku_from_url(url=_base_raw.url, domain='walmart.ca')
             # get price_raw
-            _price_raw = _q.get(url=settings.WALMART_CA_API_ITEM_PRICE_LINK_FORMAT.format(_parent_sku))
+            for link_format in settings.WALMART_CA_API_ITEM_PRICE_LINK_FORMATS:
+                try:
+                    _price_raw = _q.get(url=link_format.format(_parent_sku))
+                except RawData.DoesNotExist:
+                    continue
+                else:
+                    break
             # get stores_raw
             _stores_raw = {}
             for _s_raw in _q.filter(url__startswith=settings.WALMART_CA_API_ITEM_FIND_IN_STORE_LINK,

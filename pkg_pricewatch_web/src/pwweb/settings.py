@@ -275,7 +275,7 @@ WALMART_COM_ITEM_VARIATION_LINK_POSTFIX = '?selected=true'
 ## walmart.ca related
 WALMART_CA_ITEM_LINK_PATTERN = r'^(https?://www.walmart.ca)?/(en|fr)/([^/]+/[^/]+|ip)/([A-Z0-9]{8,15})(/.*$)?'
 WALMART_CA_ITEM_LINK_FORMAT = 'https://www.{}/en/ip/{}'
-WALMART_CA_API_ITEM_PRICE_LINK_FORMAT = 'https://www.walmart.ca/api/product-page/price-offer#{}'
+WALMART_CA_API_ITEM_PRICE_LINK_FORMATS = ['https://www.walmart.ca/api/product-page/price-offer#{}', 'https://www.walmart.ca/api/product-page/v2/price-offer#{}',]
 WALMART_CA_API_ITEM_FIND_IN_STORE_LINK = 'https://www.walmart.ca/api/product-page/find-in-store'
 WALMART_CA_API_ITEM_FIND_IN_STORE_LINK_FORMAT = '{store_link}?latitude={lat}&longitude={lng}&lang=en&upc={upc}#{pid}'
 

@@ -209,7 +209,7 @@ class BuildWalmartCaItemPriceTestCase(TestCase):
 
     def _build_price_raw_data(self):
         return RawData(
-            url="https://www.walmart.ca/api/product-page/price-offer#6000199112683",
+            url="https://www.walmart.ca/api/product-page/v2/price-offer#6000199112683",
             domain="walmart.ca",
             http_status=200,
             job_id="fb54168c-2c86-4c93-9b36-7f2185038f1f",

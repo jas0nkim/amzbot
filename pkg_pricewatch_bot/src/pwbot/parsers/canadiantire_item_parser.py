@@ -79,57 +79,23 @@ class CanadiantireCaItemParser(object):
                         })
 
     def parse_near_stores(self, response, skus):
-        try:
-            json_data = json.loads(response.text)
-        except TypeError as e:
-            self.logger.exception("{}: [{}][{}] invalid resp. ({}) - {}".format(utils.class_fullname(e),
-                                                                                            self._domain,
-                                                                                            self._sku,
-                                                                                            response.url,
-                                                                                            str(e)))
-            raise IgnoreRequest
-        except json.decoder.JSONDecodeError as e:
-            self.logger.exception("{}: [{}][{}] invalid resp. ({}) - {}".format(utils.class_fullname(e),
-                                                                                            self._domain,
-                                                                                            self._sku,
-                                                                                            response.url,
-                                                                                            str(e)))
-            raise IgnoreRequest
-        else:
-            store_ids = [i.get('storeNumber', '0') for i in json_data]
-            yield self.build_listing_item(response, data=json_data)
-            yield Request(settings.CANADIANTIRE_CA_API_ITEM_PRICE_LINK_FORMAT.format(sku=urllib.parse.quote(','.join(skus)),
-                                                                                        store=urllib.parse.quote(','.join(store_ids)),
-                                                                                        pid=self._parent_sku),
-                        callback=self.parse_api,
-                        errback=parsers.resp_error_handler,
-                        meta={
-                            # avoid error - Crawled (503)
-                            'dont_obey_robotstxt': True,
-                        },
-                        headers={
-                            'Referer': self._referer_for_jsonrequest,
-                        })
+        store_ids = [i.get('storeNumber', '0') for i in response.json()]
+        yield self.build_listing_item(response, data=response.json())
+        yield Request(settings.CANADIANTIRE_CA_API_ITEM_PRICE_LINK_FORMAT.format(sku=urllib.parse.quote(','.join(skus)),
+                                                                                    store=urllib.parse.quote(','.join(store_ids)),
+                                                                                    pid=self._parent_sku),
+                    callback=self.parse_api,
+                    errback=parsers.resp_error_handler,
+                    meta={
+                        # avoid error - Crawled (503)
+                        'dont_obey_robotstxt': True,
+                    },
+                    headers={
+                        'Referer': self._referer_for_jsonrequest,
+                    })
 
     def parse_api(self, response):
-        try:
-            json_data = json.loads(response.text)
-        except TypeError as e:
-            self.logger.exception("{}: [{}][{}] invalid resp. ({}) - {}".format(utils.class_fullname(e),
-                                                                                            self._domain,
-                                                                                            self._sku,
-                                                                                            response.url,
-                                                                                            str(e)))
-            raise IgnoreRequest
-        except json.decoder.JSONDecodeError as e:
-            self.logger.exception("{}: [{}][{}] invalid resp. ({}) - {}".format(utils.class_fullname(e),
-                                                                                            self._domain,
-                                                                                            self._sku,
-                                                                                            response.url,
-                                                                                            str(e)))
-            raise IgnoreRequest
-        else:
-            return self.build_listing_item(response, data=json_data)
+        return self.build_listing_item(response, data=response.json())
 
     def build_listing_item(self, response, data=None, meta_data=None):
         """ response: scrapy.http.response.html.HtmlResponse
