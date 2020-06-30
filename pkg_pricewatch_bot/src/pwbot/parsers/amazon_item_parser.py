@@ -29,23 +29,6 @@ class AmazonItemParser(object):
             self.logger.exception("[ASIN:null] Request Ignored - No ASIN")
             raise IgnoreRequest
 
-        # __stored_variation_asins = []
-        # if AmazonItemModelManager.is_given_asin_parent(asin=self._asin):
-        #     __stored_variation_asins = AmazonItemModelManager.fetch_its_variation_asins(parent_asin=self._asin)
-        #     for sv_asin in __stored_variation_asins:
-        #         if sv_asin != self._asin: # ignore any amazon items which have the same parent_asin and asin - which makes endless scrapy requests
-        #             yield Request(amazonmws_settings.AMAZON_ITEM_VARIATION_LINK_FORMAT % sv_asin,
-        #                     callback=self.parse_item,
-        #                     headers={ 'Referer': 'https://www.{}/'.format(domain), },
-        #                     meta={
-        #                         'dont_parse_pictures': response.meta['dont_parse_pictures'] if 'dont_parse_pictures' in response.meta else False,
-        #                         'dont_crawl_variations': True,
-        #                     })
-
-        # if 'cached_amazon_item' in response.flags:
-        #     self.logger.info("[ASIN:{}] cached amazon item - generating by database".format(asin))
-        #     yield self.__build_amazon_item_from_cache(response)
-        # else:
         if response.status != 200:
             # broken link or inactive amazon item
             amazon_item = ListingItem()
@@ -53,10 +36,6 @@ class AmazonItemParser(object):
             amazon_item['domain'] = self._domain
             amazon_item['http_status'] = response.status
             amazon_item['job_id'] = self._job_id
-            # if response.status == 404:
-                # RemovedVariationHandleMiddleware.__handle_removed_variations related
-                # amazon_item['parent_asin'] = None
-                # self.logger.error('[ASIN:null] Request Ignored - No ASIN')
             yield amazon_item
         else:
             # check variations first
