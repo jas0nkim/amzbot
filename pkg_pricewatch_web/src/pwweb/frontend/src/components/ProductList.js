@@ -1,18 +1,18 @@
 import React, { Component } from "react"
-import ProductInfo from './ProductInfo.js'
+import ProductInfo from "./ProductInfo.js"
 
 class ProjectList extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      products: props.products
+    };
   }
 
   render() {
     return (
       <div>
-        <ProductInfo />
-        <ProductInfo />
-        <ProductInfo />
+        {this.props.products.map(product => <ProductInfo key={product.id} product={product} />)}
       </div>
     );
   }
