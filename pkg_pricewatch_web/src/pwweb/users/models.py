@@ -13,3 +13,12 @@ class UserProfile(models.Model):
 
     class Meta:
         db_table = 'users_user_profile'
+
+
+class UserProduct(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    domain = models.CharField(max_length=32, db_index=True)
+    sku = models.CharField(max_length=32, db_index=True)
+
+    class Meta:
+        db_table = 'users_products'
