@@ -1,8 +1,4 @@
-## Jun 25 2020
-- javascript linter (ESlint)
-    - https://eslint.org/docs/user-guide/getting-started
-        npm install eslint --save-dev
-        npx eslint --init
+## Jul 06 2020
 - login-less service
 - implement React into pwweb.frontend
     - user product screens
@@ -21,6 +17,12 @@
     - login
     - add product
     - notification once price dropped
+
+## Jun 25 2020
+- javascript linter (ESlint)
+    - https://eslint.org/docs/user-guide/getting-started
+        npm install eslint --save-dev
+        npx eslint --init
 
 ## Jun 19 2020
 - additional user fields
