@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.postgres.fields import JSONField
 
 # Create your models here.
 class Job(models.Model):
@@ -7,8 +6,8 @@ class Job(models.Model):
     project = models.CharField(max_length=32, db_index=True)
     spider = models.CharField(max_length=32, db_index=True)
     version = models.CharField(max_length=32, blank=True, null=True)
-    settings = JSONField(blank=True, null=True)
-    other_params = JSONField(blank=True, null=True)
+    settings = models.JSONField(blank=True, null=True)
+    other_params = models.JSONField(blank=True, null=True)
     start_time = models.DateTimeField(blank=True, null=True)
     end_time = models.DateTimeField(blank=True, null=True)
     status = models.SmallIntegerField(default=1)

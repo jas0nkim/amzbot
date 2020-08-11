@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.postgres.fields import JSONField
 
 # Create your models here.
 class Crawl(models.Model):
@@ -8,7 +7,7 @@ class Crawl(models.Model):
     key_one = models.CharField(max_length=32, blank=True, null=True)
     key_two = models.CharField(max_length=32, blank=True, null=True)
     job_id = models.CharField(max_length=64, db_index=True)
-    errors = JSONField(blank=True, null=True)
+    errors = models.JSONField(blank=True, null=True)
     status = models.SmallIntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
 
