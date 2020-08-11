@@ -1,5 +1,5 @@
-Scrapy==2.2.0
-Pillow==7.1.2
+Scrapy==2.3.0
+Pillow==7.2.0
 scrapy-crawlera==1.7.0
 graypy==2.1.0
 treq==20.4.1
