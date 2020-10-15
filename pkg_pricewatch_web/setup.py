@@ -10,8 +10,8 @@ setup(
     install_requires=[
         'psycopg2==2.8.5',
         'gunicorn==20.0.4',
-        'Django==3.1',
-        'djangorestframework==3.11.1',
+        'Django==3.1.2',
+        'djangorestframework==3.12.1',
         'graypy==2.1.0',
         'django-crispy-forms==1.9.2',
     ],

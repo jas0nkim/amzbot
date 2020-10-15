@@ -1,3 +1,6 @@
+## Aug 22 2020
+- drop crawlera. convert to scrapoxy
+
 ## Jul 06 2020
 - login-less service
 - implement React into pwweb.frontend

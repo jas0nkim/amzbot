@@ -21,6 +21,8 @@ dist/
 
 # prod files
 .config/pricewatch.prod.ini
+.config/scrapoxy.env
+.config/graylog.env
 docker-compose.prod.yml
 
 # django admin templates (for reference only)
