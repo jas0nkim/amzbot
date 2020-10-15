@@ -32,4 +32,3 @@ docker-compose.prod.yml
 **/frontend/node_modules
 # webpack build file
 **/frontend/main.js
-**/frontend/package-lock.json
