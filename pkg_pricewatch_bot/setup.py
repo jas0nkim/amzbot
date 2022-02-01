@@ -12,7 +12,7 @@ setup(
         'Pillow==8.0.0',
         'scrapy-crawlera==1.7.0',
         'graypy==2.1.0',
-        'treq==20.9.0',
+        'treq==22.1.0',
         'tldextract==2.2.3',
         'requests==2.24.0',
         'python-scrapyd-api==2.1.2',
