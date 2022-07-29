@@ -8,7 +8,7 @@ setup(
     package_dir={'': 'src'},
     packages=find_packages(where='src', exclude=["pwbot.tests", "pwbot.tests.*", "pwbot_schedular", "pwbot_schedular.*", "run"]),
     install_requires=[
-        'Scrapy==2.4.0',
+        'Scrapy==2.6.2',
         'Pillow==8.0.0',
         'scrapy-crawlera==1.7.0',
         'graypy==2.1.0',
