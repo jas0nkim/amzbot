@@ -1,4 +1,4 @@
-Scrapy==2.4.0
+Scrapy==2.7.1
 Pillow==8.0.0
 scrapy-crawlera==1.7.0
 graypy==2.1.0
